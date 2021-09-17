@@ -1,0 +1,1 @@
+- Tại đây chứa các kiến trúc của model

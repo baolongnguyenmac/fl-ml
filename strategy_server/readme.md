@@ -1,0 +1,1 @@
+- Tại đây chứa chiến lược tổng hợp trọng số tại server

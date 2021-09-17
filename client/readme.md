@@ -1,0 +1,1 @@
+- Tại đây chứa code config 12 client - ứng với 12 model của paper
