@@ -51,7 +51,12 @@
 
 # dataset
 /*/shakespeare
+/*/femnist
+/*/sent140
 /*/tmp
 
 # run_split script
 data_gen.sh
+
+# ds store
+.DS_Store
