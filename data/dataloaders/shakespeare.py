@@ -54,16 +54,22 @@ class ShakespeareDataset(Dataset[XY]):
         """
         indices: List[int] = [self.characters.find(c) for c in word]
         return indices
+    def one_hot(self, index, size):
+        '''returns one-hot vector with given size and value 1 at given index
+        '''
+        vec = [0 for _ in range(size)]
+        vec[int(index)] = 1
+        return vec
 
     def __len__(self) -> int:
         return len(self.next_word)
 
     def __getitem__(self, idx: int) -> XY:
         sentence_indices = torch.tensor(self.word_to_indices(self.sentence[idx]))
-        next_word_index = torch.tensor(self.characters.find(self.next_word[idx]))
+        next_word_index = torch.tensor(self.one_hot(self.characters.find(self.next_word[idx]), len(LEAF_CHARACTERS)))
         return sentence_indices, next_word_index
 
-def get_loader(path_to_pickle, batch_size=32, shuffle=True):
+def get_loader(path_to_pickle, batch_size=1, shuffle=True):
     dataset = ShakespeareDataset(path_to_pickle)
 
     loader = DataLoader(
