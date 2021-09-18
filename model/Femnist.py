@@ -8,7 +8,7 @@ import flwr as fl
 
 import sys 
 sys.path.append('../')
-from strategy_client.fedavg import FedAvgClientTrain, FedAvgClientTest
+from strategy_client.conventionalML import ConventionalTrain, ConventionalTest
 
 DATA_ROOT = "../data/femnist"
 FED_AVG = "FedAvg"
@@ -74,7 +74,7 @@ def train(
     """
     trainer = None
     if strategy == FED_AVG:
-        trainer = FedAvgClientTrain(
+        trainer = ConventionalTrain(
             net, 
             nn.CrossEntropyLoss(), 
             torch.optim.Adam(net.parameters(), lr=0.001), 
@@ -108,5 +108,5 @@ def test(
     Returns:
         Tuple[float, float]: loss and accuracy
     """
-    tester = FedAvgClientTest(net, nn.CrossEntropyLoss(), device)
+    tester = ConventionalTest(net, nn.CrossEntropyLoss(), device)
     return tester.test(testloader)
