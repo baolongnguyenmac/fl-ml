@@ -2,15 +2,20 @@ from collections import OrderedDict
 from typing import Tuple
 
 import torch
+from torch.autograd.grad_mode import F
 import torch.nn as nn
-import torch.nn.functional as F
-import torchvision
-import torchvision.transforms as transforms
-from torch import Tensor
-
 import flwr as fl
 
+import sys 
+sys.path.append('../')
+from strategy_client.fedavg import FedAvgClientTrain, FedAvgClientTest
+
 DATA_ROOT = "../data/femnist"
+FED_AVG = "FedAvg"
+FED_META_MAML = "FedMetaMAML"
+FED_AVG_META = "FedAvgMeta"
+FED_META_SDG = "FedMetaSGD"
+# DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 class Femnist(nn.Module):
     def __init__(self) -> None:
@@ -52,57 +57,56 @@ def load_model():
 
 
 def train(
-    net: Femnist,
-    trainloader: torch.utils.data.DataLoader,
-    epochs: int,
-    device: torch.device,  # pylint: disable=no-member
-) -> None:
-    """Train the network."""
-    # Define loss and optimizer
-    criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+        net: nn.Module, 
+        trainloader: torch.utils.data.DataLoader, 
+        epochs: int, 
+        device: torch.device, 
+        strategy: str
+    ) -> None:
+    """train model at client
 
-    print(f"Training {epochs} epoch(s) w/ {len(trainloader)} batches each")
+    Args:
+        net (nn.Module): model
+        trainloader (torch.utils.data.DataLoader): train dataloader
+        epochs (int): number of epochs
+        device (torch.device): device
+        strategy (str): fedAvg, fedAvgMeta, fedMetaMAML, defMetaSGD
+    """
+    trainer = None
+    if strategy == FED_AVG:
+        trainer = FedAvgClientTrain(
+            net, 
+            nn.CrossEntropyLoss(), 
+            torch.optim.Adam(net.parameters(), lr=0.001), 
+            device)
+    elif strategy == FED_AVG_META:
+        pass
+    elif strategy == FED_META_MAML:
+        pass
+    elif strategy == FED_META_SDG:
+        pass
 
-    # Train the network
-    for epoch in range(epochs):  # loop over the dataset multiple times
-        running_loss = 0.0
-        for i, data in enumerate(trainloader, 0):
-            images, labels = data[0].to(device), data[1].to(device)
-
-            # zero the parameter gradients
-            optimizer.zero_grad()
-
-            # forward + backward + optimize
-            outputs = net(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-
-            # print statistics
-            running_loss += loss.item()
-            if i % 2000 == 1999:  # print every 2000 mini-batches
-                print("[%d, %5d] loss: %.3f" % (epoch + 1, i + 1, running_loss / 2000))
-                running_loss = 0.0
+    if trainer is not None:
+        trainer.train(trainloader, epochs)
+    else:
+        print("wrong algorithm syntax")
 
 
 def test(
-    net: Femnist,
-    testloader: torch.utils.data.DataLoader,
-    device: torch.device,  # pylint: disable=no-member
-) -> Tuple[float, float]:
-    """Validate the network on the entire test set."""
-    criterion = nn.CrossEntropyLoss()
-    correct = 0
-    total = 0
-    loss = 0.0
-    with torch.no_grad():
-        for data in testloader:
-            images, labels = data[0].to(device), data[1].to(device)
-            outputs = net(images)
-            loss += criterion(outputs, labels).item()
-            _, predicted = torch.max(outputs.data, 1)  # pylint: disable=no-member
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-    accuracy = correct / total
-    return loss, accuracy
+        net: nn.Module, 
+        testloader: torch.utils.data.DataLoader, 
+        device: torch.device,
+        # strategy: str
+    ) -> Tuple[float, float]:
+    """test the model at client
+
+    Args:
+        net (nn.Module): model
+        testloader (torch.utils.data.DataLoader): test dataloader
+        device (torch.device): device
+
+    Returns:
+        Tuple[float, float]: loss and accuracy
+    """
+    tester = FedAvgClientTest(net, nn.CrossEntropyLoss(), device)
+    return tester.test(testloader)
