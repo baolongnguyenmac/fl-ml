@@ -18,7 +18,7 @@ import json
 import pickle
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
-
+import os
 
 def check_between_zero_and_one(value: str):
     """Tests if value is between 0 an 1"""
@@ -93,17 +93,19 @@ def split_json_and_save(
     """
     users_list: List[str] = []
     new_users: List[str] = []
-    with open(path_to_json) as open_file:
-        json_file = json.load(open_file)
-        if not prev_users_list:
-            users_list = json_file["users"]
-        else:
-            print("Using previous list of users.")
-            users_list = prev_users_list
+    listFile = os.listdir(path_to_json)
+    for filename in listFile:
+        with open(f'{path_to_json.__str__()}/{filename}') as open_file:
+            json_file = json.load(open_file)
+            if not prev_users_list:
+                users_list = json_file["users"]
+            else:
+                print("Using previous list of users.")
+                users_list = prev_users_list
 
-        for user_idx, user_str in enumerate(users_list):
-            new_users.append(user_str)
-            process_user(json_file, user_idx, user_str, list_datasets, save_root)
+            for user_idx, user_str in enumerate(users_list):
+                new_users.append(user_str)
+                process_user(json_file, user_idx, user_str, list_datasets, save_root)
 
     return new_users
 
@@ -170,3 +172,9 @@ if __name__ == "__main__":
         path_to_json=original_test_dataset,
         save_root=Path(args.save_test),
     )
+
+# python split.py --save_train bb/train \
+#                 --leaf_train_json data/train \ ---> truyền vào folder, not file
+#                 --save_test shakespeare/test \
+#                 --leaf_test_json tmp/test \ ----> truyền vào folder, not file
+#                 --query_frac 0.2
