@@ -51,25 +51,6 @@ def load_model():
     return Femnist()
 
 
-# pylint: disable=unused-argument
-def load_data():
-    """Load data for model
-
-    Returns:
-        TensorDataset: Training set and test set
-    """
-    # transform = transforms.Compose(
-    #     [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
-    # )
-    # trainset = torchvision.datasets.CIFAR10(
-    #     root=DATA_ROOT, train=True, download=True, transform=transform
-    # )
-    # testset = torchvision.datasets.CIFAR10(
-    #     root=DATA_ROOT, train=False, download=True, transform=transform
-    # )
-    return trainset, testset
-
-
 def train(
     net: Femnist,
     trainloader: torch.utils.data.DataLoader,
