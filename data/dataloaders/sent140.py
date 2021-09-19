@@ -116,4 +116,4 @@ def get_loader(path_to_pickle, batch_size=32, shuffle=True):
         shuffle=shuffle
     )
 
-    return loader
+    return loader, len(dataset)
