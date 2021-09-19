@@ -28,6 +28,7 @@ class Femnist(nn.Module):
             nn.Flatten(start_dim=1),
             nn.Linear(in_features=64*7*7, out_features=2048),
             nn.ReLU(),
+            nn.Linear(in_features=2048, out_features=62),
             nn.Softmax(dim=1)
         )
 
@@ -110,3 +111,18 @@ def test(
     """
     tester = ConventionalTest(net, nn.CrossEntropyLoss(), device)
     return tester.test(testloader)
+
+'''
+    # test
+    from data.dataloaders import femnist as dataloader
+    loader, size = dataloader.get_loader('../data/femnist/test/0/support.pickle')
+    for x, y in loader:
+        # x = x.reshape(-1, 1, 28, 28)
+        # print(x.shape) # [32, 1, 28, 28]
+        print(x.shape) # [32, 28*28]
+        print(y.shape) # [32]
+        model = load_model()
+        outs = model(x)
+        print(outs.shape) # [32, 62]
+        break
+'''
