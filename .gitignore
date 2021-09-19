@@ -60,3 +60,6 @@ data_gen.sh
 
 # ds store
 .DS_Store
+
+# pycache
+/*/__pycache__
