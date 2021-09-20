@@ -69,7 +69,7 @@ class Model:
         if self.strategy == FED_AVG:
             trainer = ConventionalTrain(
                 self.model, 
-                nn.CrossEntropyLoss(), 
+                nn.functional.cross_entropy, 
                 torch.optim.Adam(self.model.parameters(), lr=0.001), 
                 device)
         elif self.strategy == FED_AVG_META:
@@ -99,28 +99,16 @@ class Model:
         Returns:
             Tuple[float, float]: loss and accuracy
         """
-        tester = ConventionalTest(self.model, nn.CrossEntropyLoss(), device)
+        tester = ConventionalTest(self.model, nn.functional.cross_entropy, device)
         return tester.test(testloader)
 
 
-'''
-    # test architecture of model
-    from data.dataloaders import femnist as dataloader
-    loader, size = dataloader.get_loader('../data/femnist/test/0/support.pickle')
-    for x, y in loader:
-        # x = x.reshape(-1, 1, 28, 28)
-        # print(x.shape) # [32, 1, 28, 28]
-        print(x.shape) # [32, 28*28]
-        print(y.shape) # [32]
-        model = load_model()
-        outs = model(x)
-        print(outs.shape) # [32, 62]
-        break
-'''
+''' test model
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 from data.dataloaders import femnist as dataloader
 loader, size = dataloader.get_loader('../data/femnist/test/0/support.pickle')
 model = Model(FEMNIST_MODEL, FED_AVG)
 outs = model.test(loader, DEVICE)
-print(outs.shape) # [32, 62]
+print(outs) # a tuple that contains loss and acc
+'''
