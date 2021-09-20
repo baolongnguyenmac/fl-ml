@@ -41,7 +41,7 @@ class FemnistClient(fl.client.Client):
         self.model.set_weights(weights)
 
         # Train model
-        trainloader, num_examples_train = dataloader.get_loader(f'../data/femnist/train/{self.cid}/support.pickle')
+        trainloader, num_examples_train = dataloader.get_loader(f'../data/femnist/train/{self.cid}/support.pickle', batch_size)
         Femnist.train(self.model, trainloader, epochs, DEVICE, self.strategy)
 
         # Return the refined weights and the number of examples used for training
