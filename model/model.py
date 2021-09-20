@@ -2,6 +2,7 @@ import sys
 sys.path.insert(0, '../')
 from model import femnist_model, shakespeare_model
 from strategy_client.conventional_ml import ConventionalTest, ConventionalTrain
+from data.dataloaders import femnist as dataloader
 
 import torch
 import torch.nn as nn
@@ -14,9 +15,9 @@ FED_META_MAML = "FedMetaMAML"
 FED_AVG_META = "FedAvgMeta"
 FED_META_SDG = "FedMetaSGD"
 
-FEMNIST_MODEL = "femnist_model"
-SHAKESPEARE_MODEL = "shakespeare_model"
-SENT140_MODEL = "sent140_model"
+FEMNIST_MODEL = "femnist"
+SHAKESPEARE_MODEL = "shakespeare"
+SENT140_MODEL = "sent140"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -26,6 +27,7 @@ class Model:
     def __init__(self, model: str, strategy: str):
         self.strategy = strategy
         self.model: nn.Module = None
+        self.model_name = model
 
         if model == FEMNIST_MODEL:
             self.model: nn.Module = femnist_model.Femnist()
@@ -35,7 +37,6 @@ class Model:
             pass
         else:
             print("wrong model syntax")
-
         self.model = self.model.to(DEVICE)
 
     def load_model(self):

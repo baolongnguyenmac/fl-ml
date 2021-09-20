@@ -41,7 +41,7 @@ class FedAvgClient(fl.client.Client):
         self.model.set_weights(weights)
 
         # Train model
-        trainloader, num_examples_train = dataloader.get_loader(f'../data/femnist/train/{self.cid}/support.pickle', batch_size)
+        trainloader, num_examples_train = dataloader.get_loader(f'../data/{self.model.model_name}/train/{self.cid}/support.pickle', batch_size)
         # self.model.train(self.model, trainloader, epochs, DEVICE, model.FED_AVG)
         trainer = ConventionalTrain(
             self.model.model,
@@ -71,7 +71,7 @@ class FedAvgClient(fl.client.Client):
         self.model.set_weights(weights)
 
         # Evaluate the updated model on the local dataset
-        testloader, num_examples = dataloader.get_loader(f'../data/femnist/train/{self.cid}/query.pickle')
+        testloader, num_examples = dataloader.get_loader(f'../data/{self.model.model_name}/train/{self.cid}/query.pickle')
         # loss, accuracy = self.model.test(testloader, DEVICE)
         tester = ConventionalTest(
             self.model.model,
