@@ -24,3 +24,20 @@ class Femnist(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x.reshape(-1, 1, 28, 28)
         return self.network(x)
+
+''' test network
+    # DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    # from data.dataloaders import femnist as dataloader
+    # loader, size = dataloader.get_loader('../data/femnist/test/0/support.pickle')
+
+    # model = Femnist()
+    # for x, y in loader:
+    #     print(x.shape)
+    #     print(y.shape)
+    #     outs = model(x)
+    #     print(outs.shape)
+    #     loss = nn.functional.cross_entropy(outs, y)
+    #     print(loss)
+    #     break
+'''
