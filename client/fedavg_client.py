@@ -9,6 +9,7 @@ import sys
 sys.path.insert(0, '../')
 from model import model
 from data.dataloaders import femnist as dataloader
+from strategy_client.conventional_ml import ConventionalTest, ConventionalTrain
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -41,7 +42,14 @@ class FedAvgClient(fl.client.Client):
 
         # Train model
         trainloader, num_examples_train = dataloader.get_loader(f'../data/femnist/train/{self.cid}/support.pickle', batch_size)
-        self.model.train(self.model, trainloader, epochs, DEVICE, model.FED_AVG)
+        # self.model.train(self.model, trainloader, epochs, DEVICE, model.FED_AVG)
+        trainer = ConventionalTrain(
+            self.model.model,
+            nn.functional.cross_entropy, 
+            torch.optim.Adam(self.model.parameters(), lr=0.001),
+            DEVICE
+        )
+        trainer.train(trainloader, epochs)
 
         # Return the refined weights and the number of examples used for training
         weights_prime: Weights = self.model.get_weights()
@@ -64,9 +72,16 @@ class FedAvgClient(fl.client.Client):
 
         # Evaluate the updated model on the local dataset
         testloader, num_examples = dataloader.get_loader(f'../data/femnist/train/{self.cid}/query.pickle')
-        loss, accuracy = self.model.test(self.model, testloader, DEVICE)
+        # loss, accuracy = self.model.test(testloader, DEVICE)
+        tester = ConventionalTest(
+            self.model.model,
+            nn.functional.cross_entropy,
+            DEVICE
+        )
+        loss, accuracy = tester.test(testloader)
 
         # Return the number of evaluation examples and the evaluation result (loss)
         return EvaluateRes(
             loss=float(loss), num_examples=num_examples, accuracy=float(accuracy)
         )
+
