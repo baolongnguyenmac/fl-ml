@@ -7,6 +7,7 @@ import timeit
 import sys
 sys.path.append('../')
 from model import femnist_model as Femnist
+from model import shakespeare_model as Shakespeare
 from data.dataloaders import femnist as dataloader
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -64,9 +65,6 @@ class FemnistClient(fl.client.Client):
 
         # Evaluate the updated model on the local dataset
         testloader, num_examples = dataloader.get_loader(f'../data/femnist/train/{self.cid}/query.pickle')
-        testloader = torch.utils.data.DataLoader(
-            self.testset, batch_size=32, shuffle=False
-        )
         loss, accuracy = Femnist.test(self.model, testloader, DEVICE)
 
         # Return the number of evaluation examples and the evaluation result (loss)
