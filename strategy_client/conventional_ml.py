@@ -58,7 +58,8 @@ class ConventionalTest:
     def valid_step(self, batch):
         with torch.no_grad():
             features, labels = batch[0].to(self.device), batch[1].to(self.device)
-            preds = self.model(features)
+            probs = self.model(features)
+            _, preds = torch.max(probs, dim=1)
             loss = self.lossFn(preds, labels)
             acc = (preds==labels).sum()
             return loss, acc
