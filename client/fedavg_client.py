@@ -2,22 +2,21 @@ import flwr as fl
 from flwr.common import EvaluateIns, EvaluateRes, FitIns, FitRes, ParametersRes, Weights
 
 import torch
+import torch.nn as nn
 import timeit
 
 import sys
-sys.path.append('../')
-from model import femnist_model as Femnist
-from model import shakespeare_model as Shakespeare
+sys.path.insert(0, '../')
+from model import model
 from data.dataloaders import femnist as dataloader
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-class FemnistClient(fl.client.Client):
-    def __init__(self, cid: int, model: Femnist.Femnist, strategy: str) -> None:
+class FedAvgClient(fl.client.Client):
+    def __init__(self, cid: int, model: model.Model) -> None:
         super().__init__()
         self.model = model
         self.cid = cid
-        self.strategy = strategy
 
     def get_parameters(self) -> ParametersRes:
         print(f"Client {self.cid}: get_parameters")
@@ -42,7 +41,7 @@ class FemnistClient(fl.client.Client):
 
         # Train model
         trainloader, num_examples_train = dataloader.get_loader(f'../data/femnist/train/{self.cid}/support.pickle', batch_size)
-        Femnist.train(self.model, trainloader, epochs, DEVICE, self.strategy)
+        self.model.train(self.model, trainloader, epochs, DEVICE, model.FED_AVG)
 
         # Return the refined weights and the number of examples used for training
         weights_prime: Weights = self.model.get_weights()
@@ -65,7 +64,7 @@ class FemnistClient(fl.client.Client):
 
         # Evaluate the updated model on the local dataset
         testloader, num_examples = dataloader.get_loader(f'../data/femnist/train/{self.cid}/query.pickle')
-        loss, accuracy = Femnist.test(self.model, testloader, DEVICE)
+        loss, accuracy = self.model.test(self.model, testloader, DEVICE)
 
         # Return the number of evaluation examples and the evaluation result (loss)
         return EvaluateRes(
