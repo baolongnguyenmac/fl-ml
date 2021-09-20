@@ -1,7 +1,8 @@
 import torch
+import torch.nn as nn
 
 class ConventionalTrain:
-    def __init__(self, model, lossFn, optimizer: torch.optim.Optimizer, device: torch.device) -> None:
+    def __init__(self, model: nn.Module, lossFn, optimizer: torch.optim.Optimizer, device: torch.device) -> None:
         self.model = model
         self.lossFn = lossFn
         self.optimizer = optimizer
@@ -50,7 +51,7 @@ class ConventionalTrain:
                 print(f"Epoch {e+1}: loss={training_loss}")
 
 class ConventionalTest:
-    def __init__(self, model, lossFn, device: torch.device) -> None:
+    def __init__(self, model: nn.Module, lossFn, device: torch.device) -> None:
         self.model = model
         self.lossFn = lossFn
         self.device = device
