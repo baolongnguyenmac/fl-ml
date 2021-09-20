@@ -1,4 +1,6 @@
-import femnist_model, shakespeare_model
+import sys 
+sys.path.insert(0, '../')
+from model import femnist_model, shakespeare_model
 from strategy_client.conventional_ml import ConventionalTest, ConventionalTrain
 
 import torch
@@ -16,6 +18,8 @@ FEMNIST_MODEL = "femnist_model"
 SHAKESPEARE_MODEL = "shakespeare_model"
 SENT140_MODEL = "sent140_model"
 
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 class Model:
     """generate a model
     """
@@ -31,6 +35,8 @@ class Model:
             pass
         else:
             print("wrong model syntax")
+
+        self.model = self.model.to(DEVICE)
 
     def load_model(self):
         """Load model
