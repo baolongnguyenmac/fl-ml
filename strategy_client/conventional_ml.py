@@ -59,8 +59,8 @@ class ConventionalTest:
         with torch.no_grad():
             features, labels = batch[0].to(self.device), batch[1].to(self.device)
             probs = self.model(features)
+            loss = self.lossFn(probs, labels)
             _, preds = torch.max(probs, dim=1)
-            loss = self.lossFn(preds, labels)
             acc = (preds==labels).sum()
             return loss, acc
 
