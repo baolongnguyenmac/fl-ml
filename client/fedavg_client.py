@@ -34,6 +34,7 @@ class FedAvgClient(fl.client.Client):
         fit_begin = timeit.default_timer()
 
         # Get training config
+        learning_rate = float(config["learning_rate"])
         epochs = int(config["epochs"])
         batch_size = int(config["batch_size"])
 
@@ -46,7 +47,7 @@ class FedAvgClient(fl.client.Client):
         trainer = ConventionalTrain(
             self.model.model,
             nn.functional.cross_entropy, 
-            torch.optim.Adam(self.model.parameters(), lr=0.001),
+            torch.optim.Adam(self.model.parameters(), learning_rate),
             DEVICE
         )
         trainer.train(trainloader, epochs)
