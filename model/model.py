@@ -1,6 +1,6 @@
 import sys 
 sys.path.insert(0, '../')
-from model import femnist_model, shakespeare_model
+from model import femnist_model, shakespeare_model, sent140_model
 from strategy_client.conventional_ml import ConventionalTest, ConventionalTrain
 from data.dataloaders import femnist as dataloader
 
@@ -34,7 +34,7 @@ class Model:
         elif model == SHAKESPEARE_MODEL:
             self.model: nn.Module = shakespeare_model.Shakespeare()
         elif model == SENT140_MODEL:
-            pass
+            self.model: nn.Module = sent140_model.Sent140()
         else:
             print("wrong model syntax")
         self.model = self.model.to(DEVICE)
