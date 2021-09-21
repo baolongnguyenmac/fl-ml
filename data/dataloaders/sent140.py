@@ -106,14 +106,3 @@ def get_loader(path_to_pickle, batch_size=32, shuffle=True):
     )
 
     return loader
-
-def get_loader(path_to_pickle, batch_size=32, shuffle=True):
-    dataset = Sent140Dataset(path_to_pickle)
-
-    loader = DataLoader(
-        dataset=dataset,
-        batch_size=batch_size,
-        shuffle=shuffle
-    )
-
-    return loader
