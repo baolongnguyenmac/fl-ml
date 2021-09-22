@@ -10,6 +10,9 @@ LEAF_CHARACTERS = (
     "\n !\"&'(),-.0123456789:;>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz}"
 )
 
+LABEL = (
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
+)
 
 class ShakespeareDataset(Dataset[XY]):  
     """Creates a PyTorch Dataset for Leaf Shakespeare.
@@ -29,6 +32,9 @@ class ShakespeareDataset(Dataset[XY]):
             self.index = data["idx"]
             self.char = data["character"]
 
+    def filter_label(self, features, labels):
+        
+
     def word_to_indices(self, word: str) -> List[int]:
         """Converts a sequence of characters into position indices in the
         reference string `self.characters`.
@@ -39,6 +45,7 @@ class ShakespeareDataset(Dataset[XY]):
         """
         indices: List[int] = [self.characters.find(c) for c in word]
         return indices
+
     def one_hot(self, index, size):
         '''returns one-hot vector with given size and value 1 at given index
         '''

@@ -49,7 +49,7 @@ def main() -> None:
         "--strategy",
         type=str,
         default=models.FED_AVG,
-        help="Strategy for client (no default).",
+        help=f"Strategy for client ({models.FED_AVG}, {models.FED_AVG_META}, {models.FED_META_MAML}, {models.FED_META_SDG}).",
     )
 
     # parser.add_argument(
@@ -67,7 +67,7 @@ def main() -> None:
     parser.add_argument(
         "--model",
         type=str,
-        help=f"{models.FED_AVG}, {models.FED_AVG_META}, {models.FED_META_MAML}, {models.FED_META_SDG}"
+        help=f"{models.FEMNIST_MODEL}, {models.SHAKESPEARE_MODEL}, {models.SENT140_MODEL}"
     )
 
     # parser.add_argument(
@@ -87,7 +87,7 @@ def main() -> None:
     client = get_client(args, model)
     fl.client.start_client(args.server_address, client)
 
-def get_client(args, model, trainset, testset):
+def get_client(args, model):
     if args.strategy == models.FED_AVG:
         return FedAvgClient(args.cid, model)
     elif args.strategy == models.FED_AVG_META:

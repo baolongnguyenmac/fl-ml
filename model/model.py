@@ -1,8 +1,6 @@
 import sys 
 sys.path.insert(0, '../')
 from model import femnist_model, shakespeare_model
-from strategy_client.conventional_ml import ConventionalTest, ConventionalTrain
-from data.dataloaders import femnist as dataloader
 
 import torch
 import torch.nn as nn
