@@ -32,7 +32,7 @@ class Model:
         elif model == SHAKESPEARE_MODEL:
             self.model: nn.Module = shakespeare_model.Shakespeare()
         elif model == SENT140_MODEL:
-            pass
+            self.model: nn.Module = sent140_model.Sent140()
         else:
             print("wrong model syntax")
         self.model = self.model.to(DEVICE)

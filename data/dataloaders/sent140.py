@@ -32,7 +32,7 @@ class Sent140Dataset(Dataset[XY]):
     """
 
     def __init__(self, path_to_pickle: Path):
-        _, self.indd, vocab = self.get_word_emb_arr(VOCAB_DIR)
+        self.word_emb_arr, self.indd, self.vocab = self.get_word_emb_arr(VOCAB_DIR)
 
         with open(path_to_pickle, "rb") as open_file:
             data = pickle.load(open_file)
@@ -81,30 +81,19 @@ class Sent140Dataset(Dataset[XY]):
         line_list = self.split_line(line) # split phrase in words
         indl = [word2id[w] if w in word2id else unk_id for w in line_list[:max_words]]
         indl += [unk_id]*(max_words-len(indl))
-        return indl
-
-    def val_to_vec(self, size, val):
-        """Converts target into one-hot.
-        Args:
-            size: Size of vector.
-            val: Integer in range [0, size].
-        Returns:
-            vec: one-hot vector with a 1 in the val element.
-        """
-        assert 0 <= val < size
-        vec = [0 for _ in range(size)]
-        vec[int(val)] = 1
-        return vec
+        emba = []
+        for i in range(0, len(indl)):
+            emba.append(self.word_emb_arr[indl[i]])
+        return emba
 
     def __len__(self) -> int:
         
         return len(self.label)
 
     def __getitem__(self, idx: int) -> XY:
-        sentence = [e[4] for e in self.sentence]
-        sentence_indices = torch.tensor([self.line_to_indices(e, self.indd) for e in sentence])
-        label = [int(e) for e in self.label]
-        label = torch.tensor([self.val_to_vec(2, e) for e in label])
+        sentence = self.sentence[idx][4]
+        sentence_indices = torch.tensor(self.line_to_indices(sentence, self.indd))
+        label = torch.tensor(int(self.label[idx]))
         return sentence_indices, label
 
 def get_loader(path_to_pickle, batch_size=32, shuffle=True):

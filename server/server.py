@@ -1,5 +1,23 @@
+# Copyright 2020 Adap GmbH. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ==============================================================================
+"""Minimal example on how to start a simple Flower server."""
+
+
 import argparse
 from typing import Callable, Dict, Optional, Tuple
+from collections import OrderedDict
 
 from logging import INFO
 from flwr.common import GRPC_MAX_MESSAGE_LENGTH
@@ -8,13 +26,11 @@ from flwr.server.grpc_server.grpc_server import start_insecure_grpc_server
 
 import torch
 import torchvision
-from torch.utils.tensorboard import SummaryWriter
 
 import flwr as fl
-from models import fashionmnist as dataset
-from fl_strategies.qffedavg import QffedAvg
+  
+DEFAULT_SERVER_ADDRESS = "localhost:1000"
 
-DEFAULT_SERVER_ADDRESS = "[::]:8080"
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def main() -> None:
@@ -67,81 +83,55 @@ def main() -> None:
         default=32,
         help="Batch size used when training each client (default: 32)",
     )   
-    parser.add_argument(
-        "--exp_name",
-        type=str,
-        help="Name of the experiment you are running (no default)",
-    )
+    
     parser.add_argument(
         "--strategy",
         type=str,
-        default="fedAvg",
-        help="Name of the strategy you are running (default: fedAvg)",
+        default='FED_AVG',
+        help="Strategy for server {FED_AVG, FED_META_MAML, FED_META_SDG}",
     )
     
     parser.add_argument(
-        "--q_param",
+        "--learning_rate",
         type=float,
-        help="Q param for QFFedAvg",
+        help="learning rate for FedAvg",
+    )
+
+    parser.add_argument(
+        "--alpha",
+        type=float,
+        help="alpha for MAML, Meta-SGD or learning rate",
     )
     
     parser.add_argument(
-        "--qffl_learning_rate",
+        "--beta",
         type=float,
-        help="Learning_rate for QFFedAvg",
+        help="beta for MAML, Meta-SGD",
     )
-   
-   
+    
    
     args = parser.parse_args()
-    dict_args = vars(args)
-    if not args.exp_name:
-        tags = ['strategy', 'rounds', 'epochs', 'min_num_clients', 'min_sample_size', 'sample_fraction']
-        params = '_'.join([f'{tag}_{dict_args[tag]}' for tag in tags])
-        args.exp_name=f'federated_' + params
 
     # Configure logger
     fl.common.logger.configure("server", host=args.log_host)
 
-    # Load training data for qffl to eval on
-    trainset, _ = dataset.load_data()
-    
+    # Create strategy
+    strategy = get_strategy(args)
 
-    # Create client_manager, strategy, and server
-    client_manager = fl.server.SimpleClientManager()
-    strategy = get_strategy(args, trainset);
-    server = fl.server.Server(client_manager=client_manager, strategy=strategy)
-    
-    # Run server 
-    grpc_server = start_insecure_grpc_server(
-        client_manager=server.client_manager(),
-        server_address=DEFAULT_SERVER_ADDRESS,
-        max_message_length=GRPC_MAX_MESSAGE_LENGTH,
+    fl.server.start_server(
+        args.server_address,
+        config={"num_rounds": args.rounds},
+        strategy=strategy,
     )
-    
-    # Fit model
-    hist = server.fit(num_rounds=args.rounds)
-    log(INFO, "app_fit: losses_distributed %s", str(hist.losses_distributed))
-    log(INFO, "app_fit: accuracies_distributed %s", str(hist.accuracies_distributed))
-    print(hist.accuracies_distributed)
-    
-    with SummaryWriter(log_dir=f'./runs/{args.exp_name}') as writer:
-        for idx, loss in hist.losses_distributed:
-            writer.add_scalar('Loss/test', loss, idx*args.epochs)
-        for idx, acc in hist.accuracies_distributed:
-            writer.add_scalar('Accuracy/test', acc, idx*args.epochs)
-
-
-    # Stop the gRPC server
-    grpc_server.stop(1)
-    
 
 def generate_config(args):  
     """Returns a funtion of parameters based on arguments"""
     
     def fit_config(rnd: int) -> Dict[str, str]:
         config = {
-        "epoch_global": str((rnd-1)*args.epochs),
+        "learning_rate": str(args.learning_rate),
+        "alpha": str(args.alpha),
+        "beta": str(args.beta),
         "epochs": str(args.epochs),
         "batch_size": str(args.batch_size),
         }
@@ -150,56 +140,22 @@ def generate_config(args):
     return fit_config 
 
 
-def get_eval_fn(
-    testset: torchvision.datasets.VisionDataset,
-) -> Callable[[fl.common.Weights], Optional[Tuple[float, float]]]:
-    """Return an evaluation function for centralized evaluation."""
-    def evaluate(weights: fl.common.Weights) -> Optional[Tuple[float, float]]:
-        """Use the entire dataset-10 test set for evaluation."""
-        model = dataset.load_model()
-        model.set_weights(weights)
-        model.to(DEVICE)
-        testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False)
-        return model.test(testloader=testloader, device = DEVICE)
-
-    return evaluate
-
-
-def get_strategy(
-    args,
-    trainset: torchvision.datasets.VisionDataset
-) -> fl.server.strategy.Strategy:
-    if args.strategy == "qffedAvg":
-        if not args.q_param:
-            args.q_param = 0.2
-        if not args.qffl_learning_rate:
-            args.qffl_learning_rate = 0.1
-        
-        return QffedAvg(
-            q_param = args.q_param,
-            qffl_learning_rate = args.qffl_learning_rate,
-            fraction_fit=args.sample_fraction,   
-            fraction_eval=1,
+def get_strategy(args) -> fl.server.strategy.Strategy:
+    if args.strategy == "FED_AVG":
+        return fl.server.strategy.FedAvg(
+            fraction_fit=args.sample_fraction,
+            fraction_eval= 1,
             min_fit_clients=args.min_sample_size,
             min_eval_clients=args.min_sample_size,
             min_available_clients=args.min_num_clients,
-            eval_fn= None, # so does federated evaluation
-            eval_train_fn = get_eval_fn(trainset),
             on_fit_config_fn=generate_config(args),
             on_evaluate_config_fn=generate_config(args)
         )
-    # perfedavg same as fedavg, only client differs
-    return fl.server.strategy.FedAvg(
-        fraction_fit=args.sample_fraction,
-        fraction_eval= 1,
-        min_fit_clients=args.min_sample_size,
-        min_eval_clients=args.min_sample_size,
-        min_available_clients=args.min_num_clients,
-        eval_fn= None, # so does federated evaluation
-        on_fit_config_fn=generate_config(args),
-        on_evaluate_config_fn=generate_config(args)
-    )
-
+    if args.strategy == "FED_META_MAML":
+        pass
+    if args.strategy == "FED_META_SGD":
+        pass
 
 if __name__ == "__main__":
     main()
+
