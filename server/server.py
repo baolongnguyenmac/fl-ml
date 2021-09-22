@@ -1,8 +1,18 @@
 import argparse
-import torch
-import flwr as fl
+from typing import Callable, Dict, Optional, Tuple
+from collections import OrderedDict
 
-DEFAULT_SERVER_ADDRESS = "localhost:1000"
+from logging import INFO
+from flwr.common import GRPC_MAX_MESSAGE_LENGTH
+from flwr.common.logger import log
+from flwr.server.grpc_server.grpc_server import start_insecure_grpc_server
+
+import torch
+import torchvision
+
+import flwr as fl
+  
+DEFAULT_SERVER_ADDRESS = "localhost:5000"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -81,7 +91,8 @@ def main() -> None:
         type=float,
         help="beta for MAML, Meta-SGD",
     )
-
+    
+   
     args = parser.parse_args()
 
     # Configure logger
@@ -110,6 +121,7 @@ def generate_config(args):
         return config
     
     return fit_config 
+
 
 def get_strategy(args) -> fl.server.strategy.Strategy:
     if args.strategy == "FED_AVG":
