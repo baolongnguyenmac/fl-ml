@@ -1,34 +1,7 @@
-# Copyright 2020 Adap GmbH. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-"""Minimal example on how to start a simple Flower server."""
-
-
 import argparse
-from typing import Callable, Dict, Optional, Tuple
-from collections import OrderedDict
-
-from logging import INFO
-from flwr.common import GRPC_MAX_MESSAGE_LENGTH
-from flwr.common.logger import log
-from flwr.server.grpc_server.grpc_server import start_insecure_grpc_server
-
 import torch
-import torchvision
-
 import flwr as fl
-  
+
 DEFAULT_SERVER_ADDRESS = "localhost:1000"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -108,8 +81,7 @@ def main() -> None:
         type=float,
         help="beta for MAML, Meta-SGD",
     )
-    
-   
+
     args = parser.parse_args()
 
     # Configure logger
@@ -138,7 +110,6 @@ def generate_config(args):
         return config
     
     return fit_config 
-
 
 def get_strategy(args) -> fl.server.strategy.Strategy:
     if args.strategy == "FED_AVG":
