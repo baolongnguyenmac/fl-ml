@@ -33,7 +33,7 @@ class ShakespeareDataset(Dataset[XY]):
             self.char = data["character"]
 
     def filter_label(self, features, labels):
-        
+        pass
 
     def word_to_indices(self, word: str) -> List[int]:
         """Converts a sequence of characters into position indices in the
@@ -58,7 +58,8 @@ class ShakespeareDataset(Dataset[XY]):
 
     def __getitem__(self, idx: int) -> XY:
         sentence_indices = torch.tensor(self.word_to_indices(self.sentence[idx]))
-        next_word_index = torch.tensor(self.one_hot(self.characters.find(self.next_word[idx]), len(LEAF_CHARACTERS)))
+        # next_word_index = torch.tensor(self.one_hot(self.characters.find(self.next_word[idx]), len(LEAF_CHARACTERS)))
+        next_word_index = torch.tensor(self.characters.find(self.next_word[idx]))
         return sentence_indices, next_word_index
 
 def get_loader(path_to_pickle, batch_size=32, shuffle=True):
@@ -71,3 +72,10 @@ def get_loader(path_to_pickle, batch_size=32, shuffle=True):
     )
 
     return loader, len(dataset)
+
+# loader, _ = get_loader('../shakespeare/test/0/query.pickle')
+# for x, y in loader:
+#     print(x.shape)
+#     print(y.shape)
+#     print(y)
+#     break
