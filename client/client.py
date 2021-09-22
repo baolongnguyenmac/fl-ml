@@ -7,7 +7,7 @@ import argparse
 import torch 
 import flwr as fl
 
-DEFAULT_SERVER_ADDRESS = "localhost:1000"
+DEFAULT_SERVER_ADDRESS = "localhost:5000"
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def main() -> None:

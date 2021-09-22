@@ -8,7 +8,9 @@ import timeit
 import sys
 sys.path.insert(0, '../')
 from model import model
-from data.dataloaders import femnist as dataloader
+from data.dataloaders import femnist as femnist_loader
+from data.dataloaders import shakespeare as shakespeare_loader
+from data.dataloaders import sent140 as sent140_loader
 from strategy_client.conventional_ml import ConventionalTest, ConventionalTrain
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -42,12 +44,19 @@ class FedAvgClient(fl.client.Client):
         self.model.set_weights(weights)
 
         # Train model
-        trainloader, num_examples_train = dataloader.get_loader(f'../data/{self.model.model_name}/train/{self.cid}/support.pickle', batch_size)
+        # trainloader, num_examples_train = dataloader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle', batch_size)
+        # trainloader, num_examples_train = None
+        if self.model.model_name == model.FEMNIST_MODEL:
+            trainloader, num_examples_train = femnist_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
+        elif self.model.model_name == model.SHAKESPEARE_MODEL:
+            trainloader, num_examples_train = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
+        elif self.model.model_name == model.SENT140_MODEL:
+            trainloader, num_examples_train = sent140_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
         # self.model.train(self.model, trainloader, epochs, DEVICE, model.FED_AVG)
         trainer = ConventionalTrain(
             self.model.model,
             nn.functional.cross_entropy, 
-            torch.optim.Adam(self.model.parameters(), learning_rate),
+            torch.optim.Adam(self.model.model.parameters(), learning_rate),
             DEVICE
         )
         trainer.train(trainloader, epochs)
@@ -72,7 +81,13 @@ class FedAvgClient(fl.client.Client):
         self.model.set_weights(weights)
 
         # Evaluate the updated model on the local dataset
-        testloader, num_examples = dataloader.get_loader(f'../data/{self.model.model_name}/train/{self.cid}/query.pickle')
+        # testloader, num_examples = None
+        if self.model.model_name == model.FEMNIST_MODEL:
+            testloader, num_examples = femnist_loader.get_loader(f'./data/{self.model.model_name}/test/{self.cid}/query.pickle')
+        elif self.model.model_name == model.SHAKESPEARE_MODEL:
+            testloader, num_examples = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/test/{self.cid}/query.pickle')
+        elif self.model.model_name == model.SENT140_MODEL:
+            testloader, num_examples = sent140_loader.get_loader(f'./data/{self.model.model_name}/test/{self.cid}/query.pickle')
         # loss, accuracy = self.model.test(testloader, DEVICE)
         tester = ConventionalTest(
             self.model.model,
