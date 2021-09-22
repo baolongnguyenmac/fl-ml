@@ -47,11 +47,11 @@ class FedAvgClient(fl.client.Client):
         # trainloader, num_examples_train = dataloader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle', batch_size)
         # trainloader, num_examples_train = None
         if self.model.model_name == model.FEMNIST_MODEL:
-            trainloader, num_examples_train = femnist_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
+            trainloader, num_examples_train = femnist_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle')
         elif self.model.model_name == model.SHAKESPEARE_MODEL:
-            trainloader, num_examples_train = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
+            trainloader, num_examples_train = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle')
         elif self.model.model_name == model.SENT140_MODEL:
-            trainloader, num_examples_train = sent140_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
+            trainloader, num_examples_train = sent140_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle')
         # self.model.train(self.model, trainloader, epochs, DEVICE, model.FED_AVG)
         trainer = ConventionalTrain(
             self.model.model,
@@ -83,11 +83,11 @@ class FedAvgClient(fl.client.Client):
         # Evaluate the updated model on the local dataset
         # testloader, num_examples = None
         if self.model.model_name == model.FEMNIST_MODEL:
-            testloader, num_examples = femnist_loader.get_loader(f'./data/{self.model.model_name}/test/{self.cid}/query.pickle')
+            testloader, num_examples = femnist_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
         elif self.model.model_name == model.SHAKESPEARE_MODEL:
-            testloader, num_examples = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/test/{self.cid}/query.pickle')
+            testloader, num_examples = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
         elif self.model.model_name == model.SENT140_MODEL:
-            testloader, num_examples = sent140_loader.get_loader(f'./data/{self.model.model_name}/test/{self.cid}/query.pickle')
+            testloader, num_examples = sent140_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
         # loss, accuracy = self.model.test(testloader, DEVICE)
         tester = ConventionalTest(
             self.model.model,
