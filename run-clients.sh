@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NUM_CLIENTS=$126
+NUM_CLIENTS=26
 
 echo "Starting $NUM_CLIENTS clients."
 for ((i = 0; i < $NUM_CLIENTS; i++))
@@ -10,7 +10,7 @@ do
       --cid=$i \
       --num_partitions=$NUM_CLIENTS \
       --strategy='FedAvg' \
-      --model='shakespeare'
+      --model='shakespeare' &
 done
 echo "Started $NUM_CLIENTS clients."
 
