@@ -1,6 +1,6 @@
 import sys 
 sys.path.insert(0, '../')
-from model import femnist_model, shakespeare_model
+from model import femnist_model, shakespeare_model, sent140_model
 
 import torch
 import torch.nn as nn
