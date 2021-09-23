@@ -25,21 +25,6 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "--num_partitions", 
-        type=int, 
-        required=True, 
-        help="In our case, this is the total number of clients participating during training. The original dataset is partitioned among clients."
-    )
-
-    # parser.add_argument(
-    #     "--iid_fraction", 
-    #     type=float, 
-    #     nargs="?", 
-    #     const=1.0, 
-    #     help="Fraction of data [0,1] that is independent and identically distributed."
-    # ) --> default: 80:20
-
-    parser.add_argument(
         "--log_host",
         type=str,
         help="Logserver address (no default).",
@@ -52,29 +37,11 @@ def main() -> None:
         help=f"Strategy for client ({models.FED_AVG}, {models.FED_AVG_META}, {models.FED_META_MAML}, {models.FED_META_SDG}).",
     )
 
-    # parser.add_argument(
-    #     "--alpha",
-    #     type=float,
-    #     help="Server learning rate alpha",
-    # )
-
-    # parser.add_argument(
-    #     "--beta",
-    #     type=float,
-    #     help="Client learning rate beta",
-    # )
-
     parser.add_argument(
         "--model",
         type=str,
         help=f"{models.FEMNIST_MODEL}, {models.SHAKESPEARE_MODEL}, {models.SENT140_MODEL}"
     )
-
-    # parser.add_argument(
-    #     "--exp_name",
-    #     type=str,
-    #     help="Useful experiment name for tensorboard plotting.",
-    # )
 
     args = parser.parse_args()
 
