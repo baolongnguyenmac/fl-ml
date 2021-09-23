@@ -6,6 +6,7 @@ sys.path.insert(0, '../')
 
 class Femnist(nn.Module):
     def __init__(self) -> None:
+        super().__init__()
         self.network = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, stride=1, padding=2),
             nn.MaxPool2d(kernel_size=2), # batch: [#numOfElement, 64, 14, 14]
@@ -22,3 +23,13 @@ class Femnist(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x.reshape(-1, 1, 28, 28)
         return self.network(x)
+
+# model = Femnist()
+# from data.dataloaders.femnist import get_loader
+# loader, _ = get_loader('../data/femnist/test/0/query.pickle')
+# for x, y in loader:
+#     print(x.shape)
+#     print(y.shape)
+#     outs = model(x)
+#     print(outs.shape)
+#     break
