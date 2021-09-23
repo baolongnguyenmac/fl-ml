@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.nn.modules.activation import Softmax
 
 class ConventionalTrain:
     def __init__(self, model: nn.Module, lossFn, optimizer: torch.optim.Optimizer, device: torch.device) -> None:
@@ -65,7 +66,7 @@ class ConventionalTest:
             acc = (preds==labels).sum()
             return loss, acc
 
-    def test(self, testloader: torch.utils.data.DataLoader) -> None:
+    def test(self, testloader: torch.utils.data.DataLoader):
         """Test the network
 
         Args:
@@ -78,5 +79,5 @@ class ConventionalTest:
             tmp_loss, tmp_acc = self.valid_step(batch)
             loss += tmp_loss
             acc += tmp_acc
-            num_of_sample += len(batch)
+            num_of_sample += len(batch[0])
         return loss, acc/num_of_sample
