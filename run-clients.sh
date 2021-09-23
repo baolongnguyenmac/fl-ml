@@ -8,7 +8,6 @@ do
     echo "Starting client(cid=$i) with partition $i out of $NUM_CLIENTS clients."
     python3 -m client.client \
       --cid=$i \
-      --num_partitions=$NUM_CLIENTS \
       --strategy='FedAvg' \
       --model='shakespeare' &
 done
