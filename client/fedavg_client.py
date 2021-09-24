@@ -28,6 +28,18 @@ class FedAvgClient(fl.client.Client):
         parameters = fl.common.weights_to_parameters(weights)
         return ParametersRes(parameters=parameters)
 
+    def get_loader(self, train: bool, batch_size):
+        tr = ''
+        if train: tr = 'support'
+        else: tr = 'query'
+
+        if self.model.model_name == model.FEMNIST_MODEL:
+            return femnist_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/{tr}.pickle', batch_size)
+        elif self.model.model_name == model.SHAKESPEARE_MODEL:
+            return shakespeare_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/{tr}.pickle', batch_size)
+        elif self.model.model_name == model.SENT140_MODEL:
+            return sent140_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/{tr}.pickle', batch_size)
+
     def fit(self, ins: FitIns) -> FitRes:
         print(f"Client {self.cid}: fit")
 
@@ -44,15 +56,7 @@ class FedAvgClient(fl.client.Client):
         self.model.set_weights(weights)
 
         # Train model
-        # trainloader, num_examples_train = dataloader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle', batch_size)
-        # trainloader, num_examples_train = None
-        if self.model.model_name == model.FEMNIST_MODEL:
-            trainloader, num_examples_train = femnist_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle')
-        elif self.model.model_name == model.SHAKESPEARE_MODEL:
-            trainloader, num_examples_train = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle')
-        elif self.model.model_name == model.SENT140_MODEL:
-            trainloader, num_examples_train = sent140_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/support.pickle')
-        # self.model.train(self.model, trainloader, epochs, DEVICE, model.FED_AVG)
+        trainloader, num_examples_train = self.get_loader(train=True, batch_size=batch_size)
         trainer = ConventionalTrain(
             self.model.model,
             nn.functional.cross_entropy, 
@@ -76,19 +80,14 @@ class FedAvgClient(fl.client.Client):
         print(f"Client {self.cid}: evaluate")
 
         weights = fl.common.parameters_to_weights(ins.parameters)
+        config = ins.config
+        batch_size = int(config["batch_size"])
 
         # Use provided weights to update the local model
         self.model.set_weights(weights)
 
         # Evaluate the updated model on the local dataset
-        # testloader, num_examples = None
-        if self.model.model_name == model.FEMNIST_MODEL:
-            testloader, num_examples = femnist_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
-        elif self.model.model_name == model.SHAKESPEARE_MODEL:
-            testloader, num_examples = shakespeare_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
-        elif self.model.model_name == model.SENT140_MODEL:
-            testloader, num_examples = sent140_loader.get_loader(f'./data/{self.model.model_name}/train/{self.cid}/query.pickle')
-        # loss, accuracy = self.model.test(testloader, DEVICE)
+        testloader, num_examples = self.get_loader(train=False, batch_size=batch_size)
         tester = ConventionalTest(
             self.model.model,
             nn.functional.cross_entropy,
