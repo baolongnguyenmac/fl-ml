@@ -25,7 +25,8 @@ class Shakespeare(nn.Module):
             num_layers=2,
             batch_first=True,  # Notice batch is first dim now
         )
-        self.decoder = nn.Linear(self.hidden_size, self.dict_size)
+        # self.decoder = nn.Linear(self.hidden_size, self.dict_size)
+        self.decoder = nn.Linear(self.hidden_size, 53) # 26 (a-z) + 26(A-Z) + ' ' = 53
 
     def forward(self, sentence: torch.Tensor) -> torch.Tensor:
         """Forwards sentence to obtain next character.
