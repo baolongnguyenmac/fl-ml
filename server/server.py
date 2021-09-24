@@ -1,17 +1,10 @@
 import argparse
-from typing import Callable, Dict, Optional, Tuple
-from collections import OrderedDict
-
-from logging import INFO
-from flwr.common import GRPC_MAX_MESSAGE_LENGTH
-from flwr.common.logger import log
-from flwr.server.grpc_server.grpc_server import start_insecure_grpc_server
+from typing import Dict
 
 import torch
-import torchvision
 
 import flwr as fl
-  
+
 DEFAULT_SERVER_ADDRESS = "localhost:5000"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -66,14 +59,12 @@ def main() -> None:
         default=32,
         help="Batch size used when training each client (default: 32)",
     )   
-    
     parser.add_argument(
         "--strategy",
         type=str,
         default='FED_AVG',
         help="Strategy for server {FED_AVG, FED_META_MAML, FED_META_SDG}",
     )
-    
     parser.add_argument(
         "--learning_rate",
         type=float,
@@ -85,14 +76,12 @@ def main() -> None:
         type=float,
         help="alpha for MAML, Meta-SGD or learning rate",
     )
-    
     parser.add_argument(
         "--beta",
         type=float,
         help="beta for MAML, Meta-SGD",
     )
-    
-   
+
     args = parser.parse_args()
 
     # Configure logger
@@ -109,19 +98,17 @@ def main() -> None:
 
 def generate_config(args):  
     """Returns a funtion of parameters based on arguments"""
-    
     def fit_config(rnd: int) -> Dict[str, str]:
         config = {
-        "learning_rate": str(args.learning_rate),
-        "alpha": str(args.alpha),
-        "beta": str(args.beta),
-        "epochs": str(args.epochs),
-        "batch_size": str(args.batch_size),
+            "learning_rate": str(args.learning_rate),
+            "alpha": str(args.alpha),
+            "beta": str(args.beta),
+            "epochs": str(args.epochs),
+            "batch_size": str(args.batch_size),
         }
         return config
-    
-    return fit_config 
 
+    return fit_config 
 
 def get_strategy(args) -> fl.server.strategy.Strategy:
     if args.strategy == "FED_AVG":
