@@ -4,7 +4,7 @@ from typing import Dict
 import torch
 
 import flwr as fl
-
+from strategy_server.fedmeta_maml import FedMetaMAML
 DEFAULT_SERVER_ADDRESS = "localhost:5000"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -114,7 +114,7 @@ def get_strategy(args) -> fl.server.strategy.Strategy:
     if args.strategy == "FED_AVG":
         return fl.server.strategy.FedAvg(
             fraction_fit=args.sample_fraction,
-            fraction_eval= 1,
+            fraction_eval= args.sample_fraction,
             min_fit_clients=args.min_sample_size,
             min_eval_clients=args.min_sample_size,
             min_available_clients=args.min_num_clients,
@@ -122,7 +122,17 @@ def get_strategy(args) -> fl.server.strategy.Strategy:
             on_evaluate_config_fn=generate_config(args)
         )
     if args.strategy == "FED_META_MAML":
-        pass
+        return FedMetaMAML(
+            fraction_fit=args.sample_fraction,
+            fraction_eval= args.sample_fraction,
+            min_fit_clients=args.min_sample_size,
+            min_eval_clients=args.min_sample_size,
+            min_available_clients=args.min_num_clients,
+            on_fit_config_fn=generate_config(args),
+            on_evaluate_config_fn=generate_config(args),
+            alpha=args.alpha,
+            beta=args.beta
+        )
     if args.strategy == "FED_META_SGD":
         pass
 

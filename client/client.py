@@ -1,6 +1,8 @@
 import sys 
 sys.path.insert(0, '../')
 from client.fedavg_client import FedAvgClient
+from client.fedmetamaml_client import FedMetaMAMLClient
+
 from model import model as models
 
 import argparse
@@ -60,7 +62,7 @@ def get_client(args, model):
     elif args.strategy == models.FED_AVG_META:
         pass
     elif args.strategy == models.FED_META_MAML:
-        pass
+        return FedMetaMAMLClient(args.cid, model)
     elif args.strategy == models.FED_META_SDG:
         pass 
 
