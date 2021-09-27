@@ -54,7 +54,7 @@ class FedMetaMAMLClient(fl.client.Client):
         self.model.set_weights(weights)
 
         # Train model
-        supportloader, _ = self.get_loader(train=True, batch_size=batch_size)
+        supportloader, num_examples_train = self.get_loader(train=True, batch_size=batch_size)
 
         trainer = MAMLTrain(
             self.model.model,
@@ -64,7 +64,7 @@ class FedMetaMAMLClient(fl.client.Client):
         )
         trainer.trainOnSupport(supportloader, epochs)
         
-        queryloader, num_examples_train = self.get_loader(train=False, batch_size=batch_size)
+        queryloader, _ = self.get_loader(train=False, batch_size=batch_size)
 
         grad = trainer.trainOnQuey(queryloader)
 
