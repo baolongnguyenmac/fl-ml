@@ -23,7 +23,7 @@ class Model:
     """generate a model
     """
     def __init__(self, model: str, strategy: str):
-        self.strategy = strategy
+        # self.strategy = strategy
         self.model: nn.Module = None
         self.model_name = model
 
