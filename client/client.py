@@ -3,7 +3,7 @@ sys.path.insert(0, '../')
 from client.fedavg_client import FedAvgClient
 from client.fedmetamaml_client import FedMetaMAMLClient
 
-from model import model as models
+from model import model as models, femnist_model, shakespeare_model, sent140_model
 
 import argparse
 import torch 
@@ -52,9 +52,23 @@ def main() -> None:
 
     # Start client
     print(f'Starting client {args.cid}')
-    model = models.Model(args.model, args.strategy)
+    if args.strategy == models.FED_META_SDG:
+        model = models.Model(get_model(args), args.model, meta_sgd=True)
+    else:
+        model = models.Model(get_model(args), args.model)
     client = get_client(args, model)
     fl.client.start_client(args.server_address, client)
+
+def get_model(args):
+    if args.model == models.FEMNIST_MODEL:
+        return femnist_model.Femnist()
+    elif args.model == models.SHAKESPEARE_MODEL:
+        return shakespeare_model.Shakespeare()
+    elif args.model == models.SENT140_MODEL:
+        return sent140_model.Sent140()
+    else:
+        print("wrong model syntax")
+        return None
 
 def get_client(args, model):
     if args.strategy == models.FED_AVG:
@@ -64,7 +78,7 @@ def get_client(args, model):
     elif args.strategy == models.FED_META_MAML:
         return FedMetaMAMLClient(args.cid, model)
     elif args.strategy == models.FED_META_SDG:
-        pass 
+        return FedMetaMAMLClient(args.cid, model)
 
 
 if __name__ == "__main__":
