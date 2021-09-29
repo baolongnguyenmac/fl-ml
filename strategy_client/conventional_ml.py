@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torch.nn.modules.activation import Softmax
 
 class ConventionalTrain:
     def __init__(self, model: nn.Module, lossFn, optimizer: torch.optim.Optimizer, device: torch.device) -> None:
