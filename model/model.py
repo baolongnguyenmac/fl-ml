@@ -1,6 +1,6 @@
 import sys 
 sys.path.insert(0, '../')
-from model import femnist_model, shakespeare_model, sent140_model
+from model.meta_sgd_model import MetaSGD
 
 import torch
 import torch.nn as nn
@@ -22,28 +22,14 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class Model:
     """generate a model
     """
-    def __init__(self, model: str, strategy: str):
-        # self.strategy = strategy
-        self.model: nn.Module = None
-        self.model_name = model
-
-        if model == FEMNIST_MODEL:
-            self.model: nn.Module = femnist_model.Femnist()
-        elif model == SHAKESPEARE_MODEL:
-            self.model: nn.Module = shakespeare_model.Shakespeare()
-        elif model == SENT140_MODEL:
-            self.model: nn.Module = sent140_model.Sent140()
+    def __init__(self, model: nn.Module, model_name, meta_sgd = False):
+        if meta_sgd:
+            self.model = MetaSGD(model)
         else:
-            print("wrong model syntax")
+            self.model: nn.Module = model
+        self.model_name = model_name
+
         self.model = self.model.to(DEVICE)
-
-    def load_model(self):
-        """Load model
-
-        Returns:
-            nn.Module: an instance of class nn.Module
-        """
-        return self.model
 
     def get_weights(self) -> fl.common.Weights:
         """Get model weights as a list of NumPy ndarrays."""
