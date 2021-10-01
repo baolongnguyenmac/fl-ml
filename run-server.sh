@@ -11,11 +11,11 @@
 #   --learning_rate=0.001
 
 python3 -m server.server \
-  --rounds=100 \
+  --rounds=10 \
   --epochs=1 \
   --sample_fraction=0.3 \
   --min_sample_size=2 \
   --min_num_clients=2 \
-  --strategy='FED_META_MAML'  \
-  --alpha=0.1 \
-  --beta=0.01
+  --strategy='FED_META_SGD'  \
+  --alpha=0.01 \
+  --beta=11

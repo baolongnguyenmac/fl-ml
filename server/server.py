@@ -2,9 +2,13 @@ import argparse
 from typing import Dict
 
 import torch
-
 import flwr as fl
+
+import sys 
+sys.path.insert(0, '../')
 from strategy_server.fedmeta_maml import FedMetaMAML
+from strategy_server.fedmeta_sgd import FedMetaSGD
+
 DEFAULT_SERVER_ADDRESS = "localhost:5000"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -134,7 +138,16 @@ def get_strategy(args) -> fl.server.strategy.Strategy:
             beta=args.beta
         )
     if args.strategy == "FED_META_SGD":
-        pass
+        return FedMetaSGD(
+            fraction_fit=args.sample_fraction,
+            fraction_eval= args.sample_fraction,
+            min_fit_clients=args.min_sample_size,
+            min_eval_clients=args.min_sample_size,
+            min_available_clients=args.min_num_clients,
+            on_fit_config_fn=generate_config(args),
+            on_evaluate_config_fn=generate_config(args),
+            beta=args.beta
+        )
 
 if __name__ == "__main__":
     main()

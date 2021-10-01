@@ -22,13 +22,9 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class Model:
     """generate a model
     """
-    def __init__(self, model: nn.Module, model_name, meta_sgd = False):
-        if meta_sgd:
-            self.model = MetaSGD(model)
-        else:
-            self.model: nn.Module = model
+    def __init__(self, model: nn.Module, model_name):
+        self.model = model
         self.model_name = model_name
-
         self.model = self.model.to(DEVICE)
 
     def get_weights(self) -> fl.common.Weights:

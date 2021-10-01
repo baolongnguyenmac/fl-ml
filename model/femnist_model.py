@@ -1,9 +1,6 @@
 import torch
 import torch.nn as nn
 
-import sys 
-sys.path.insert(0, '../')
-
 class Femnist(nn.Module):
     def __init__(self) -> None:
         super().__init__()
