@@ -3,7 +3,7 @@ from torch.utils.data.dataloader import DataLoader
 
 import sys
 sys.path.insert(0, '../')
-from model.meta_sgd_model import MetaSGD 
+from client.fedmetasgd_client import MetaSGD 
 
 class MetaSGDTrain:
     def __init__(self, model: MetaSGD, loss_fn, device: torch.device) -> None:

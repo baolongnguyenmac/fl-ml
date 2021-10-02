@@ -91,4 +91,8 @@ class FedMetaSGD(FedAvg):
         for i in range(len(total_grads[0])):
             total_grads[0][i] *= self.beta/total_client
 
-        return weights_to_parameters(total_grads), {}
+        new_weights = [
+            x - y
+            for x, y in zip(self.pre_weights, total_grads)
+        ]
+        return weights_to_parameters(new_weights), {}

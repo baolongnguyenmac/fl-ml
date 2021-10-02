@@ -1,6 +1,5 @@
 import sys 
 sys.path.insert(0, '../')
-from model.meta_sgd_model import MetaSGD
 
 import torch
 import torch.nn as nn
