@@ -25,7 +25,6 @@ class FedMetaMAML(FedAvg):
 
     def __init__(
         self,
-        eval_train_fn: Callable[[Weights], Tuple[float, float]] = None,
         fraction_fit: float = 0.1,
         fraction_eval: float = 0.1,
         min_fit_clients: int = 2,
@@ -51,16 +50,6 @@ class FedMetaMAML(FedAvg):
             accept_failures=accept_failures,
             initial_parameters=initial_parameters,
         )
-        self.min_fit_clients = min_fit_clients
-        self.min_eval_clients = min_eval_clients
-        self.fraction_fit = fraction_fit
-        self.fraction_eval = fraction_eval
-        self.min_available_clients = min_available_clients
-        self.eval_fn = eval_fn
-        self.eval_train_fn = eval_train_fn
-        self.on_fit_config_fn = on_fit_config_fn
-        self.on_evaluate_config_fn = on_evaluate_config_fn
-        self.accept_failures = accept_failures
         self.alpha = alpha
         self.beta = beta
         self.pre_weights: Optional[Weights] = None

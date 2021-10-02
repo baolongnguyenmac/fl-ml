@@ -2,9 +2,9 @@ import sys
 sys.path.insert(0, '../')
 from client.fedavg_client import FedAvgClient
 from client.fedmetamaml_client import FedMetaMAMLClient
-from client.fedmetasgd_client import FedMetaSGDClient
+from client.fedmetasgd_client import FedMetaSGDClient, MetaSGD
 
-from model import model as models, femnist_model, shakespeare_model, sent140_model, meta_sgd_model
+from model import model as models, femnist_model, shakespeare_model, sent140_model
 
 import argparse
 import torch 
@@ -58,7 +58,7 @@ def main() -> None:
     # Start client
     print(f'Starting client {args.cid}')
     if args.strategy == models.FED_META_SDG:
-        model = models.Model(meta_sgd_model.MetaSGD(get_model(args), lr=args.alpha), args.model)
+        model = models.Model(MetaSGD(get_model(args), lr=args.alpha), args.model)
     else:
         model = models.Model(get_model(args), args.model)
     client = get_client(args, model)

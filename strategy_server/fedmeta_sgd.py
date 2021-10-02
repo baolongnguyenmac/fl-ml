@@ -111,7 +111,4 @@ class FedMetaSGD(FedAvg):
             x - y
             for x, y in zip(self.pre_weights, total_grads)
         ]
-
-        print('\n\n', new_weights[-1], '\n\n')
-
         return weights_to_parameters(new_weights), {}

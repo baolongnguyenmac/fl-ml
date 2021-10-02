@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NUM_CLIENTS=3
+NUM_CLIENTS=5
 
 echo "Starting $NUM_CLIENTS clients."
 for ((i = 0; i < $NUM_CLIENTS; i++))
@@ -9,8 +9,8 @@ do
     python3 -m client.client \
       --cid=$i \
       --strategy='FedMetaSGD' \
-      --alpha=10 \
-      --model='femnist' &
+      --alpha=0.1 \
+      --model='shakespeare' &s
 done
 echo "Started $NUM_CLIENTS clients."
 
