@@ -3,6 +3,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
+from functools import reduce
 
 from flwr.common import (
     EvaluateIns,
@@ -91,4 +92,26 @@ class FedMetaSGD(FedAvg):
         for i in range(len(total_grads[0])):
             total_grads[0][i] *= self.beta/total_client
 
-        return weights_to_parameters(total_grads), {}
+        # for i in range(len(self.pre_weights)):
+        #     item -= 
+
+        # # Convert results
+        # weights_results = [
+        #     parameters_to_weights(fit_res.parameters)
+        #     for _, fit_res in results
+        # ]
+        # total_client = len(results)
+
+        # weights_prime: Weights = [
+        #     self.beta * reduce(np.add, layer_updates) / total_client
+        #     for layer_updates in zip(*weights_results)
+        # ]   
+
+        new_weights = [
+            x - y
+            for x, y in zip(self.pre_weights, total_grads)
+        ]
+
+        print('\n\n', new_weights[-1], '\n\n')
+
+        return weights_to_parameters(new_weights), {}
