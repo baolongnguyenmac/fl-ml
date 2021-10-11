@@ -35,12 +35,20 @@ class FedAvgClient(BaseClient):
 
         # Train model
         trainloader, num_examples_train = self.get_loader(train=True, batch_size=batch_size)
-        trainer = ConventionalTrain(
-            self.model.model,
-            nn.functional.cross_entropy, 
-            torch.optim.Adam(self.model.model.parameters(), learning_rate),
-            DEVICE
-        )
+        if self.model.model_name=='sent140':
+            trainer = ConventionalTrain(
+                self.model.model,
+                nn.functional.binary_cross_entropy, 
+                torch.optim.Adam(self.model.model.parameters(), learning_rate),
+                DEVICE
+            )
+        else:
+            trainer = ConventionalTrain(
+                self.model.model,
+                nn.functional.cross_entropy, 
+                torch.optim.Adam(self.model.model.parameters(), learning_rate),
+                DEVICE
+            )
         trainer.train(trainloader, epochs)
 
         # Return the refined weights and the number of examples used for training

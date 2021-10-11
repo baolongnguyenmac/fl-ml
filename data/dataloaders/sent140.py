@@ -41,7 +41,8 @@ class Sent140Dataset(Dataset[XY]):
 
     def __getitem__(self, idx: int) -> XY:
         sentence_indices = torch.tensor(self.sentence[idx])
-        label = torch.tensor(int(self.label[idx]))
+        label = torch.tensor(float(self.label[idx]))
+        label = torch.unsqueeze(label, -1)
         return sentence_indices, label
 
 def get_loader(path_to_pickle, batch_size=32, shuffle=True):

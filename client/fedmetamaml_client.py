@@ -32,13 +32,20 @@ class FedMetaMAMLClient(BaseClient):
 
         # Train model
         supportloader, num_examples_train = self.get_loader(train=True, batch_size=batch_size)
-
-        trainer = MAMLTrain(
-            self.model.model,
-            nn.functional.cross_entropy,    
-            torch.optim.Adam(self.model.model.parameters(), alpha),
-            DEVICE
-        )
+        if self.model.model_name=='sent140':
+            trainer = MAMLTrain(
+                self.model.model,
+                nn.functional.binary_cross_entropy,    
+                torch.optim.Adam(self.model.model.parameters(), alpha),
+                DEVICE
+            )
+        else: 
+            trainer = MAMLTrain(
+                self.model.model,
+                nn.functional.cross_entropy,    
+                torch.optim.Adam(self.model.model.parameters(), alpha),
+                DEVICE
+            )
         trainer.trainOnSupport(supportloader, epochs)
         
         queryloader, _ = self.get_loader(train=False, batch_size=batch_size)

@@ -49,11 +49,18 @@ class BaseClient(fl.client.Client):
 
         # Evaluate the updated model on the local dataset
         testloader, num_examples = self.get_loader(train=False, batch_size=batch_size)
-        tester = ConventionalTest(
-            self.model.model,
-            nn.functional.cross_entropy,
-            DEVICE
-        )
+        if self.model.model_name == 'sent140':
+            tester = ConventionalTest(
+                self.model.model,
+                nn.functional.binary_cross_entropy,
+                DEVICE
+            )
+        else: 
+            tester = ConventionalTest(
+                self.model.model,
+                nn.functional.cross_entropy,
+                DEVICE
+            )
         loss, accuracy = tester.test(testloader)
 
         # Return the number of evaluation examples and the evaluation result (loss)

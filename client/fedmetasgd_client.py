@@ -69,11 +69,16 @@ class FedMetaSGDClient(BaseClient):
         # data for training
         support_loader, num_sample_support = self.get_loader(train=True, batch_size=batch_size)
         query_loader, _ = self.get_loader(train=False, batch_size=batch_size)
-
-        trainer = MetaSGDTrain(
-            self.model.model, 
-            torch.nn.functional.cross_entropy, 
-            DEVICE)
+        if self.model.model_name=='sent140':
+            trainer = MetaSGDTrain(
+                self.model.model, 
+                torch.nn.functional.binary_cross_entropy, 
+                DEVICE)
+        else:
+            trainer = MetaSGDTrain(
+                self.model.model, 
+                torch.nn.functional.cross_entropy, 
+                DEVICE)
 
         grads = trainer.train(support_loader, query_loader, epochs)
 
