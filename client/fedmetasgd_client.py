@@ -27,7 +27,10 @@ class MetaSGD(nn.Module):
         if len(list(model._modules)) == 0 and len(list(model._parameters)) != 0:
             for param_key in model._parameters:
                 p = model._parameters[param_key].detach().clone()
-                model._parameters[param_key] = p - self.alpha[self.count] * grads[self.count]
+                try:
+                    model._parameters[param_key] = p - self.alpha[self.count] * grads[self.count]
+                except:
+                    pass
                 self.count += 1
 
         # Then, recurse for each submodule
@@ -76,6 +79,7 @@ class FedMetaSGDClient(BaseClient):
 
         # Return the refined weights and the number of examples used for training
         weights_prime: Weights = grads
+        print('\n\n', grads, '\n\n')
         params_prime = weights_to_parameters(weights_prime)
         fit_duration = timeit.default_timer() - fit_begin
         return FitRes(
