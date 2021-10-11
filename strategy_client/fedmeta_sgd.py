@@ -31,4 +31,4 @@ class MetaSGDTrain:
             inner_loss += loss
 
         print(f"Loss: {inner_loss.item()}")
-        return torch.autograd.grad(inner_loss, self.model.parameters())
+        return torch.autograd.grad(inner_loss, self.model.parameters(), allow_unused=True)
