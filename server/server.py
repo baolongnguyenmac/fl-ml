@@ -6,8 +6,6 @@ import flwr as fl
 
 import sys 
 sys.path.insert(0, '../')
-from strategy_server.fedmeta_maml import FedMetaMAML
-from strategy_server.fedmeta_sgd import FedMetaSGD
 
 DEFAULT_SERVER_ADDRESS = "localhost:5000"
 
@@ -64,12 +62,6 @@ def main() -> None:
         help="Batch size used when training each client (default: 32)",
     )   
     parser.add_argument(
-        "--strategy",
-        type=str,
-        default='FED_AVG',
-        help="Strategy for server {FED_AVG, FED_META_MAML, FED_META_SDG}",
-    )
-    parser.add_argument(
         "--learning_rate",
         type=float,
         help="learning rate for FedAvg",
@@ -92,7 +84,15 @@ def main() -> None:
     fl.common.logger.configure("server", host=args.log_host)
 
     # Create strategy
-    strategy = get_strategy(args)
+    strategy = fl.server.strategy.FedAvg(
+            fraction_fit=args.sample_fraction,
+            fraction_eval= args.sample_fraction,
+            min_fit_clients=args.min_sample_size,
+            min_eval_clients=args.min_sample_size,
+            min_available_clients=args.min_num_clients,
+            on_fit_config_fn=generate_config(args),
+            on_evaluate_config_fn=generate_config(args)
+        )
 
     fl.server.start_server(
         args.server_address,
@@ -113,41 +113,6 @@ def generate_config(args):
         return config
 
     return fit_config 
-
-def get_strategy(args) -> fl.server.strategy.Strategy:
-    if args.strategy == "FED_AVG":
-        return fl.server.strategy.FedAvg(
-            fraction_fit=args.sample_fraction,
-            fraction_eval= args.sample_fraction,
-            min_fit_clients=args.min_sample_size,
-            min_eval_clients=args.min_sample_size,
-            min_available_clients=args.min_num_clients,
-            on_fit_config_fn=generate_config(args),
-            on_evaluate_config_fn=generate_config(args)
-        )
-    if args.strategy == "FED_META_MAML":
-        return FedMetaMAML(
-            fraction_fit=args.sample_fraction,
-            fraction_eval= args.sample_fraction,
-            min_fit_clients=args.min_sample_size,
-            min_eval_clients=args.min_sample_size,
-            min_available_clients=args.min_num_clients,
-            on_fit_config_fn=generate_config(args),
-            on_evaluate_config_fn=generate_config(args),
-            alpha=args.alpha,
-            beta=args.beta
-        )
-    if args.strategy == "FED_META_SGD":
-        return FedMetaSGD(
-            fraction_fit=args.sample_fraction,
-            fraction_eval= args.sample_fraction,
-            min_fit_clients=args.min_sample_size,
-            min_eval_clients=args.min_sample_size,
-            min_available_clients=args.min_num_clients,
-            on_fit_config_fn=generate_config(args),
-            on_evaluate_config_fn=generate_config(args),
-            beta=args.beta
-        )
 
 if __name__ == "__main__":
     main()
