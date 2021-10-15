@@ -24,6 +24,7 @@ class FedMetaMAMLClient(BaseClient):
         fit_begin = timeit.default_timer()
         # Get training config
         alpha = float(config["alpha"])
+        beta = float(config['beta'])
         epochs = int(config["epochs"])
         batch_size = int(config["batch_size"])
 
@@ -34,26 +35,28 @@ class FedMetaMAMLClient(BaseClient):
         supportloader, num_examples_train = self.get_loader(train=True, batch_size=batch_size)
         if self.model.model_name=='sent140':
             trainer = MAMLTrain(
-                self.model.model,
+                self.model,
                 nn.functional.binary_cross_entropy,    
                 torch.optim.Adam(self.model.model.parameters(), alpha),
+                torch.optim.Adam(self.model.model.parameters(), beta),
                 DEVICE
             )
         else: 
             trainer = MAMLTrain(
-                self.model.model,
+                self.model,
                 nn.functional.cross_entropy,    
                 torch.optim.Adam(self.model.model.parameters(), alpha),
+                torch.optim.Adam(self.model.model.parameters(), beta),
                 DEVICE
             )
-        trainer.trainOnSupport(supportloader, epochs)
-        
         queryloader, _ = self.get_loader(train=False, batch_size=batch_size)
 
-        grad = trainer.trainOnQuey(queryloader)
+        trainer.trainOnSupport(supportloader, queryloader, epochs)
+
+        # grad = trainer.trainOnQuey(queryloader)
 
         # Return the refined weights and the number of examples used for training
-        weights_prime: Weights = grad
+        weights_prime: Weights = self.model.get_weights()
         params_prime = weights_to_parameters(weights_prime)
         fit_duration = timeit.default_timer() - fit_begin
         return FitRes(

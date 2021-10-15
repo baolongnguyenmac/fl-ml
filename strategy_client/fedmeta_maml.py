@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
-
+import copy
 class MAMLTrain:
-    def __init__(self, model: nn.Module, lossFn, optimizer: torch.optim.Optimizer, device: torch.device) -> None:
+    def __init__(self, model, lossFn, optimizerSup: torch.optim.Optimizer, optimizerQuery: torch.optim.Optimizer, device: torch.device) -> None:
         self.model = model
         self.lossFn = lossFn
-        self.optimizer = optimizer
+        self.optimizerSup = optimizerSup
+        self.optimizerQuery = optimizerQuery
         self.device = device
 
     def training_step(self, batch):
@@ -18,11 +19,11 @@ class MAMLTrain:
             float: loss of batch training
         """
         features, labels = batch[0].to(self.device), batch[1].to(self.device)
-        preds = self.model(features)
+        preds = self.model.model(features)
         loss = self.lossFn(preds, labels)
         return loss
 
-    def trainOnSupport(self, supportloader: torch.utils.data.DataLoader, epochs: int) -> None:
+    def trainOnSupport(self, supportloader: torch.utils.data.DataLoader, queryloader: torch.utils.data.DataLoader, epochs: int) -> None:
         """Train the network using MAML
 
         Args:
@@ -33,27 +34,21 @@ class MAMLTrain:
         """
         print(f"Training {epochs} epoch(s) on {len(supportloader)} batch(es) using {self.device}")
 
-        for e in range(epochs):
+        w_t_copy = copy.deepcopy(self.model.get_weights())
+        
+        for _ in range(epochs):
             for batch in supportloader:
                 # set grad to 0
-                self.optimizer.zero_grad()
-
-                # forward + backward + optimize
+                self.optimizerSup.zero_grad()
                 loss = self.training_step(batch)
                 loss.backward()
-                self.optimizer.step()
+                self.optimizerSup.step()
 
-    def trainOnQuey(self, queryloader: torch.utils.data.DataLoader):
-        """Train the network using convention machine learning
-
-        Args:
-            net (nn.Module): model
-            testloader (torch.utils.data.DataLoader): trained dataloader
-            device (torch.device): train model on device
-        """
-        loss=0
         for batch in queryloader:
-            loss += self.training_step(batch)
-            
-        grad = torch.autograd.grad(loss, self.model.parameters())
-        return grad
+            self.optimizerQuery.zero_grad()
+            loss = self.training_step(batch)
+            loss.backward()
+            self.model.set_weights(w_t_copy)
+            self.optimizerQuery.step()        
+
+    
