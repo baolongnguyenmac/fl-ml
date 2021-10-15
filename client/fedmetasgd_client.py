@@ -63,9 +63,6 @@ class FedMetaSGDClient(BaseClient):
         # Set model parameters
         self.model.set_weights(weights)
 
-        # Set model parameters
-        self.model.set_weights(weights)
-
         # data for training
         support_loader, num_sample_support = self.get_loader(train=True, batch_size=batch_size)
         query_loader, _ = self.get_loader(train=False, batch_size=batch_size)
@@ -84,7 +81,6 @@ class FedMetaSGDClient(BaseClient):
 
         # Return the refined weights and the number of examples used for training
         weights_prime: Weights = grads
-        print('\n\n', grads, '\n\n')
         params_prime = weights_to_parameters(weights_prime)
         fit_duration = timeit.default_timer() - fit_begin
         return FitRes(

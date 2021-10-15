@@ -1,9 +1,6 @@
 import torch
 import torch.nn as nn
 
-import sys 
-sys.path.insert(0, '../')
-
 class Sent140(nn.Module):
     def __init__(
         self,

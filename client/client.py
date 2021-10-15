@@ -55,8 +55,6 @@ def main() -> None:
     # Configure logger
     fl.common.logger.configure(f"client_{args.cid}", host=args.log_host)
 
-    # Start client
-    print(f'Starting client {args.cid}')
     if args.strategy == models.FED_META_SDG:
         model = models.Model(MetaSGD(get_model(args), lr=args.alpha), args.model)
     else:

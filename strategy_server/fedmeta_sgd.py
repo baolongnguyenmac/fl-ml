@@ -58,7 +58,7 @@ class FedMetaSGD(FedAvg):
         client_manager: ClientManager
     ) -> List[Tuple[ClientProxy, FitIns]]:
         weights = parameters_to_weights(parameters)
-        # print('theta and alpha from client:', weights)
+        print(f'\n\nweight and theta from a client: {weights[-1][0]}\n\n')
         self.pre_weights = weights
         return super().configure_fit(rnd, parameters, client_manager)
 
@@ -68,6 +68,8 @@ class FedMetaSGD(FedAvg):
         results: List[Tuple[ClientProxy, FitRes]], 
         failures: List[BaseException]
     ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
+        print("\nCalculate global model's weights")
+
         if not results:
             return None, {}
         # Do not aggregate if there are failures and failures are not accepted
@@ -84,31 +86,71 @@ class FedMetaSGD(FedAvg):
         # sum_of_grads
         total_grads = grads_results[0][0]
         for i in range(1, len(grads_results)):
-            weights, _ = grads_results[i]
+            grads, _ = grads_results[i]
             for i in range(len(total_grads)):
-                total_grads[i] += weights[i]
+                try:
+                    total_grads[i] += grads[i]
+                except Exception as e:
+                    print(e)
+                    pass
+
+        print(f'\n\ntotal grads: {total_grads[-1][0]}')
 
         # beta/#client * sum_of_grads
-        for i in range(len(total_grads[0])):
-            total_grads[0][i] *= self.beta/total_client
+        for i in range(len(total_grads)):
+            try:
+                total_grads[i] *= self.beta/total_client
+            except Exception as e:
+                print(e)
+                pass
 
-        # for i in range(len(self.pre_weights)):
-        #     item -= 
+        new_weights = []
+        for i in range(len(self.pre_weights)):
+            try:
+                new_weights.append(self.pre_weights[i] - total_grads[i])
+            except Exception as e:
+                print(e)
+                new_weights.append(self.pre_weights[i])
 
-        # # Convert results
-        # weights_results = [
-        #     parameters_to_weights(fit_res.parameters)
-        #     for _, fit_res in results
-        # ]
-        # total_client = len(results)
+        print('\n\nnew_weights:', new_weights[-1][0], '\n\n')
 
-        # weights_prime: Weights = [
-        #     self.beta * reduce(np.add, layer_updates) / total_client
-        #     for layer_updates in zip(*weights_results)
-        # ]   
-
-        new_weights = [
-            x - y
-            for x, y in zip(self.pre_weights, total_grads)
-        ]
         return weights_to_parameters(new_weights), {}
+
+    # def aggregate_fit(
+    #     self, 
+    #     rnd: int, 
+    #     results: List[Tuple[ClientProxy, FitRes]], 
+    #     failures: List[BaseException]
+    # ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
+    #     if not results:
+    #         return None, {}
+    #     # Do not aggregate if there are failures and failures are not accepted
+    #     if not self.accept_failures and failures:
+    #         return None, {}
+    #     # Convert results
+    #     grads_results = [
+    #         (parameters_to_weights(fit_res.parameters), fit_res.num_examples) 
+    #         for client, fit_res in results
+    #     ]
+
+    #     total_client = len(results)
+
+    #     # sum_of_grads
+    #     total_grads = grads_results[0][0]
+    #     for i in range(1, len(grads_results)):
+    #         weights, _ = grads_results[i]
+    #         for i in range(len(total_grads)):
+    #             total_grads[i] += weights[i]
+
+    #     # beta/#client * sum_of_grads
+    #     for i in range(len(total_grads)):
+    #         total_grads[i] *= self.beta/total_client
+
+    #     new_weights = [
+    #         x - y
+    #         for x, y in zip(self.pre_weights, total_grads)
+    #     ]
+
+    #     print(f'\n\nNew weights: {new_weights}\n\n')
+
+    #     return weights_to_parameters(new_weights), {}

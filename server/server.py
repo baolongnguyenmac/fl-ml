@@ -11,8 +11,6 @@ from strategy_server.fedmeta_sgd import FedMetaSGD
 
 DEFAULT_SERVER_ADDRESS = "localhost:5000"
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 def main() -> None:
     """Start server and train five rounds."""
     parser = argparse.ArgumentParser(description="Flower")
@@ -55,7 +53,7 @@ def main() -> None:
         "--epochs",
         type=int,
         default=10,
-        help="Number of epochs each client will train for (default: 10)",
+        help="Number of epochs each client will fine-tune (default: 10)",
     )
     parser.add_argument(
         "--batch_size",
@@ -72,18 +70,18 @@ def main() -> None:
     parser.add_argument(
         "--learning_rate",
         type=float,
-        help="learning rate for FedAvg",
+        help="Learning rate for FedAvg",
     )
 
     parser.add_argument(
         "--alpha",
         type=float,
-        help="alpha for MAML, Meta-SGD or learning rate",
+        help="Alpha for MAML, Meta-SGD or learning rate",
     )
     parser.add_argument(
         "--beta",
         type=float,
-        help="beta for MAML, Meta-SGD",
+        help="Beta for MAML, Meta-SGD",
     )
 
     args = parser.parse_args()
