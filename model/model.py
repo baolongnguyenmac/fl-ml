@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import flwr as fl
 from collections import OrderedDict
-from typing import Tuple
+from learn2learn.algorithms.meta_sgd import MetaSGD, meta_sgd_update, clone_module, clone_parameters
 
 FED_AVG = "FedAvg"
 FED_META_MAML = "FedMetaMAML"
@@ -36,3 +36,21 @@ class Model:
             {k: torch.Tensor(v) for k, v in zip(self.model.state_dict().keys(), weights)}
         )
         self.model.load_state_dict(state_dict, strict=True)
+
+class MetaSGD(MetaSGD):
+    """generate a meta model that wraps a nn.Module
+    """
+    def clone(self):
+        return MetaSGD(clone_module(self.module),
+                        lrs=clone_parameters(self.lrs),
+                        first_order=self.first_order)
+
+    def adapt(self, loss, first_order=None):
+        if first_order is None:
+            first_order = self.first_order
+        second_order = not first_order
+        gradients = torch.autograd.grad(loss,
+                        self.module.parameters(),
+                        retain_graph=second_order,
+                        create_graph=second_order, allow_unused=True)
+        self.module = meta_sgd_update(self.module, self.lrs, gradients)

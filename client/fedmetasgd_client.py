@@ -10,39 +10,7 @@ from model import model
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-class MetaSGD(nn.Module):
-    def __init__(self, model: nn.Module, lr=0.01):
-        super().__init__()
-        self.model = model
-        alpha = [torch.ones_like(p) * lr for p in self.model.parameters()]
-        alpha = nn.ParameterList([nn.Parameter(lr) for lr in alpha])
-        self.alpha = alpha
-        self.count = 0
-
-    def forward(self, x):
-        return self.model(x)
-
-    def _adapt_update(self, model: nn.Module, grads):
-        # Update the params
-        if len(list(model._modules)) == 0 and len(list(model._parameters)) != 0:
-            for param_key in model._parameters:
-                p = model._parameters[param_key].detach().clone()
-                try:
-                    model._parameters[param_key] = p - self.alpha[self.count] * grads[self.count]
-                except:
-                    pass
-                self.count += 1
-
-        # Then, recurse for each submodule
-        for module_key in model._modules:
-            model._modules[module_key] = self._adapt_update(model._modules[module_key], grads)
-        return model
-
-    def adapt(self, loss):
-        grads = torch.autograd.grad(loss, self.model.parameters(), allow_unused=True)
-        self._adapt_update(self.model, grads)
-
-from strategy_client.fedmeta_sgd import MetaSGDTrain        
+from strategy_client.fedmeta_sgd import MetaSGDTrain
 from client.base_client import BaseClient
 
 class FedMetaSGDClient(BaseClient):
@@ -59,6 +27,7 @@ class FedMetaSGDClient(BaseClient):
         # Get training config
         epochs = int(config["epochs"])
         batch_size = int(config["batch_size"])
+        beta = float(config["beta"])
 
         # Set model parameters
         self.model.set_weights(weights)
@@ -70,17 +39,19 @@ class FedMetaSGDClient(BaseClient):
             trainer = MetaSGDTrain(
                 self.model.model, 
                 torch.nn.functional.binary_cross_entropy, 
-                DEVICE)
+                DEVICE,
+                self.cid)
         else:
             trainer = MetaSGDTrain(
                 self.model.model, 
                 torch.nn.functional.cross_entropy, 
-                DEVICE)
+                DEVICE,
+                self.cid)
 
-        grads = trainer.train(support_loader, query_loader, epochs)
+        trainer.train(support_loader, query_loader, epochs, beta)
 
         # Return the refined weights and the number of examples used for training
-        weights_prime: Weights = grads
+        weights_prime: Weights = self.model.get_weights()
         params_prime = weights_to_parameters(weights_prime)
         fit_duration = timeit.default_timer() - fit_begin
         return FitRes(

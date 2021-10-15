@@ -2,7 +2,8 @@ import sys
 sys.path.insert(0, '../')
 from client.fedavg_client import FedAvgClient
 from client.fedmetamaml_client import FedMetaMAMLClient
-from client.fedmetasgd_client import FedMetaSGDClient, MetaSGD
+from client.fedmetasgd_client import FedMetaSGDClient
+from model.model import MetaSGD
 
 from model import model as models, femnist_model, shakespeare_model, sent140_model
 

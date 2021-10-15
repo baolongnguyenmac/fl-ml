@@ -11,7 +11,7 @@
 #     - shakespeare
 #     - sent140
 
-NUM_CLIENTS=20
+NUM_CLIENTS=2
 
 echo "Starting $NUM_CLIENTS clients."
 for ((i = 0; i < $NUM_CLIENTS; i++))
@@ -20,8 +20,7 @@ do
     python3 -m client.client \
         --cid=$i \
         --strategy='FedMetaSGD' \
-        --alpha=0.1 \
-        --model='femnist' &
+        --alpha=0.01 \
+        --model='shakespeare' &
 done
 echo "Started $NUM_CLIENTS clients."
-
