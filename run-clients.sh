@@ -19,8 +19,8 @@ do
     echo "Starting client(cid=$i) with partition $i out of $NUM_CLIENTS clients."
     python3 -m client.client \
         --cid=$i \
-        --strategy='FedMetaSGD' \
+        --strategy='FedMetaMAML' \
         --alpha=0.01 \
-        --model='shakespeare' &
+        --model='femnist' &
 done
 echo "Started $NUM_CLIENTS clients."

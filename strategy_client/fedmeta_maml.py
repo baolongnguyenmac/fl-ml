@@ -23,7 +23,7 @@ class MAMLTrain:
         loss = self.lossFn(preds, labels)
         return loss
 
-    def trainOnSupport(self, supportloader: torch.utils.data.DataLoader, queryloader: torch.utils.data.DataLoader, epochs: int) -> None:
+    def train(self, supportloader: torch.utils.data.DataLoader, queryloader: torch.utils.data.DataLoader, epochs: int) -> None:
         """Train the network using MAML
 
         Args:
@@ -49,6 +49,4 @@ class MAMLTrain:
             loss = self.training_step(batch)
             loss.backward()
             self.model.set_weights(w_t_copy)
-            self.optimizerQuery.step()        
-
-    
+            self.optimizerQuery.step()

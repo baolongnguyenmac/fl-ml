@@ -33,6 +33,8 @@ class FedMetaMAMLClient(BaseClient):
 
         # Train model
         supportloader, num_examples_train = self.get_loader(train=True, batch_size=batch_size)
+        queryloader, _ = self.get_loader(train=False, batch_size=batch_size)
+
         if self.model.model_name=='sent140':
             trainer = MAMLTrain(
                 self.model,
@@ -49,9 +51,8 @@ class FedMetaMAMLClient(BaseClient):
                 torch.optim.Adam(self.model.model.parameters(), beta),
                 DEVICE
             )
-        queryloader, _ = self.get_loader(train=False, batch_size=batch_size)
 
-        trainer.trainOnSupport(supportloader, queryloader, epochs)
+        trainer.train(supportloader, queryloader, epochs)
 
         # grad = trainer.trainOnQuey(queryloader)
 
