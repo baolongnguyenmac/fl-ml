@@ -1,13 +1,16 @@
-import torch 
+import torch
 import torch.nn as nn
 from torch.utils.data.dataloader import DataLoader
 
+import warnings
+warnings.filterwarnings("ignore")
+
 import sys
 sys.path.insert(0, '../')
-from model.model import MetaSGD
+from model.model_wrapper import MetaSGDModelWrapper
 
-class MetaSGDTrain:
-    def __init__(self, model: MetaSGD, loss_fn, device: torch.device, cid: int) -> None:
+class MetaSGDTrainer:
+    def __init__(self, model: MetaSGDModelWrapper, loss_fn, device: torch.device, cid: int) -> None:
         self.model = model
         self.loss_fn = loss_fn
         self.device = device
@@ -22,7 +25,7 @@ class MetaSGDTrain:
     def train(self, support_loader: DataLoader, query_loader: DataLoader, epochs, beta: float):
         learner = self.model.clone()
         opt = torch.optim.Adam(self.model.parameters(), lr=beta)
-        print(f'[Client {self.cid}]: Running {epochs} epoch(s) for fast adaption')
+        print(f'[Client {self.cid}]: Running {epochs} epoch(s) on {len(support_loader)} batch(es) using {self.device}')
         for e in range(epochs):
             for batch in support_loader:
                 loss = self._training_step(learner, batch)
@@ -39,4 +42,4 @@ class MetaSGDTrain:
         opt.step()
 
         # print(f'[Client {self.cid}]: New weights: {list(self.model.parameters())}')
-        print(f'[Client {self.cid}] loss: {meta_loss.item()}')
+        print(f'[Client {self.cid}] training loss (on query set): {meta_loss.item()}')

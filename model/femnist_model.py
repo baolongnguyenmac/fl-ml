@@ -20,13 +20,3 @@ class Femnist(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x.reshape(-1, 1, 28, 28)
         return self.network(x)
-
-# model = Femnist()
-# from data.dataloaders.femnist import get_loader
-# loader, _ = get_loader('../data/femnist/test/0/query.pickle')
-# for x, y in loader:
-#     print(x.shape)
-#     print(y.shape)
-#     outs = model(x)
-#     print(outs.shape)
-#     break
