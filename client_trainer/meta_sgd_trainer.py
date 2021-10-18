@@ -18,28 +18,34 @@ class MetaSGDTrainer:
 
     def _training_step(self, model: nn.Module, batch):
         features, labels = batch[0].to(self.device), batch[1].to(self.device)
-        preds = model(features)
-        loss = self.loss_fn(preds, labels)
-        return loss
+        outputs = model(features)
+        loss = self.loss_fn(outputs, labels)
+        _, preds = torch.max(outputs, dim=1)
+        acc = (preds == labels).sum()
+        return loss, acc
 
     def train(self, support_loader: DataLoader, query_loader: DataLoader, epochs, beta: float):
         learner = self.model.clone()
         opt = torch.optim.Adam(self.model.parameters(), lr=beta)
-        print(f'[Client {self.cid}]: Running {epochs} epoch(s) on {len(support_loader)} batch(es) using {self.device}')
         for e in range(epochs):
             for batch in support_loader:
-                loss = self._training_step(learner, batch)
+                loss = self._training_step(learner, batch)[0]
                 learner.adapt(loss)
 
-        print(f'[Client {self.cid}]: Calculate meta_loss')
-        meta_loss = 0.
+        print(f'[Client {self.cid}]: Calculate meta_loss and optimize (theta, alpha)')
+        training_loss = 0.
+        training_acc = 0.
+        set_weight_copy = True
         for batch in query_loader:
-            meta_loss += self._training_step(learner, batch)
-
-        print(f'[Client {self.cid}]: Optimize theta and alpha')
-        opt.zero_grad()
-        meta_loss.backward()
-        opt.step()
+            opt.zero_grad()
+            loss, acc = self._training_step(self.model, batch)
+            training_loss += loss
+            training_acc += acc
+            loss.backward()
+            if set_weight_copy:
+                self.model.load_state_dict(learner.state_dict())
+                set_weight_copy = False
+            opt.step()
 
         # print(f'[Client {self.cid}]: New weights: {list(self.model.parameters())}')
-        print(f'[Client {self.cid}] training loss (on query set): {meta_loss.item()}')
+        return float(training_loss), float(training_acc)

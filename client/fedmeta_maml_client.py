@@ -28,9 +28,8 @@ class FedMetaMAMLClient(BaseClient):
         self.model_wrapper.set_weights(weights)
 
         # get loader
-        support_loader, num_examples_train = self.get_loader(
-            True, batch_size=batch_size)
-        query_loader, _ = self.get_loader(False, batch_size=batch_size)
+        support_loader, num_examples_support = self.get_loader(True, batch_size=batch_size)
+        query_loader, num_examples_query = self.get_loader(False, batch_size=batch_size)
 
         trainer = MAMLTrainer(
             self.model_wrapper,
@@ -40,12 +39,16 @@ class FedMetaMAMLClient(BaseClient):
             DEVICE,
             self.cid
         )
-        trainer.train(support_loader, query_loader, epochs)
+        print(f'[Client {self.cid}] Fit {epochs} epoch(s) on {len(support_loader)} batch(es) using {DEVICE}')
+        training_loss, training_acc = trainer.train(support_loader, query_loader, epochs)
+        training_acc /= num_examples_query
+        print(f'[Client {self.cid}]: Training_loss: {training_loss}, Training acc: {training_acc}')
 
         # Return the refined weights and the number of examples used for training
         new_weights: Weights = self.model_wrapper.get_weights()
         new_params = weights_to_parameters(new_weights)
         return FitRes(
             parameters=new_params,
-            num_examples=num_examples_train,
+            num_examples=num_examples_query,
+            metrics={'training_loss': training_loss, 'training_accuracy': training_acc}
         )

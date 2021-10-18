@@ -46,7 +46,22 @@ class MyFedAvg(FedAvg):
             (parameters_to_weights(fit_res.parameters), fit_res.num_examples)
             for client, fit_res in results
         ]
-        return weights_to_parameters(aggregate(weights_results)), {}
+
+        loss_aggregated, acc_aggregated = weighted_loss_acc_avg(
+            [
+                (
+                    fit_res.num_examples,
+                    fit_res.metrics['training_loss'],
+                    fit_res.metrics['training_accuracy'],
+                )
+                for _, fit_res in results
+            ]
+        )
+
+        print(f'[Round {rnd}]: Training loss: {loss_aggregated}')
+        print(f'[Round {rnd}]: Training accuracy: {acc_aggregated}')
+
+        return weights_to_parameters(aggregate(weights_results)), {'training_loss': loss_aggregated, 'training_accuracy': acc_aggregated}
 
     def aggregate_evaluate(
         self,

@@ -39,7 +39,6 @@ class BaseClient(fl.client.Client):
 
     def evaluate(self, ins: EvaluateIns) -> EvaluateRes:
         print(f'[Client {self.cid}]: Evaluate')
-
         weights = parameters_to_weights(ins.parameters)
         config = ins.config
         batch_size = int(config["batch_size"])
@@ -48,15 +47,17 @@ class BaseClient(fl.client.Client):
 
         query_loader, num_query = self.get_loader(False, batch_size)
         tester = ConventionalTester(
-            self.model_wrapper.model,
+            self.model_wrapper,
             torch.nn.functional.cross_entropy if self.model_wrapper.model_name != 'sent140' else torch.nn.functional.binary_cross_entropy,
             DEVICE,
             self.cid
         )
 
         loss, acc = tester.test(query_loader)
+        acc = acc/num_query
+        print(f'[Client {self.cid}]: Evaluate loss: {loss}, Evaluate accuracy: {acc}')
 
         # Return the number of evaluation examples and the evaluation result (loss)
         return EvaluateRes(
-            loss=float(loss), num_examples=num_query, metrics={'acc': float(acc)/num_query}
+            loss=loss, num_examples=num_query, metrics={'acc': acc}
         )

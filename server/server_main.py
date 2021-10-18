@@ -34,8 +34,8 @@ def main():
     parser.add_argument(
         "--batch_size",
         type=int,
-        default=10,
-        help="Batch size of inner task (default: 10)",
+        default=32,
+        help="Batch size of inner task (default: 32)",
     )
     parser.add_argument(
         "--epochs",
@@ -75,7 +75,8 @@ def main():
 
     strategy = MyFedAvg(
         fraction_fit=args.sample_fraction,
-        fraction_eval= args.sample_fraction,
+        fraction_eval= 1,
+        # fraction_eval= args.sample_fraction,
         min_fit_clients=args.min_sample_size,
         min_eval_clients=args.min_sample_size,
         min_available_clients=args.min_num_clients,

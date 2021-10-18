@@ -30,18 +30,23 @@ class FedAvgClient(BaseClient):
 
         # train model
         trainer = ConventionalTrainer(
-            self.model_wrapper.model,
+            self.model_wrapper,
             torch.nn.functional.cross_entropy if self.model_wrapper.model_name != 'sent140' else torch.nn.functional.binary_cross_entropy,
             torch.optim.Adam(self.model_wrapper.model.parameters(), lr=lr),
             DEVICE,
             self.cid
         )
-        trainer.train(support_loader, epochs)
+
+        print(f'[Client {self.cid}] Fit {epochs} epoch(s) on {len(support_loader)} batch(es) using {DEVICE}')
+        training_loss, training_acc = trainer.train(support_loader, epochs)
+        training_acc /= num_support
+        print(f'[Client {self.cid}]: Training_loss: {training_loss}, Training acc: {training_acc}')
 
         # return the refined weights and the number of examples used for training
         new_weights: Weights = self.model_wrapper.get_weights()
         new_params = weights_to_parameters(new_weights)
         return FitRes(
             parameters=new_params,
-            num_examples=num_support
+            num_examples=num_support,
+            metrics={'training_loss': training_loss, 'training_accuracy': training_acc}
         )
