@@ -33,7 +33,7 @@ class BaseClient(fl.client.Client):
         if self.model_wrapper.model_name == FEMNIST_MODEL:
             return femnist_loader(f'./data/{self.model_wrapper.model_name}/train/{self.cid}/{s}.pickle', batch_size)
         elif self.model_wrapper.model_name == SHAKESPEARE_MODEL:
-            return shakespeare_loader(f'./data/{self.model_wrapper.model_name}/test/{self.cid}/{s}.pickle', batch_size)
+            return shakespeare_loader(f'./data/{self.model_wrapper.model_name}/train/{self.cid}/{s}.pickle', batch_size)
         elif self.model_wrapper.model_name == SENT140_MODEL:
             return sent140_loader(f'./data/{self.model_wrapper.model_name}/train/{self.cid}/{s}.pickle', batch_size)
 

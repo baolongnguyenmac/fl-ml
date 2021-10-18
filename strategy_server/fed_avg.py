@@ -1,4 +1,3 @@
-from logging import WARNING
 from typing import List, Tuple
 from flwr.common import FitIns,Parameters,parameters_to_weights
 from flwr.server.client_manager import ClientManager

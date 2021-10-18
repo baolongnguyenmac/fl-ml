@@ -1,12 +1,11 @@
-import sys 
-sys.path.insert(0, '../')
-
 import torch
 import torch.nn as nn
 import flwr as fl
 from flwr.common import Weights
 from collections import OrderedDict
 from learn2learn.algorithms.meta_sgd import MetaSGD, meta_sgd_update, clone_module, clone_parameters
+
+import copy
 
 FED_AVG = "FedAvg"
 FED_META_MAML = "FedMetaMAML"
@@ -55,3 +54,24 @@ class MetaSGDModelWrapper(MetaSGD):
                         retain_graph=second_order,
                         create_graph=second_order, allow_unused=True)
         self.module = meta_sgd_update(self.module, self.lrs, gradients)
+
+# class MetaSGDModelWrapper(nn.Module):
+#     def __init__(self, model: nn.Module, lr: float = 0.01) -> None:
+#         super().__init__()
+#         self.model = model
+#         lrs = [torch.ones_like(p) * lr for p in model.parameters()]
+#         lrs = nn.ParameterList([nn.Parameter(lr) for lr in lrs])
+#         self.alpha = lrs
+
+#     def forward(self, *args, **kwargs):
+#         return self.model(*args, **kwargs)
+
+#     def clone(self):
+#         return copy.deepcopy(self)
+
+#     def adapt(self, loss):
+#         gradients = torch.autograd.grad(loss,
+#                         self.model.parameters(),
+#                         retain_graph=True,
+#                         create_graph=True, allow_unused=True)
+#         self.model = meta_sgd_update(self.model, self.alpha, gradients)
