@@ -32,9 +32,7 @@ class FedMetaSGDClient(BaseClient):
         trainer = MetaSGDTrainer(
             self.model_wrapper,
             nn.functional.cross_entropy if self.model_wrapper.model_name != 'sent140' else nn.functional.binary_cross_entropy,
-            DEVICE,
-            self.cid,
-            torch.optim.Adam(self.model_wrapper.model.parameters(), lr=beta)
+            DEVICE
         )
         print(f'[Client {self.cid}] Fit {epochs} epoch(s) on {len(support_loader)} batch(es) using {DEVICE}')
         training_loss, training_acc = trainer.train(support_loader, query_loader, epochs, beta)

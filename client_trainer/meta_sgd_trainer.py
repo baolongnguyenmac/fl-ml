@@ -7,45 +7,44 @@ warnings.filterwarnings("ignore")
 
 import sys
 sys.path.insert(0, '../')
-from model.model_wrapper import MetaSGDModelWrapper
+from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper
 
 class MetaSGDTrainer:
-    def __init__(self, model: MetaSGDModelWrapper, loss_fn, device: torch.device, cid: int) -> None:
-        self.model = model
+    def __init__(self, model_wrapper: ModelWrapper, loss_fn, device: torch.device) -> None:
+        self.model_wrapper = model_wrapper
         self.loss_fn = loss_fn
         self.device = device
-        self.cid = cid
 
     def _training_step(self, model: nn.Module, batch):
         features, labels = batch[0].to(self.device), batch[1].to(self.device)
         outputs = model(features)
         loss = self.loss_fn(outputs, labels)
-        _, preds = torch.max(outputs, dim=1)
+        if self.model_wrapper.model_name == 'sent140':
+            preds = torch.round(outputs)
+        else:
+            _, preds = torch.max(outputs, dim=1)
         acc = (preds == labels).sum()
+
         return loss, acc
 
     def train(self, support_loader: DataLoader, query_loader: DataLoader, epochs, beta: float):
-        learner = self.model.clone()
-        opt = torch.optim.Adam(self.model.parameters(), lr=beta)
-        for e in range(epochs):
+        learner: MetaSGDModelWrapper = self.model_wrapper.model.clone()
+        opt = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=beta)
+
+        for epoch in range(epochs):
             for batch in support_loader:
-                loss = self._training_step(learner, batch)[0]
+                loss, _ = self._training_step(learner, batch)
                 learner.adapt(loss)
 
-        print(f'[Client {self.cid}]: Calculate meta_loss and optimize (theta, alpha)')
         training_loss = 0.
         training_acc = 0.
-        set_weight_copy = True
         for batch in query_loader:
-            opt.zero_grad()
-            loss, acc = self._training_step(self.model, batch)
+            loss, acc = self._training_step(learner, batch)
             training_loss += loss
             training_acc += acc
+
+            opt.zero_grad()
             loss.backward()
-            if set_weight_copy:
-                self.model.load_state_dict(learner.state_dict())
-                set_weight_copy = False
             opt.step()
 
-        # print(f'[Client {self.cid}]: New weights: {list(self.model.parameters())}')
         return float(training_loss), float(training_acc)

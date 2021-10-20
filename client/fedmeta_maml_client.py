@@ -36,8 +36,7 @@ class FedMetaMAMLClient(BaseClient):
             nn.functional.cross_entropy if self.model_wrapper.model_name != 'sent140' else nn.functional.binary_cross_entropy,
             torch.optim.Adam(self.model_wrapper.model.parameters(), alpha),
             torch.optim.Adam(self.model_wrapper.model.parameters(), beta),
-            DEVICE,
-            self.cid
+            DEVICE
         )
         print(f'[Client {self.cid}] Fit {epochs} epoch(s) on {len(support_loader)} batch(es) using {DEVICE}')
         training_loss, training_acc = trainer.train(support_loader, query_loader, epochs)

@@ -9,13 +9,12 @@ from model.model_wrapper import ModelWrapper
 
 
 class MAMLTrainer:
-    def __init__(self, model_wrapper: ModelWrapper, loss_fn, support_optimizer: torch.optim.Optimizer, query_optimizer: torch.optim.Optimizer, device: torch.device, cid: int) -> None:
+    def __init__(self, model_wrapper: ModelWrapper, loss_fn, support_optimizer: torch.optim.Optimizer, query_optimizer: torch.optim.Optimizer, device: torch.device) -> None:
         self.model_wrapper = model_wrapper
         self.loss_fn = loss_fn
         self.support_optimizer = support_optimizer
         self.query_optimizer = query_optimizer
         self.device = device
-        self.cid = cid
 
     def _training_step(self, batch):
         features, labels = batch[0].to(self.device), batch[1].to(self.device)
@@ -49,6 +48,8 @@ class MAMLTrainer:
             training_loss += loss
             training_acc += acc
             loss.backward()
+
+            # theta = theta - lr * grad(loss(new_theta, query))
             if set_weight_copy:
                 self.model_wrapper.set_weights(w_t_copy)
                 set_weight_copy = False

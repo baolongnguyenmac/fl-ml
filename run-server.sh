@@ -7,7 +7,8 @@ python3 -m server.server_main \
     --rounds=10 \
     --epochs=2 \
     --batch_size=32 \
-    --sample_fraction=0.3 \
+    --fit_sample_fraction=0.3 \
+    --eval_sample_fraction=0.3 \
     --min_sample_size=2 \
     --min_num_clients=2 \
     --alpha=0.01 \

@@ -49,8 +49,7 @@ class BaseClient(fl.client.Client):
         tester = ConventionalTester(
             self.model_wrapper,
             torch.nn.functional.cross_entropy if self.model_wrapper.model_name != 'sent140' else torch.nn.functional.binary_cross_entropy,
-            DEVICE,
-            self.cid
+            DEVICE
         )
 
         loss, acc = tester.test(query_loader)

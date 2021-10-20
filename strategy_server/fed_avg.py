@@ -27,6 +27,7 @@ def weighted_loss_acc_avg(results: List[Tuple[int, float, Optional[float]]]) -> 
     weighted_acc = [num_examples * acc for num_examples, _, acc in results]
 
     return sum(weighted_losses) / num_total_evaluation_examples, sum(weighted_acc) / num_total_evaluation_examples
+
 class MyFedAvg(FedAvg):
 
     def aggregate_fit(

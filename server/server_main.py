@@ -62,10 +62,16 @@ def main():
         help="Meta-learning rate for FedMeta algorithms (default: 0.001)",
     )
     parser.add_argument(
-        "--sample_fraction",
+        "--fit_sample_fraction",
         type=float,
-        default=1.0,
-        help="Fraction of available clients used for fit/evaluate (default: 1.0)",
+        default=0.3,
+        help="Fraction of available clients used for fit (default: 0.3)",
+    )
+    parser.add_argument(
+        "--eval_sample_fraction",
+        type=float,
+        default=0.3,
+        help="Fraction of available clients used for evaluate (default: 0.3)",
     )
 
     args = parser.parse_args()
@@ -74,9 +80,9 @@ def main():
     fl.common.logger.configure("server", host=None)
 
     strategy = MyFedAvg(
-        fraction_fit=args.sample_fraction,
-        fraction_eval= 1,
-        # fraction_eval= args.sample_fraction,
+        fraction_fit=args.fit_sample_fraction,
+        # fraction_eval= 1,
+        fraction_eval= args.eval_sample_fraction,
         min_fit_clients=args.min_sample_size,
         min_eval_clients=args.min_sample_size,
         min_available_clients=args.min_num_clients,

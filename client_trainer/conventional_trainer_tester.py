@@ -7,12 +7,11 @@ sys.path.insert(0, '../')
 from model.model_wrapper import ModelWrapper
 
 class ConventionalTrainer:
-    def __init__(self, model_wrapper: ModelWrapper, loss_fn, optimizer: torch.optim.Optimizer, device: torch.device, cid: int) -> None:
+    def __init__(self, model_wrapper: ModelWrapper, loss_fn, optimizer: torch.optim.Optimizer, device: torch.device) -> None:
         self.model_wrapper = model_wrapper
         self.loss_fn = loss_fn
         self.optimizer = optimizer
         self.device = device
-        self.cid = cid
 
     def _training_step(self, batch):
         features, labels = batch[0].to(self.device), batch[1].to(self.device)
@@ -47,11 +46,10 @@ class ConventionalTrainer:
 
 
 class ConventionalTester:
-    def __init__(self, model_wrapper: ModelWrapper, loss_fn, device: torch.device, cid: int) -> None:
+    def __init__(self, model_wrapper: ModelWrapper, loss_fn, device: torch.device) -> None:
         self.model_wrapper = model_wrapper
         self.loss_fn = loss_fn
         self.device = device
-        self.cid = cid
 
     def _valid_step(self, batch):
         with torch.no_grad():

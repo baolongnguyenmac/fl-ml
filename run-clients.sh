@@ -13,7 +13,7 @@
 
 # alpha is only used for fedmeta meta sgd algorithm
 
-NUM_CLIENTS=10
+NUM_CLIENTS=2
 
 echo "Starting $NUM_CLIENTS clients."
 for ((i = 0; i < $NUM_CLIENTS; i++))
@@ -22,8 +22,7 @@ do
     python3 -m client.client_main \
         --cid=$i \
         --alpha=0.01 \
-        --strategy='FedAvg' \
+        --strategy='FedMetaSGD' \
         --model='sent140' &
 done
 echo "Started $NUM_CLIENTS clients."
-
