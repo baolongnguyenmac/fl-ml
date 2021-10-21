@@ -43,8 +43,8 @@ class MetaSGDTrainer:
             training_loss += loss
             training_acc += acc
 
-            opt.zero_grad()
-            loss.backward()
-            opt.step()
+        opt.zero_grad()
+        training_loss.backward()
+        opt.step()
 
         return float(training_loss), float(training_acc)
