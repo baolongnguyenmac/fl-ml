@@ -1,6 +1,8 @@
 import flwr as fl
 from flwr.common import EvaluateIns, EvaluateRes, ParametersRes, Weights, weights_to_parameters, parameters_to_weights
 import torch
+from typing import Dict
+from flwr.common.typing import Scalar
 
 import sys
 sys.path.insert(0, '../')
@@ -15,10 +17,11 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class BaseClient(fl.client.Client):
-    def __init__(self, model_wrapper: ModelWrapper, cid: int) -> None:
+    def __init__(self, model_wrapper: ModelWrapper, cid: str) -> None:
         super().__init__()
         self.model_wrapper = model_wrapper
         self.cid = cid
+        self.properties: Dict[str, Scalar] = {"tensor_type": "numpy.ndarray"}
 
     def get_parameters(self) -> ParametersRes:
         print(f"[Client {self.cid}]: get_parameters")
@@ -26,6 +29,10 @@ class BaseClient(fl.client.Client):
         weights: Weights = self.model_wrapper.get_weights()
         parameters = weights_to_parameters(weights)
         return ParametersRes(parameters=parameters)
+
+    # def get_properties(self, ins: PropertiesIns) -> PropertiesRes:
+    def get_properties(self, ins):
+        return self.properties
 
     def get_loader(self, support: bool, batch_size: int = 32):
         s = 'support' if support else 'query'
