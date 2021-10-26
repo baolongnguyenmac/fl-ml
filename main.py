@@ -82,7 +82,7 @@ def main():
         "--alpha",
         type=float,
         default=0.01,
-        help="Meta-learning rate for FedMetaMAML algorithm (default: 0.01)",
+        help="Meta-learning rate for FedMeta algorithms (default: 0.01)",
     )
     parser.add_argument(
         "--beta",
@@ -105,32 +105,31 @@ def main():
 
     args = parser.parse_args()
 
-    strategy = MyFedAvg(
-        fraction_fit=args.fraction_fit,
-        fraction_eval= args.fraction_eval,
-        min_fit_clients=args.min_fit_clients,
-        min_eval_clients=args.min_eval_clients,
-        min_available_clients=args.min_available_clients,
-        on_fit_config_fn=generate_config(args),
-        on_evaluate_config_fn=generate_config(args)
-    )
-    
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
         # client_resources={"num_cpus": 4},
         num_rounds=args.rounds,
-        strategy=strategy,
+        strategy=MyFedAvg(
+            fraction_fit=args.fraction_fit,
+            fraction_eval= args.fraction_eval,
+            min_fit_clients=args.min_fit_clients,
+            min_eval_clients=args.min_eval_clients,
+            min_available_clients=args.min_available_clients,
+            on_fit_config_fn=generate_config(args),
+            on_evaluate_config_fn=generate_config(args)
+        )
     )
 
 def generate_config(args):  
     """Returns a function of parameters based on arguments"""
     def fit_config(rnd: int) -> Dict[str, str]:
         config = {
-            "epochs": str(args.epochs),
-            "batch_size": str(args.batch_size),
-            "beta": str(args.beta),
-            "alpha": str(args.alpha) # alpha is used for both fedmeta sgd and fedavg as learning rate of a client
+            "current_round": str(rnd),
+            "epochs": str(args.epochs), # epochs of fine-tune process at client
+            "batch_size": str(args.batch_size), # batch size of support_loader and query_loader
+            "beta": str(args.beta),  # beta is used for fedmeta maml and fedmeta sgd as a meta learning rate of client
+            "alpha": str(args.alpha) # alpha is used for fedmeta sgd and fedavg as a learning rate of client
         }
         return config
 
@@ -140,7 +139,7 @@ def client_fn_config(args):
     # create a single client instance
     def client_fn(cid: str):
         return get_client(args, cid, get_model(args))
-        
+
     return client_fn
 
 def get_client(args, cid, model: nn.Module) -> fl.client.Client:
@@ -150,11 +149,9 @@ def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     elif args.strategy_client == FED_META_MAML:
         client = FedMetaMAMLClient(ModelWrapper(model, args.model), cid)
     elif args.strategy_client == FED_META_SDG:
-        client = FedMetaSGDClient(ModelWrapper(
-            MetaSGDModelWrapper(model, lr=args.alpha), args.model), cid)
+        client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, lr=args.alpha), args.model), cid)
 
     return client
-
 
 def get_model(args) -> nn.Module:
     model: nn.Module = None
@@ -166,7 +163,6 @@ def get_model(args) -> nn.Module:
         model = Shakespeare()
 
     return model
-
 
 if __name__ == "__main__":
     main()

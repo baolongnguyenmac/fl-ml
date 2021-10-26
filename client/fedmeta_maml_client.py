@@ -13,7 +13,7 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class FedMetaMAMLClient(BaseClient):
     def fit(self, ins: FitIns) -> FitRes:
-        print(f'[Client {self.cid}]: Fit')
+        print(f"[Client {self.cid}]: Fit in round {ins.config['current_round']}")
 
         weights: Weights = parameters_to_weights(ins.parameters)
         config = ins.config
