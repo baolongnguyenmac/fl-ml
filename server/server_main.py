@@ -19,13 +19,19 @@ def main():
         help=f"gRPC server address (default: {DEFAULT_SERVER_ADDRESS})",
     )
     parser.add_argument(
-        "--min_sample_size",
+        "--min_fit_clients",
         type=int,
         default=2,
         help="Minimum number of clients used for fit/evaluate (default: 2)",
     )
     parser.add_argument(
-        "--min_num_clients",
+        "--min_eval_clients",
+        type=int,
+        default=2,
+        help="Minimum number of clients used for fit/evaluate (default: 2)",
+    )
+    parser.add_argument(
+        "--min_available_clients",
         type=int,
         default=2,
         help="Minimum number of available clients required for sampling (default: 2)",
@@ -62,13 +68,13 @@ def main():
         help="Meta-learning rate for FedMeta algorithms (default: 0.001)",
     )
     parser.add_argument(
-        "--fit_sample_fraction",
+        "--fraction_fit",
         type=float,
         default=0.3,
         help="Fraction of available clients used for fit (default: 0.3)",
     )
     parser.add_argument(
-        "--eval_sample_fraction",
+        "--fraction_eval",
         type=float,
         default=0.3,
         help="Fraction of available clients used for evaluate (default: 0.3)",
@@ -80,12 +86,11 @@ def main():
     fl.common.logger.configure("server", host=None)
 
     strategy = MyFedAvg(
-        fraction_fit=args.fit_sample_fraction,
-        # fraction_eval= 1,
-        fraction_eval= args.eval_sample_fraction,
-        min_fit_clients=args.min_sample_size,
-        min_eval_clients=args.min_sample_size,
-        min_available_clients=args.min_num_clients,
+        fraction_fit=args.fraction_fit,
+        fraction_eval= args.fraction_eval,
+        min_fit_clients=args.min_fit_clients,
+        min_eval_clients=args.min_eval_clients,
+        min_available_clients=args.min_available_clients,
         on_fit_config_fn=generate_config(args),
         on_evaluate_config_fn=generate_config(args)
     )
@@ -100,6 +105,7 @@ def generate_config(args):
     """Returns a function of parameters based on arguments"""
     def fit_config(rnd: int) -> Dict[str, str]:
         config = {
+            "current_round": str(rnd),
             "epochs": str(args.epochs),
             "batch_size": str(args.batch_size),
             "beta": str(args.beta),

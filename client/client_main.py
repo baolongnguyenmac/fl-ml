@@ -2,6 +2,7 @@ import torch.nn as nn
 
 import flwr as fl
 import argparse
+from typing import Dict
 
 import sys
 sys.path.insert(0, '../')
@@ -13,6 +14,7 @@ from model.sent140_model import Sent140
 from model.shakespeare_model import Shakespeare
 from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper, FED_AVG, FED_META_MAML, FED_AVG_META, FED_META_SDG, FEMNIST_MODEL, SHAKESPEARE_MODEL, SENT140_MODEL
 
+from strategy_server.fed_avg import MyFedAvg
 
 DEFAULT_SERVER_ADDRESS = "localhost:5000"
 

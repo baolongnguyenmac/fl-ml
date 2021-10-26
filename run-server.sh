@@ -5,11 +5,12 @@
 # meta learning based
 python3 -m server.server_main \
     --rounds=10 \
-    --epochs=2 \
+    --epochs=1 \
     --batch_size=32 \
-    --fit_sample_fraction=0.3 \
-    --eval_sample_fraction=0.3 \
-    --min_sample_size=2 \
-    --min_num_clients=2 \
+    --fraction_fit=0.1 \
+    --min_fit_clients=1 \
+    --fraction_eval=0.1 \
+    --min_eval_clients=1 \
+    --min_available_clients=1 \
     --alpha=0.01 \
     --beta=0.001

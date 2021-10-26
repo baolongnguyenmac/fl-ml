@@ -23,6 +23,6 @@ do
         --cid=$i \
         --alpha=0.01 \
         --strategy='FedMetaSGD' \
-        --model='sent140' &
+        --model='femnist' &
 done
 echo "Started $NUM_CLIENTS clients."

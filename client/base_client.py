@@ -38,7 +38,7 @@ class BaseClient(fl.client.Client):
             return sent140_loader(f'./data/{self.model_wrapper.model_name}/train/{self.cid}/{s}.pickle', batch_size)
 
     def evaluate(self, ins: EvaluateIns) -> EvaluateRes:
-        print(f'[Client {self.cid}]: Evaluate')
+        print(f"[Client {self.cid}]: Evaluate in round {ins.config['current_round']}")
         weights = parameters_to_weights(ins.parameters)
         config = ins.config
         batch_size = int(config["batch_size"])

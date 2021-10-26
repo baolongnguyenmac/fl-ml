@@ -21,7 +21,7 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class ModelWrapper:
     """generate a wrapper that wraps a nn.Module
     """
-    def __init__(self, model: nn.Module, model_name):
+    def __init__(self, model: nn.Module, model_name: str):
         self.model = model
         self.model_name = model_name
         self.model = self.model.to(DEVICE)
@@ -55,23 +55,4 @@ class MetaSGDModelWrapper(MetaSGD):
                         create_graph=second_order, allow_unused=True)
         self.module = meta_sgd_update(self.module, self.lrs, gradients)
 
-# class MetaSGDModelWrapper(nn.Module):
-#     def __init__(self, model: nn.Module, lr: float = 0.01) -> None:
-#         super().__init__()
-#         self.model = model
-#         lrs = [torch.ones_like(p) * lr for p in model.parameters()]
-#         lrs = nn.ParameterList([nn.Parameter(lr) for lr in lrs])
-#         self.alpha = lrs
 
-#     def forward(self, *args, **kwargs):
-#         return self.model(*args, **kwargs)
-
-#     def clone(self):
-#         return copy.deepcopy(self)
-
-#     def adapt(self, loss):
-#         gradients = torch.autograd.grad(loss,
-#                         self.model.parameters(),
-#                         retain_graph=True,
-#                         create_graph=True, allow_unused=True)
-#         self.model = meta_sgd_update(self.model, self.alpha, gradients)
