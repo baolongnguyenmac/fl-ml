@@ -80,6 +80,7 @@ def split_json_and_save(
     users_list: List[str] = []
     new_users: List[str] = []
     listFile = os.listdir(path_to_json)
+    user_idx = 0
     for filename in listFile:
         with open(f'{path_to_json.__str__()}/{filename}') as open_file:
             json_file = json.load(open_file)
@@ -89,9 +90,10 @@ def split_json_and_save(
                 print("Using previous list of users.")
                 users_list = prev_users_list
 
-            for user_idx, user_str in enumerate(users_list):
+            for user_str in users_list:
                 new_users.append(user_str)
                 process_user(json_file, user_idx, user_str, list_datasets, save_root)
+                user_idx += 1
 
     return new_users
 
