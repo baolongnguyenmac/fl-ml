@@ -28,7 +28,7 @@ class MAMLTrainer:
 
         return loss, acc
 
-    def train(self, support_loader: DataLoader, query_loader: DataLoader, epochs: int) -> None:
+    def train(self, support_loader: DataLoader, query_loader: DataLoader, epochs: int):
         w_t_copy = copy.deepcopy(self.model_wrapper.get_weights())
         for _ in range(epochs):
             for batch in support_loader:

@@ -4,7 +4,7 @@ import argparse
 from typing import Dict
 
 import sys
-sys.path.insert(0, '/')
+sys.path.insert(0, './')
 from client.fedmeta_maml_client import FedMetaMAMLClient
 from client.fedmeta_sgd_client import FedMetaSGDClient
 from client.fedavg_client import FedAvgClient
@@ -20,7 +20,19 @@ def main():
         "--num_clients",
         type=int,
         required=True,
-        help="Num clients"
+        help="Num clients for training"
+    )
+    parser.add_argument(
+        "--num_val_clients",
+        type=int,
+        required=True,
+        help="Num clients for valid"
+    )
+    parser.add_argument(
+        "--num_test_clients",
+        type=int,
+        required=True,
+        help="Num clients for testing"
     )
     parser.add_argument(
         "--rounds",
@@ -94,13 +106,19 @@ def main():
         required=True,
         help="sent140, shakespeare, femnist"
     )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        required=True,
+        help="train or test"
+    )
 
     args = parser.parse_args()
 
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
-        client_resources={"num_cpus": 2, "num_gpus": 1},
+        client_resources={"num_cpus": 2},
         num_rounds=args.rounds,
         strategy=MyFedAvg(
             fraction_fit=args.fraction_fit,
@@ -136,12 +154,12 @@ def client_fn_config(args):
 
 def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     client: fl.client.Client = None
-    if args.strategy_client == FED_AVG:
-        client = FedAvgClient(ModelWrapper(model, args.model), cid)
+    if args.strategy_client == FED_AVG or args.strategy_client == FED_AVG_META:
+        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.strategy_client, args.num_test_clients, args.num_val_clients)
     elif args.strategy_client == FED_META_MAML:
-        client = FedMetaMAMLClient(ModelWrapper(model, args.model), cid)
+        client = FedMetaMAMLClient(ModelWrapper(model, args.model), cid, args.mode, args.strategy_client, args.num_test_clients, args.num_val_clients)
     elif args.strategy_client == FED_META_SDG:
-        client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, lr=args.alpha), args.model), cid)
+        client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, lr=args.alpha), args.model), cid, args.mode, args.strategy_client, args.num_test_clients, args.num_val_clients)
 
     return client
 

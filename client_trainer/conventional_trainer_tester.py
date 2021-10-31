@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 from torch.utils.data.dataloader import DataLoader
 
 import sys
@@ -25,7 +24,7 @@ class ConventionalTrainer:
 
         return loss, acc
 
-    def train(self, trainloader: DataLoader, epochs: int) -> None:
+    def train(self, trainloader: DataLoader, epochs: int):
         for e in range(epochs):
             training_loss = 0.
             training_acc = 0.
@@ -64,10 +63,10 @@ class ConventionalTester:
 
             return loss, acc
 
-    def test(self, testloader: DataLoader):
+    def test(self, test_loader: DataLoader):
         loss = 0.
         acc = 0.
-        for batch in testloader:
+        for batch in test_loader:
             tmp_loss, tmp_acc = self._valid_step(batch)
             loss += tmp_loss
             acc += tmp_acc

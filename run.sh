@@ -12,7 +12,9 @@
 #     - sent140
 
 python main.py \
-    --num_clients=10 \
+    --num_clients=2 \
+    --num_val_clients=2 \
+    --num_test_clients=2 \
     --rounds=5 \
     --epochs=1 \
     --batch_size=32 \
@@ -24,4 +26,5 @@ python main.py \
     --alpha=0.01 \
     --beta=0.001 \
     --strategy_client='FedMetaMAML' \
-    --model='femnist' 
+    --model='femnist' \
+    --mode='train'
