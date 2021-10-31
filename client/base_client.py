@@ -12,9 +12,7 @@ from data.dataloaders.femnist import get_loader as femnist_loader
 from data.dataloaders.sent140 import get_loader as sent140_loader
 from data.dataloaders.shakespeare import get_loader as shakespeare_loader
 
-
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 
 class BaseClient(fl.client.Client):
     def __init__(self, model_wrapper: ModelWrapper, cid: str) -> None:

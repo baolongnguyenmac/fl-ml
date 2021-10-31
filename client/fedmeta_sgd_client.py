@@ -25,8 +25,7 @@ class FedMetaSGDClient(BaseClient):
         self.model_wrapper.set_weights(weights)
 
         # get loader
-        support_loader, num_examples_support = self.get_loader(
-            True, batch_size)
+        support_loader, num_examples_support = self.get_loader(True, batch_size)
         query_loader, num_examples_query = self.get_loader(False, batch_size)
 
         trainer = MetaSGDTrainer(

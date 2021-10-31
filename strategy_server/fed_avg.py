@@ -1,4 +1,3 @@
-from logging import WARNING
 from typing import Dict, List, Optional, Tuple
 
 from flwr.common import (
@@ -11,7 +10,6 @@ from flwr.common import (
 )
 from flwr.server.strategy.aggregate import aggregate
 
-from flwr.server.client_manager import ClientManager
 from flwr.server.client_proxy import ClientProxy
 from flwr.server.strategy.fedavg import FedAvg
 

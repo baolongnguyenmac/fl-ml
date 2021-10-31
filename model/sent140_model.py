@@ -2,15 +2,9 @@ import torch
 import torch.nn as nn
 
 class Sent140(nn.Module):
-    def __init__(
-        self,
-        hidden_size: int = 256,
-        embedding_dim: int = 300) -> None:
-        
+    def __init__(self, hidden_size: int = 256, embedding_dim: int = 300) -> None:
         super(Sent140, self).__init__()
-
         self.hidden_size = hidden_size
-
         self.lstm = nn.LSTM(
             input_size=embedding_dim,
             hidden_size=hidden_size,

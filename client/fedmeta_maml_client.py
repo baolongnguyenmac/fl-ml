@@ -7,9 +7,7 @@ sys.path.insert(0, '../')
 from client.base_client import BaseClient
 from client_trainer.maml_trainer import MAMLTrainer
 
-
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 
 class FedMetaMAMLClient(BaseClient):
     def fit(self, ins: FitIns) -> FitRes:

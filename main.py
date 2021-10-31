@@ -14,16 +14,8 @@ from model.shakespeare_model import Shakespeare
 from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper, FED_AVG, FED_META_MAML, FED_AVG_META, FED_META_SDG, FEMNIST_MODEL, SHAKESPEARE_MODEL, SENT140_MODEL
 from strategy_server.fed_avg import MyFedAvg
 
-DEFAULT_SERVER_ADDRESS = "localhost:5000"
-
 def main():
     parser = argparse.ArgumentParser(description="Flower")
-    parser.add_argument(
-        "--server_address",
-        type=str,
-        default=DEFAULT_SERVER_ADDRESS,
-        help=f"gRPC server address (default: {DEFAULT_SERVER_ADDRESS})"
-    )
     parser.add_argument(
         "--num_clients",
         type=int,

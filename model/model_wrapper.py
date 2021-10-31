@@ -22,9 +22,8 @@ class ModelWrapper:
     """generate a wrapper that wraps a nn.Module
     """
     def __init__(self, model: nn.Module, model_name: str):
-        self.model = model
+        self.model = model.to(DEVICE)
         self.model_name = model_name
-        self.model = self.model.to(DEVICE)
 
     def get_weights(self) -> Weights:
         """Get model weights as a list of NumPy ndarrays."""
