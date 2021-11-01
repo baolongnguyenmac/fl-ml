@@ -111,7 +111,7 @@ class BaseClient(fl.client.Client):
                 torch.nn.functional.cross_entropy if self.model_wrapper.model_name != 'sent140' else torch.nn.functional.binary_cross_entropy,
                 DEVICE
             )
-            loss, acc = tester.test(support_loader)
+            loss, acc = tester.test(query_loader)
             acc = acc/num_query
             print(f'[Client {self.cid}]: Meta-Evaluate loss: {loss}, Meta-Evaluate accuracy: {acc}')
 

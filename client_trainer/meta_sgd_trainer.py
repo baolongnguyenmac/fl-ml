@@ -44,6 +44,7 @@ class MetaSGDTrainer:
             training_acc += acc
 
         opt.zero_grad()
+        training_loss /= len(query_loader)
         training_loss.backward()
         opt.step()
 

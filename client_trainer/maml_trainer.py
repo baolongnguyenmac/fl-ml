@@ -55,4 +55,5 @@ class MAMLTrainer:
                 set_weight_copy = False
             self.query_optimizer.step()
 
+        training_loss /= len(query_loader)
         return float(training_loss), float(training_acc)

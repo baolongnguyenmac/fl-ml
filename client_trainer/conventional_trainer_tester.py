@@ -24,11 +24,11 @@ class ConventionalTrainer:
 
         return loss, acc
 
-    def train(self, trainloader: DataLoader, epochs: int):
+    def train(self, train_loader: DataLoader, epochs: int):
         for e in range(epochs):
             training_loss = 0.
             training_acc = 0.
-            for batch in trainloader:
+            for batch in train_loader:
                 # set grad to 0
                 self.optimizer.zero_grad()
 
@@ -41,6 +41,7 @@ class ConventionalTrainer:
                 training_loss += loss
                 training_acc += acc
 
+        training_loss /= len(train_loader)
         return float(training_loss), float(training_acc)
 
 
@@ -71,4 +72,5 @@ class ConventionalTester:
             loss += tmp_loss
             acc += tmp_acc
 
+        loss /= len(test_loader)
         return float(loss), float(acc)

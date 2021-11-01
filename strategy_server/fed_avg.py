@@ -39,8 +39,7 @@ class MyFedAvg(FedAvg):
         self.valid_history['loss'] = []
         self.valid_history['acc'] = []
 
-        self.x_train = []
-        self.x_valid = []
+        self.x_axis = []
 
     def aggregate_fit(
         self,
@@ -71,7 +70,7 @@ class MyFedAvg(FedAvg):
             ]
         )
 
-        self.x_train.append(rnd)
+        self.x_axis.append(rnd)
 
         self.training_history['loss'].append(loss_aggregated)
         self.training_history['acc'].append(acc_aggregated)
@@ -104,35 +103,36 @@ class MyFedAvg(FedAvg):
             ]
         )
 
-        self.x_valid.append(rnd)
-
         self.valid_history['loss'].append(loss_aggregated)
         self.valid_history['acc'].append(acc_aggregated)
+
+        print(f'[Round {rnd}]: Valid loss: {loss_aggregated}')
+        print(f'[Round {rnd}]: Valid accuracy: {acc_aggregated}')
 
         return loss_aggregated, {"accuracy": acc_aggregated}
 
     def visualize_result(self):
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=np.array(self.x_train), y=np.array(self.training_history['loss']),
+        fig.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.training_history['loss']),
                             mode='lines+markers',
                             name='training loss'))
-        fig.add_trace(go.Scatter(x=np.array(self.x_train), y=np.array(self.training_history['acc']),
-                            mode='lines+markers',
-                            name='training acc'))
-        fig.update_layout(title='Training process',
-                        xaxis_title='Round communication',
-                        yaxis_title='loss-acc')
-
-        fig1 = go.Figure()
-        fig1.add_trace(go.Scatter(x=np.array(self.x_valid), y=np.array(self.valid_history['loss']),
+        fig.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.valid_history['loss']),
                             mode='lines+markers',
                             name='valid loss'))
-        fig1.add_trace(go.Scatter(x=np.array(self.x_valid), y=np.array(self.valid_history['acc']),
+        fig.update_layout(title='Loss',
+                        xaxis_title='Round communication',
+                        yaxis_title='Loss')
+
+        fig1 = go.Figure()
+        fig1.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.training_history['acc']),
+                            mode='lines+markers',
+                            name='training acc'))
+        fig1.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.valid_history['acc']),
                             mode='lines+markers',
                             name='valid acc'))
-        fig1.update_layout(title='Validation process',
+        fig1.update_layout(title='Accuracy',
                         xaxis_title='Round communication',
-                        yaxis_title='loss-acc')
+                        yaxis_title='Accuracy')
 
         fig.show()
         fig1.show()
