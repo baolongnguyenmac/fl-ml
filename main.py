@@ -115,21 +115,26 @@ def main():
 
     args = parser.parse_args()
 
+    strategy = MyFedAvg(
+        fraction_fit=args.fraction_fit,
+        fraction_eval= args.fraction_eval,
+        min_fit_clients=args.min_fit_clients,
+        min_eval_clients=args.min_eval_clients,
+        min_available_clients=args.min_available_clients,
+        on_fit_config_fn=generate_config(args),
+        on_evaluate_config_fn=generate_config(args)
+    )
+
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
         client_resources={"num_cpus": 2},
+        # client_resources={"num_cpus": 2, "num_gpus": 1},
         num_rounds=args.rounds,
-        strategy=MyFedAvg(
-            fraction_fit=args.fraction_fit,
-            fraction_eval= args.fraction_eval,
-            min_fit_clients=args.min_fit_clients,
-            min_eval_clients=args.min_eval_clients,
-            min_available_clients=args.min_available_clients,
-            on_fit_config_fn=generate_config(args),
-            on_evaluate_config_fn=generate_config(args)
-        )
+        strategy=strategy
     )
+
+    strategy.visualize_result()
 
 def generate_config(args):  
     """Returns a function of parameters based on arguments"""
