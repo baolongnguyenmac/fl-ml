@@ -1,10 +1,11 @@
-"""Splits LEAF generated datasets and creates individual client partitions."""
 import argparse
 import json
 import pickle
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import os
+import random
+random.seed(42)
 
 def check_between_zero_and_one(value: str):
     """Tests if value is between 0 an 1"""
@@ -47,6 +48,9 @@ def process_user(
     """
     sentence = json_file["user_data"][user_str]["x"]
     next_char = json_file["user_data"][user_str]["y"]
+    temp = list(zip(sentence, next_char))
+    random.shuffle(temp)
+    sentence, next_char = zip(*temp)
     start_idx = 0
 
     for split_id, (dataset, fraction) in enumerate(list_datasets):
@@ -160,9 +164,3 @@ if __name__ == "__main__":
         path_to_json=original_test_dataset,
         save_root=Path(args.save_test),
     )
-
-# python split.py --save_train bb/train \
-#                 --leaf_train_json data/train \ ---> truyền vào folder, not file
-#                 --save_test shakespeare/test \
-#                 --leaf_test_json tmp/test \ ----> truyền vào folder, not file
-#                 --query_frac 0.2

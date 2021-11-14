@@ -40,4 +40,4 @@ class Shakespeare(nn.Module):
         encoded_seq = self.encoder(sentence)  # (batch, seq_len, embedding_dim)
         _, (h_n, _) = self.lstm(encoded_seq)  # (batch, seq_len, hidden_size)
         pred = self.decoder(h_n[-1])
-        return nn.functional.softmax(pred, dim=1)
+        return pred

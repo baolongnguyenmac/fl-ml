@@ -26,4 +26,4 @@ python main.py \
     --beta=0.001 \
     --strategy_client='FedMetaSGD' \
     --model='sent140' \
-    --mode='train'
+    --mode='val'

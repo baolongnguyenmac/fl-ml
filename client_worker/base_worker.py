@@ -1,6 +1,7 @@
 import torch 
 import torch.nn as nn 
 import random
+random.seed(42)
 
 from model.model_wrapper import ModelWrapper, FEMNIST_MODEL, SHAKESPEARE_MODEL, SENT140_MODEL
 from data.dataloaders.femnist import get_loader as f_loader

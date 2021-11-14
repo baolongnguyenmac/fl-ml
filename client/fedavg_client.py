@@ -57,6 +57,9 @@ class FedAvgClient(BaseClient):
             epochs = int(config['epochs'])
             lr = float(config['alpha'])
 
+            # set weight of server to client
+            self.model_wrapper.set_weights(weights)
+
             # test the model
             tester = ConventionalTester(
                 model_wrapper=self.model_wrapper,

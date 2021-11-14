@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--beta", type=float, default=0.001, help="Meta-learning rate for FedMeta algorithms (default: 0.001)")
     parser.add_argument("--strategy_client", type=str, required=True, help="FedAvg, FedMetaMAML, FedAvgMeta, FedMetaSGD")
     parser.add_argument("--model", type=str, required=True, help="sent140, shakespeare, femnist")
-    parser.add_argument("--mode", type=str, required=True, help="train or test")
+    parser.add_argument("--mode", type=str, required=True, help="val or test")
 
     args = parser.parse_args()
 
@@ -47,13 +47,13 @@ def main():
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
-        client_resources={"num_cpus": 4},
-        # client_resources={"num_cpus": 2, "num_gpus": 1},
+        # client_resources={"num_cpus": 4},
+        client_resources={"num_cpus": 2, "num_gpus": 1},
         num_rounds=args.rounds,
         strategy=strategy
     )
 
-    # strategy.visualize_result()
+    strategy.visualize_result()
 
 def generate_config(args):  
     """Returns a function of parameters based on arguments"""
@@ -81,7 +81,7 @@ def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     if strategy == FED_AVG:
         client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, False)
     elif strategy == FED_AVG_META:
-        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, False)
+        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True)
     elif strategy == FED_META_MAML:
         client = FedMetaMAMLClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients)
     elif strategy == FED_META_SDG:
