@@ -1,84 +1,72 @@
-import torch
-from torch.utils.data.dataloader import DataLoader
-import copy
+import torch 
+from learn2learn.algorithms.maml import MAML
 
-from .base_worker import BaseTester, BaseTrainer
+from .base_worker import BaseTrainer, BaseTester
 from model.model_wrapper import ModelWrapper
 
 class MAMLTrainer(BaseTrainer):
-    def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int, epochs: int, alpha: float, beta: float) -> None:
+    def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int, epochs: int, beta: float) -> None:
         super().__init__(model_wrapper, device, cid, current_round, batch_size, epochs)
-        self.support_optimizer = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=alpha)
-        self.query_optimizer = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=beta)
+        self.beta = beta
 
     def train(self):
         print(f'[Client {self.cid}]: Fit in round {self.current_round}')
 
-        support_loader, _ = self.get_loader(support=True)
-        query_loader, num_query_sample = self.get_loader(support=False)
-
-        w_t_copy = copy.deepcopy(self.model_wrapper.get_weights())
+        support_loader, _ = self.get_loader(True)
+        query_loader, num_query_sample = self.get_loader(False)
 
         print(f'[Client {self.cid}]: Fit {self.epochs} epoch(s) on {len(support_loader)} batch(es) using {self.device}')
-        for _ in range(self.epochs):
-            for batch in support_loader:
-                # set grad to 0
-                self.support_optimizer.zero_grad()
-                loss, _ = self._training_step(self.model_wrapper.model, batch)
-                loss.backward()
-                self.support_optimizer.step()
+        learner: MAML = self.model_wrapper.model.clone()
+        opt = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=self.beta)
 
-        # only set w_t_copy for model in the first batch
-        set_weight_copy = True
+        for epoch in range(self.epochs):
+            for batch in support_loader:
+                loss, _ = self._training_step(learner, batch)
+                learner.adapt(loss)
+
         training_loss = 0.
         training_acc = 0.
         for batch in query_loader:
-            self.query_optimizer.zero_grad()
-            loss, acc = self._training_step(self.model_wrapper.model, batch)
+            loss, acc = self._training_step(learner, batch)
             training_loss += loss
             training_acc += acc
-            loss.backward()
 
-            # theta = theta - lr * grad(loss(new_theta, query))
-            if set_weight_copy:
-                self.model_wrapper.set_weights(w_t_copy)
-                set_weight_copy = False
-            self.query_optimizer.step()
-
+        opt.zero_grad()
         training_loss /= len(query_loader)
         training_acc /= num_query_sample
+        training_loss.backward()
+        opt.step()
 
         print(f'[Client {self.cid}]: Training loss = {float(training_loss)}, Training acc = {float(training_acc)}')
         return float(training_loss), float(training_acc), num_query_sample
 
 class MAMLTester(BaseTester):
-    def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int, num_eval_clients: int, mode: str, epochs: int, alpha: float) -> None:
+    def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int, num_eval_clients: int, mode: str, epochs: int) -> None:
         super().__init__(model_wrapper, device, cid, current_round, batch_size, num_eval_clients, mode)
         self.epochs = epochs
-        self.support_optimizer = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=alpha)
 
     def test(self):
         print(f'[Client {self.cid}]: Eval in round {self.current_round}')
 
         support_loader, _ = self.get_loader(support=True)
         query_loader, num_query_sample = self.get_loader(support=False)
+        learner: MAML = self.model_wrapper.model.clone()
 
+        print(f'[Client {self.cid}]: Evaluate {self.epochs} epoch(s) on {len(support_loader)} batch(es) using {self.device}')
         for e in range(self.epochs):
             for batch in support_loader:
-                self.support_optimizer.zero_grad()
-                loss, _ = self._training_step(self.model_wrapper.model, batch)
-                loss.backward()
-                self.support_optimizer.step()
+                loss, _ = self._training_step(learner, batch)
+                learner.adapt(loss)
 
-        valid_loss = 0.
-        valid_acc = 0.
+        val_loss = 0.
+        val_acc = 0.
         for batch in query_loader:
-            loss, acc = self._valid_step(self.model_wrapper.model, batch)
-            valid_loss += loss 
-            valid_acc += acc
+            loss, acc = self._valid_step(learner, batch)
+            val_loss += loss
+            val_acc += acc
 
-        valid_loss /= len(query_loader)
-        valid_acc /= num_query_sample
+        val_loss /= len(query_loader)
+        val_acc /= num_query_sample
 
-        print(f'[Client {self.cid}]: Val loss = {float(valid_loss)}, Val acc = {float(valid_acc)}')
-        return float(valid_loss), float(valid_acc), num_query_sample
+        print(f'[Client {self.cid}]: Val loss = {float(val_loss)}, Val acc = {float(val_acc)}')
+        return float(val_loss), float(val_acc), num_query_sample

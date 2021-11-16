@@ -28,7 +28,7 @@ class FedMetaMAMLClient(BaseClient):
             current_round=current_round,
             batch_size=batch_size,
             epochs=epochs,
-            alpha=alpha,
+            # alpha=alpha,
             beta=beta
         )
         training_loss, training_acc, num_train_sample = trainer.train()
@@ -65,7 +65,7 @@ class FedMetaMAMLClient(BaseClient):
             num_eval_clients=self.num_eval_clients,
             mode=self.mode,
             epochs=epochs,
-            alpha=alpha
+            # alpha=alpha
         )
         val_loss, val_acc, num_val_sample = tester.test()
 

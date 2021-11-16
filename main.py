@@ -2,9 +2,8 @@ import torch.nn as nn
 import flwr as fl
 import argparse
 from typing import Dict
+from learn2learn.algorithms.maml import MAML
 
-import sys
-sys.path.insert(0, './')
 from client.fedmeta_maml_client import FedMetaMAMLClient
 from client.fedmeta_sgd_client import FedMetaSGDClient
 from client.fedavg_client import FedAvgClient
@@ -83,7 +82,7 @@ def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     elif strategy == FED_AVG_META:
         client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True)
     elif strategy == FED_META_MAML:
-        client = FedMetaMAMLClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients)
+        client = FedMetaSGDClient(ModelWrapper(MAML(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
     elif strategy == FED_META_SDG:
         client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
 

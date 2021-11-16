@@ -11,10 +11,10 @@
 #     - shakespeare
 #     - sent140
 
-python main.py \
+python -m main \
     --num_clients=10 \
     --num_eval_clients=5 \
-    --rounds=10 \
+    --rounds=15 \
     --epochs=1 \
     --batch_size=32 \
     --fraction_fit=0.1 \
@@ -24,6 +24,6 @@ python main.py \
     --min_available_clients=2 \
     --alpha=0.01 \
     --beta=0.001 \
-    --strategy_client='FedMetaSGD' \
+    --strategy_client='FedMetaMAML' \
     --model='sent140' \
     --mode='val'
