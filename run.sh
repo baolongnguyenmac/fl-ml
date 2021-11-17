@@ -11,19 +11,19 @@
 #     - shakespeare
 #     - sent140
 
-python -m main \
-    --num_clients=10 \
-    --num_eval_clients=5 \
-    --rounds=15 \
+python main.py \
+    --num_clients=299 \
+    --num_eval_clients=37 \
+    --rounds=2 \
     --epochs=1 \
     --batch_size=32 \
-    --fraction_fit=0.1 \
-    --fraction_eval=0.1 \
-    --min_fit_clients=2 \
-    --min_eval_clients=2 \
-    --min_available_clients=2 \
+    --fraction_fit=0 \
+    --fraction_eval=0 \
+    --min_fit_clients=4 \
+    --min_eval_clients=4 \
+    --min_available_clients=4 \
     --alpha=0.01 \
     --beta=0.001 \
     --strategy_client='FedMetaMAML' \
-    --model='sent140' \
+    --model='femnist' \
     --mode='val'

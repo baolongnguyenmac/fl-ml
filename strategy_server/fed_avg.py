@@ -111,7 +111,10 @@ class MyFedAvg(FedAvg):
 
         return loss_aggregated, {"accuracy": acc_aggregated}
 
-    def visualize_result(self):
+    def visualize_result(self, args):
+        loss_title = f'[LOSS] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta = {args.beta}'
+        acc_title = f'[ACCURACY] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta = {args.beta}'
+
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.training_history['loss']),
                             mode='lines+markers',
@@ -119,7 +122,7 @@ class MyFedAvg(FedAvg):
         fig.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.valid_history['loss']),
                             mode='lines+markers',
                             name='valid loss'))
-        fig.update_layout(title='Loss',
+        fig.update_layout(title=loss_title,
                         xaxis_title='Round communication',
                         yaxis_title='Loss')
 
@@ -130,7 +133,7 @@ class MyFedAvg(FedAvg):
         fig1.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.valid_history['acc']),
                             mode='lines+markers',
                             name='valid acc'))
-        fig1.update_layout(title='Accuracy',
+        fig1.update_layout(title=acc_title,
                         xaxis_title='Round communication',
                         yaxis_title='Accuracy')
 

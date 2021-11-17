@@ -52,7 +52,7 @@ def main():
         strategy=strategy
     )
 
-    strategy.visualize_result()
+    strategy.visualize_result(args)
 
 def generate_config(args):  
     """Returns a function of parameters based on arguments"""
