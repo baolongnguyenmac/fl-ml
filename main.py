@@ -46,8 +46,8 @@ def main():
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
-        # client_resources={"num_cpus": 4},
-        client_resources={"num_cpus": 2, "num_gpus": 1},
+        client_resources={"num_cpus": 4},
+        # client_resources={"num_cpus": 2, "num_gpus": 1},
         num_rounds=args.rounds,
         strategy=strategy
     )
@@ -82,7 +82,7 @@ def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     elif strategy == FED_AVG_META:
         client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True)
     elif strategy == FED_META_MAML:
-        client = FedMetaSGDClient(ModelWrapper(MAML(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
+        client = FedMetaMAMLClient(ModelWrapper(MAML(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
     elif strategy == FED_META_SDG:
         client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
 
