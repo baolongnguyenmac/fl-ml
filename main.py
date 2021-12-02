@@ -10,7 +10,7 @@ from client.fedavg_client import FedAvgClient
 from model.femnist_model import Femnist
 from model.sent140_model import Sent140
 from model.shakespeare_model import Shakespeare
-from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper, FED_AVG, FED_META_MAML, FED_AVG_META, FED_META_SDG, FEMNIST_MODEL, SHAKESPEARE_MODEL, SENT140_MODEL
+from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper, FED_AVG, FED_META_MAML, FED_AVG_META, FED_META_SGD, FEMNIST_MODEL, SHAKESPEARE_MODEL, SENT140_MODEL
 from strategy_server.fed_avg import MyFedAvg
 
 def main():
@@ -83,7 +83,7 @@ def get_client(args, cid, model: nn.Module) -> fl.client.Client:
         client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True)
     elif strategy == FED_META_MAML:
         client = FedMetaMAMLClient(ModelWrapper(MAML(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
-    elif strategy == FED_META_SDG:
+    elif strategy == FED_META_SGD:
         client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
 
     return client

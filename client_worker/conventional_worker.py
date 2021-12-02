@@ -10,8 +10,16 @@ class ConventionalTrainer(BaseTrainer):
 
     def train(self):
         print(f'[Client {self.cid}]: Fit in round {self.current_round}')
-        train_loader, num_train_sample = self.get_loader(True)
+        support_loader, num_support_sample = self.get_loader(True)
+        query_loader, num_query_sample = self.get_loader(False)
+        train_loader = []
+        for batch in support_loader:
+            train_loader.append(batch)
+        for batch in query_loader:
+            train_loader.append(batch)
+        num_train_sample = num_support_sample + num_query_sample
         opt = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=self.lr)
+        # opt = torch.optim.SGD(self.model_wrapper.model.parameters(), lr=self.lr)
 
         print(f'[Client {self.cid}]: Fit {self.epochs} epoch(s) on {len(train_loader)} batch(es) using {self.device}')
         for e in range(self.epochs):

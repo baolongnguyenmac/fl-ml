@@ -5,12 +5,10 @@ from flwr.common import Weights
 from collections import OrderedDict
 from learn2learn.algorithms.meta_sgd import MetaSGD, meta_sgd_update, clone_module, clone_parameters
 
-import copy
-
 FED_AVG = "FedAvg"
 FED_META_MAML = "FedMetaMAML"
 FED_AVG_META = "FedAvgMeta"
-FED_META_SDG = "FedMetaSGD"
+FED_META_SGD = "FedMetaSGD"
 
 FEMNIST_MODEL = "femnist"
 SHAKESPEARE_MODEL = "shakespeare"
@@ -53,5 +51,3 @@ class MetaSGDModelWrapper(MetaSGD):
                         retain_graph=second_order,
                         create_graph=second_order, allow_unused=True)
         self.module = meta_sgd_update(self.module, self.lrs, gradients)
-
-
