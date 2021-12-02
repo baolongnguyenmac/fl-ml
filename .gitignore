@@ -3,7 +3,11 @@
 
 # dataset
 shakespeare
+mnist
 femnist
+femnist20support_0.3
+femnist80support
+femnist20support
 sent140
 tmp
 
@@ -24,3 +28,4 @@ run_client.sh
 run_server.sh
 client_main.py 
 server
+main_experiment.py
