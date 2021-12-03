@@ -1,5 +1,4 @@
 from typing import Callable, Dict, List, Optional, Tuple
-
 from flwr.common import (
     EvaluateRes,
     FitRes,
@@ -17,6 +16,8 @@ import numpy as np
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
 import plotly.graph_objects as go
+
+import json
 
 def weighted_loss_acc_avg(results: List[Tuple[int, float, Optional[float]]]) -> float:
     """Aggregate evaluation results obtained from multiple clients."""
@@ -71,7 +72,6 @@ class MyFedAvg(FedAvg):
         )
 
         self.x_axis.append(rnd)
-
         self.training_history['loss'].append(loss_aggregated)
         self.training_history['acc'].append(acc_aggregated)
 
@@ -92,6 +92,7 @@ class MyFedAvg(FedAvg):
         # Do not aggregate if there are failures and failures are not accepted
         if not self.accept_failures and failures:
             return None, {}
+
         loss_aggregated, acc_aggregated = weighted_loss_acc_avg(
             [
                 (
@@ -112,8 +113,21 @@ class MyFedAvg(FedAvg):
         return loss_aggregated, {"accuracy": acc_aggregated}
 
     def visualize_result(self, args):
-        loss_title = f'[LOSS] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta = {args.beta}'
-        acc_title = f'[ACCURACY] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta = {args.beta}'
+        acc = round(sum(self.valid_history['acc'][-5:])/5, 4)
+        self.valid_history['final_acc'] = acc
+        loss_title = f'[LOSS] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta:{args.beta}'
+        acc_title = f'[ACC: {acc}] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta: {args.beta}'
+    # def visualize_result(self, model, strategy_client, min_fit_clients, epochs, batch_size, alpha, beta):
+    #     acc = round(sum(self.valid_history['acc'][-5:])/5, 4)
+    #     self.valid_history['final_acc'] = acc
+    #     loss_title = f'[LOSS] [{model}, {strategy_client}]: Clients/round: {min_fit_clients} - Epochs: {epochs} - Batch size: {batch_size} - Alpha: {alpha} - Beta: {beta}'
+    #     acc_title = f'[ACCURACY] [{model}, {strategy_client}]: Clients/round: {min_fit_clients} - Epochs: {epochs} - Batch size: {batch_size} - Alpha: {alpha} - Beta: {beta}'
+
+        # save result
+        with open(f"./experiments/[{args.model}, {args.strategy_client}, Train] ClientsPerRound {args.min_fit_clients}, Epochs {args.epochs}, Batch size {args.batch_size}, Alpha {args.alpha}, Beta {args.beta}.json", "w") as outfile:
+            json.dump(self.training_history, outfile)
+        with open(f"./experiments/[{args.model}, {args.strategy_client}, Val] ClientsPerRound {args.min_fit_clients}, Epochs {args.epochs}, Batch size {args.batch_size}, Alpha {args.alpha}, Beta {args.beta}.json", "w") as outfile:
+            json.dump(self.valid_history, outfile)
 
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.training_history['loss']),
