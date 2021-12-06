@@ -104,7 +104,7 @@ def split_json_and_save(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="""Splits a LEAF Shakespeare train dataset into
+        description="""Splits train dataset into
         train/validation for each client and saves the clients'
         train/val/test dataset in their respective folder."""
     )
@@ -120,7 +120,7 @@ if __name__ == "__main__":
         type=str,
         required=True,
         help="""Complete path to JSON file containing the generated
-                trainset for LEAF Shakespeare.""",
+                trainset.""",
     )
     parser.add_argument(
         "--save_test",
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         type=str,
         required=True,
         help="""Complete path to JSON file containing the generated
-            *testset* for LEAF Shakespeare.""",
+            *testset*.""",
     )
     parser.add_argument(
         "--query_frac",

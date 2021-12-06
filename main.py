@@ -9,8 +9,8 @@ from client.fedmeta_sgd_client import FedMetaSGDClient
 from client.fedavg_client import FedAvgClient
 from model.femnist_model import Femnist
 from model.sent140_model import Sent140
-from model.shakespeare_model import Shakespeare
-from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper, FED_AVG, FED_META_MAML, FED_AVG_META, FED_META_SGD, FEMNIST_MODEL, SHAKESPEARE_MODEL, SENT140_MODEL
+from model.mnist_model import Mnist
+from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper, FED_AVG, FED_META_MAML, FED_AVG_META, FED_META_SGD, FEMNIST_MODEL, MNIST_MODEL, SENT140_MODEL
 from strategy_server.fed_avg import MyFedAvg
 
 def main():
@@ -28,7 +28,7 @@ def main():
     parser.add_argument("--alpha", type=float, default=0.01, help="Meta-learning rate for FedMeta algorithms (default: 0.01)")
     parser.add_argument("--beta", type=float, default=0.001, help="Meta-learning rate for FedMeta algorithms (default: 0.001)")
     parser.add_argument("--strategy_client", type=str, required=True, help="FedAvg, FedMetaMAML, FedAvgMeta, FedMetaSGD")
-    parser.add_argument("--model", type=str, required=True, help="sent140, shakespeare, femnist")
+    parser.add_argument("--model", type=str, required=True, help="sent140, mnist, femnist")
     parser.add_argument("--mode", type=str, required=True, help="val or test")
 
     args = parser.parse_args()
@@ -46,7 +46,7 @@ def main():
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
-        client_resources={"num_cpus": 4},
+        client_resources={"num_cpus": 8},
         # client_resources={"num_cpus": 2, "num_gpus": 1},
         num_rounds=args.rounds,
         strategy=strategy
@@ -94,8 +94,8 @@ def get_model(args) -> nn.Module:
         model = Sent140()
     elif args.model == FEMNIST_MODEL:
         model = Femnist()
-    elif args.model == SHAKESPEARE_MODEL:
-        model = Shakespeare()
+    elif args.model == MNIST_MODEL:
+        model = Mnist()
 
     return model
 

@@ -46,6 +46,6 @@ def main():
         j += 1
 if __name__ == '__main__':
     main()
-# python test.py --path_in='femnist/test' --path_out='femnist/val'
-# python test.py --path_in='sent140/test' --path_out='sent140/val'
-# python test.py --path_in='shakespeare/test' --path_out='shakespeare/val'
+# python split_val_test.py --path_in='femnist/test' --path_out='femnist/val'
+# python split_val_test.py --path_in='mnist/test' --path_out='mnist/val'
+# python split_val_test.py --path_in='cifar/test' --path_out='cifar/val'

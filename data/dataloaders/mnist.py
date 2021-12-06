@@ -6,8 +6,8 @@ from flwr.dataset.utils.common import XY
 from torch.utils.data import Dataset, DataLoader
 
 
-class FemnistDataset(Dataset[XY]):  
-    """Creates a PyTorch Dataset for Leaf FEMNIST.
+class MnistDataset(Dataset[XY]):  
+    """Creates a PyTorch Dataset for Leaf MNIST.
     Args:
         Dataset (torch.utils.data.Dataset): PyTorch Dataset
     """
@@ -25,11 +25,11 @@ class FemnistDataset(Dataset[XY]):
 
     def __getitem__(self, idx: int) -> XY:
         imgs = torch.tensor(self.imgs[idx])
-        labels = torch.tensor(self.labels[idx])
+        labels = torch.tensor(self.labels[idx], dtype=torch.long)
         return imgs, labels
 
 def get_loader(path_to_pickle, batch_size=32, shuffle=True):
-    dataset = FemnistDataset(path_to_pickle)
+    dataset = MnistDataset(path_to_pickle)
 
     loader = DataLoader(
         dataset=dataset,
