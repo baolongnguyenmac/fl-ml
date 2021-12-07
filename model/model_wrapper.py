@@ -12,7 +12,7 @@ FED_META_SGD = "FedMetaSGD"
 
 FEMNIST_MODEL = "femnist"
 MNIST_MODEL = "mnist"
-SENT140_MODEL = "sent140"
+CIFAR_MODEL = "cifar"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

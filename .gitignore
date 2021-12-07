@@ -34,3 +34,4 @@ server
 main_experiment.py
 
 gen_data_mnist.py
+experiments
