@@ -3,10 +3,10 @@ import torch.nn as nn
 import random
 random.seed(42)
 
-from model.model_wrapper import ModelWrapper, FEMNIST_MODEL, MNIST_MODEL, SENT140_MODEL
+from model.model_wrapper import ModelWrapper, FEMNIST_MODEL, MNIST_MODEL, CIFAR_MODEL
 from data.dataloaders.femnist import get_loader as f_loader
 from data.dataloaders.mnist import get_loader as mn_loader
-from data.dataloaders.sent140 import get_loader as se_loader
+from data.dataloaders.cifar import get_loader as ci_loader
 
 class BaseWorker:
     def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int) -> None:
@@ -16,24 +16,21 @@ class BaseWorker:
         self.current_round = current_round
         self.loader = self._get_loader()
         self.batch_size = batch_size
-        self.loss_fn = nn.functional.cross_entropy if self.model_wrapper.model_name != 'sent140' else nn.functional.binary_cross_entropy
+        self.loss_fn = nn.functional.cross_entropy
 
     def _get_loader(self):
         if self.model_wrapper.model_name == FEMNIST_MODEL:
             return f_loader
         elif self.model_wrapper.model_name == MNIST_MODEL:
             return mn_loader
-        elif self.model_wrapper.model_name == SENT140_MODEL:
-            return se_loader
+        elif self.model_wrapper.model_name == CIFAR_MODEL:
+            return ci_loader
 
     def _training_step(self, model: nn.Module, batch):
         features, labels = batch[0].to(self.device), batch[1].to(self.device)
         outputs = model(features)
-        loss = self.loss_fn(outputs, labels)
-        if self.model_wrapper.model_name == 'sent140':
-            preds = torch.round(outputs)
-        else:
-            _, preds = torch.max(outputs, dim=1)
+        loss = self.loss_fn(outputs, labels)       
+        _, preds = torch.max(outputs, dim=1)
         acc = (preds == labels).sum()
 
         return loss, acc
