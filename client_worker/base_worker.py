@@ -3,9 +3,9 @@ import torch.nn as nn
 import random
 random.seed(42)
 
-from model.model_wrapper import ModelWrapper, FEMNIST_MODEL, SHAKESPEARE_MODEL, SENT140_MODEL
+from model.model_wrapper import ModelWrapper, FEMNIST_MODEL, MNIST_MODEL, SENT140_MODEL
 from data.dataloaders.femnist import get_loader as f_loader
-from data.dataloaders.shakespeare import get_loader as sh_loader
+from data.dataloaders.mnist import get_loader as mn_loader
 from data.dataloaders.sent140 import get_loader as se_loader
 
 class BaseWorker:
@@ -21,8 +21,8 @@ class BaseWorker:
     def _get_loader(self):
         if self.model_wrapper.model_name == FEMNIST_MODEL:
             return f_loader
-        elif self.model_wrapper.model_name == SHAKESPEARE_MODEL:
-            return sh_loader
+        elif self.model_wrapper.model_name == MNIST_MODEL:
+            return mn_loader
         elif self.model_wrapper.model_name == SENT140_MODEL:
             return se_loader
 
@@ -61,6 +61,7 @@ class BaseTester(BaseWorker):
 
     def get_loader(self, support: bool):
         s = 'support' if support else 'query'
-        id_set = random.choice(list(range(self.num_eval_clients)))
-
+        # id_set = random.choice(list(range(self.num_eval_clients)))
+        id_set = self.cid
+        
         return self.loader(path_to_pickle=f'./data/{self.model_wrapper.model_name}/{self.mode}/{id_set}/{s}.pickle', batch_size=self.batch_size, shuffle=True)

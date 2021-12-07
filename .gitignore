@@ -3,6 +3,7 @@
 .ipynb_checkpoints
 
 # dataset
+sent140
 shakespeare
 emnist
 mnist
@@ -10,7 +11,7 @@ femnist
 femnist20support_0.3
 femnist80support
 femnist20support
-sent140
+cifar
 tmp
 
 # run_split script

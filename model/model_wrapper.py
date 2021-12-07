@@ -11,7 +11,7 @@ FED_AVG_META = "FedAvgMeta"
 FED_META_SGD = "FedMetaSGD"
 
 FEMNIST_MODEL = "femnist"
-SHAKESPEARE_MODEL = "shakespeare"
+MNIST_MODEL = "mnist"
 SENT140_MODEL = "sent140"
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
