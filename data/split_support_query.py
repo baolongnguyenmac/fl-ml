@@ -164,3 +164,12 @@ if __name__ == "__main__":
         path_to_json=original_test_dataset,
         save_root=Path(args.save_test),
     )
+
+
+# python split_support_query.py --save_train mnist/train \
+#                               --leaf_train_json mnist/train_json \
+#                               --save_test mnist/test \
+#                               --leaf_test_json mnist/test_json \
+#                               --query_frac 0.8
+
+# python split_val_test.py --path_in='mnist/test' --path_out='mnist/val'
