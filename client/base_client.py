@@ -13,7 +13,7 @@ class BaseClient(fl.client.Client):
         super().__init__()
         self.model_wrapper = model_wrapper
         self.cid = cid
-        # self.properties: Dict[str, Scalar] = {"tensor_type": "numpy.ndarray"}
+        self.properties: Dict[str, Scalar] = {"tensor_type": "numpy.ndarray"}
         # mode bao gồm 'valid' và 'test', sử dụng mode để đổi tập valid/test trong lúc evaluate của client
         self.mode = mode 
         self.num_eval_clients = num_eval_clients
