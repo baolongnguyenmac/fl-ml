@@ -1,8 +1,10 @@
 # End of https://www.toptal.com/developers/gitignore/api/c++
 .vscode
+.ipynb_checkpoints
 
 # dataset
 shakespeare
+emnist
 mnist
 femnist
 femnist20support_0.3
@@ -29,3 +31,5 @@ run_server.sh
 client_main.py 
 server
 main_experiment.py
+
+gen_data_mnist.py
