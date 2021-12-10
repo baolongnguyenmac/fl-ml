@@ -1,1 +1,0 @@
-- Tại đây chứa các config của từng thí nghiệm
