@@ -3,16 +3,14 @@
 .ipynb_checkpoints
 
 # dataset
-sent140
-shakespeare
-emnist
-mnist
-femnist
-femnist20support_0.3
-femnist80support
-femnist20support
+test
+test_json
+train
+train_json
 cifar
 tmp
+*.csv
+*.zip
 
 # run_split script
 data_gen.sh
@@ -33,5 +31,4 @@ client_main.py
 server
 main_experiment.py
 
-gen_data_mnist.py
 experiments
