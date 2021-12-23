@@ -29,7 +29,6 @@ class FedAvgClient(BaseClient):
 
         # assgin personalized layer to local model 
         if self.per_layer is not None:
-            print('running fedPer 1 ', self.per_layer)
             try:
                 with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as input:
                     personalized_weight = pickle.load(input)
@@ -55,7 +54,6 @@ class FedAvgClient(BaseClient):
 
         # save personalized layer to file
         if self.per_layer is not None:
-            print('running fedPer 2', self.per_layer)
             personalized_weight = new_weights[self.per_layer:]
             with open(f'./personalized_weight/{self.cid}.pickle', 'wb') as fp:
                 pickle.dump(personalized_weight, fp)

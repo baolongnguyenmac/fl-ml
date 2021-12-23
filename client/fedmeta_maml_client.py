@@ -27,7 +27,6 @@ class FedMetaMAMLClient(BaseClient):
 
         # assgin personalized layer to local model 
         if self.per_layer is not None:
-            print('running fedPer 1', self.per_layer)
             try:
                 with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as input:
                     personalized_weight = pickle.load(input)
@@ -56,7 +55,6 @@ class FedMetaMAMLClient(BaseClient):
 
         # save personalized layer to file
         if self.per_layer is not None:
-            print('running fedPer 2', self.per_layer)
             personalized_weight = new_weights[self.per_layer:]
             with open(f'./personalized_weight/{self.cid}.pickle', 'wb') as fp:
                 pickle.dump(personalized_weight, fp)
@@ -81,7 +79,6 @@ class FedMetaMAMLClient(BaseClient):
         # Set model parameters
         self.model_wrapper.set_weights(weights)
         if self.per_layer is not None:
-            print('running fedPer 3', self.per_layer)
             for param in list(self.model_wrapper.model.parameters())[:self.per_layer]:
                 param.requires_grad = False
 
