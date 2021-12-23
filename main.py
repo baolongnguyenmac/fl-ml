@@ -90,7 +90,7 @@ def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     elif strategy == FED_AVG_META:
         client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True, args.per_layer)
     elif strategy == FED_META_MAML:
-        client = FedMetaMAMLClient(ModelWrapper(MAML(model, args.alpha, allow_nograd=True), args.model), cid, args.mode, args.num_eval_clients, args.per_layer)
+        client = FedMetaMAMLClient(ModelWrapper(MAML(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients, args.per_layer)
     elif strategy == FED_META_SGD:
         client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients, args.per_layer)
 

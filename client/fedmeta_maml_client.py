@@ -78,9 +78,6 @@ class FedMetaMAMLClient(BaseClient):
 
         # Set model parameters
         self.model_wrapper.set_weights(weights)
-        if self.per_layer is not None:
-            for param in list(self.model_wrapper.model.parameters())[:self.per_layer]:
-                param.requires_grad = False
 
         # test the model
         tester = MAMLTester(
