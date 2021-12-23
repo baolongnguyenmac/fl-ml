@@ -1,12 +1,18 @@
 import torch
 from flwr.common import FitIns, FitRes, EvaluateIns, EvaluateRes, Weights, weights_to_parameters, parameters_to_weights
+import pickle
 
 from .base_client import BaseClient
 from client_worker.maml_worker import MAMLTester, MAMLTrainer
+from model.model_wrapper import ModelWrapper
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class FedMetaMAMLClient(BaseClient):
+    def __init__(self, model_wrapper: ModelWrapper, cid: str, mode: str, num_eval_clients: int, per_layer=None) -> None:
+        super().__init__(model_wrapper, cid, mode, num_eval_clients)
+        self.per_layer = (-1) * per_layer * 2 if per_layer is not None else None
+
     def fit(self, ins: FitIns) -> FitRes:
         # Get training config
         config = ins.config
@@ -18,6 +24,17 @@ class FedMetaMAMLClient(BaseClient):
 
         # Set model parameters
         weights: Weights = parameters_to_weights(ins.parameters)
+
+        # assgin personalized layer to local model 
+        if self.per_layer is not None:
+            print('running fedPer 1', self.per_layer)
+            try:
+                with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as input:
+                    personalized_weight = pickle.load(input)
+                weights[self.per_layer:] = personalized_weight
+            except:
+                pass
+
         self.model_wrapper.set_weights(weights)
 
         # train the model
@@ -36,6 +53,15 @@ class FedMetaMAMLClient(BaseClient):
         # Return the refined weights and the number of examples used for training
         new_weights: Weights = self.model_wrapper.get_weights()
         new_params = weights_to_parameters(new_weights)
+
+        # save personalized layer to file
+        if self.per_layer is not None:
+            print('running fedPer 2', self.per_layer)
+            personalized_weight = new_weights[self.per_layer:]
+            with open(f'./personalized_weight/{self.cid}.pickle', 'wb') as fp:
+                pickle.dump(personalized_weight, fp)
+            fp.close()
+
         return FitRes(
             parameters=new_params,
             num_examples=num_train_sample,
@@ -54,6 +80,10 @@ class FedMetaMAMLClient(BaseClient):
 
         # Set model parameters
         self.model_wrapper.set_weights(weights)
+        if self.per_layer is not None:
+            print('running fedPer 3', self.per_layer)
+            for param in list(self.model_wrapper.model.parameters())[:self.per_layer]:
+                param.requires_grad = False
 
         # test the model
         tester = MAMLTester(

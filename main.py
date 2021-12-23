@@ -13,7 +13,14 @@ from model.mnist_model import Mnist
 from model.model_wrapper import MetaSGDModelWrapper, ModelWrapper, FED_AVG, FED_META_MAML, FED_AVG_META, FED_META_SGD, FEMNIST_MODEL, MNIST_MODEL, CIFAR_MODEL
 from strategy_server.fed_avg import MyFedAvg
 
+import os
+
 def main():
+    # delete all personalized weight
+    filenames = os.listdir('./personalized_weight')
+    for filename in filenames:
+        os.remove(f'./personalized_weight/{filename}')
+
     parser = argparse.ArgumentParser(description="Flower")
     parser.add_argument("--num_clients", type=int, required=True, help="Num clients for training")
     parser.add_argument("--num_eval_clients", type=int, required=True, help="Num clients for eval")
@@ -30,6 +37,7 @@ def main():
     parser.add_argument("--strategy_client", type=str, required=True, help="FedAvg, FedMetaMAML, FedAvgMeta, FedMetaSGD")
     parser.add_argument("--model", type=str, required=True, help="cifar, mnist, femnist")
     parser.add_argument("--mode", type=str, required=True, help="val or test")
+    parser.add_argument("--per_layer", type=int, required=False, help="number of personalized layers (count from the buttom)")
 
     args = parser.parse_args()
 
@@ -46,7 +54,7 @@ def main():
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
-        client_resources={"num_cpus": 8},
+        client_resources={"num_cpus": 4},
         # client_resources={"num_cpus": 2, "num_gpus": 1},
         num_rounds=args.rounds,
         strategy=strategy
@@ -78,13 +86,13 @@ def client_fn_config(args):
 def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     strategy = args.strategy_client
     if strategy == FED_AVG:
-        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, False)
+        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, False, args.per_layer)
     elif strategy == FED_AVG_META:
-        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True)
+        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True, args.per_layer)
     elif strategy == FED_META_MAML:
-        client = FedMetaMAMLClient(ModelWrapper(MAML(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
+        client = FedMetaMAMLClient(ModelWrapper(MAML(model, args.alpha, allow_nograd=True), args.model), cid, args.mode, args.num_eval_clients, args.per_layer)
     elif strategy == FED_META_SGD:
-        client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients)
+        client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients, args.per_layer)
 
     return client
 

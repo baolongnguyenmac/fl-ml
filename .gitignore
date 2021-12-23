@@ -30,3 +30,6 @@ run_server.sh
 client_main.py 
 server
 main_experiment.py
+
+# temp weight
+personalized_weight

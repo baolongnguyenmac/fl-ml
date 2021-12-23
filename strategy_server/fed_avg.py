@@ -115,13 +115,12 @@ class MyFedAvg(FedAvg):
     def visualize_result(self, args):
         acc = round(sum(self.valid_history['acc'][-5:])/5, 4)
         self.valid_history['final_acc'] = acc
-        loss_title = f'[LOSS] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta:{args.beta}'
-        acc_title = f'[ACC: {acc}] [{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha} - Beta: {args.beta}'
-    # def visualize_result(self, model, strategy_client, min_fit_clients, epochs, batch_size, alpha, beta):
-    #     acc = round(sum(self.valid_history['acc'][-5:])/5, 4)
-    #     self.valid_history['final_acc'] = acc
-    #     loss_title = f'[LOSS] [{model}, {strategy_client}]: Clients/round: {min_fit_clients} - Epochs: {epochs} - Batch size: {batch_size} - Alpha: {alpha} - Beta: {beta}'
-    #     acc_title = f'[ACCURACY] [{model}, {strategy_client}]: Clients/round: {min_fit_clients} - Epochs: {epochs} - Batch size: {batch_size} - Alpha: {alpha} - Beta: {beta}'
+
+        base_title = f'[{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha}'
+        per_ = f' - PerLayer: {args.per_layer}' if args.per_layer is not None else ''
+        meta_ = f' - Beta: {args.beta}' if args.strategy_client != 'FedAvg' and args.strategy_client != 'FedAvgMeta' else ''
+        loss_title = '[LOSS] ' + base_title + meta_ + per_
+        acc_title = f'[ACC: {acc}] ' + base_title + meta_ + per_
 
         # save result
         with open(f"./experiments/[{args.model}, {args.strategy_client}, Train] ClientsPerRound {args.min_fit_clients}, Epochs {args.epochs}, Batch size {args.batch_size}, Alpha {args.alpha}, Beta {args.beta}.json", "w") as outfile:
