@@ -25,10 +25,10 @@ __pycache__
 nhap
 
 # debug for client and server
-run_client.sh
-run_server.sh
-client_main.py 
-server
+# run_client.sh
+# run_server.sh
+# client_main.py 
+# server
 main_experiment.py
 
 # temp weight
