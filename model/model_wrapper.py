@@ -14,12 +14,13 @@ FEMNIST_MODEL = "femnist"
 MNIST_MODEL = "mnist"
 CIFAR_MODEL = "cifar"
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class ModelWrapper:
     """generate a wrapper that wraps a nn.Module
     """
     def __init__(self, model: nn.Module, model_name: str):
+        model = nn.DataParallel(model)
         self.model = model.to(DEVICE)
         self.model_name = model_name
 

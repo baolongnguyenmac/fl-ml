@@ -1,12 +1,9 @@
-import torch
 import flwr as fl
 from flwr.common.typing import Scalar
 from flwr.common import ParametersRes, Weights, weights_to_parameters
 from typing import Dict
 
 from model.model_wrapper import ModelWrapper
-
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class BaseClient(fl.client.Client):
     def __init__(self, model_wrapper: ModelWrapper, cid: str, mode: str, num_eval_clients: int) -> None:

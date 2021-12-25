@@ -6,7 +6,7 @@ from client_worker.conventional_worker import ConventionalTester, ConventionalTr
 from .base_client import BaseClient
 from model.model_wrapper import ModelWrapper
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class FedAvgClient(BaseClient):
     def __init__(self, model_wrapper: ModelWrapper, cid: str, mode: str, num_eval_clients: int, meta: bool, per_layer=None) -> None:

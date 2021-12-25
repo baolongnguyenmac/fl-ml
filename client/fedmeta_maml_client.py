@@ -6,7 +6,7 @@ from .base_client import BaseClient
 from client_worker.maml_worker import MAMLTester, MAMLTrainer
 from model.model_wrapper import ModelWrapper
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class FedMetaMAMLClient(BaseClient):
     def __init__(self, model_wrapper: ModelWrapper, cid: str, mode: str, num_eval_clients: int, per_layer=None) -> None:
