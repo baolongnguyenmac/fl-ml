@@ -116,16 +116,16 @@ class MyFedAvg(FedAvg):
         acc = round(sum(self.valid_history['acc'][-5:])/5, 4)
         self.valid_history['final_acc'] = acc
 
-        base_title = f'[{args.model}, {args.strategy_client}]: Clients/round: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha}'
+        base_title = f'[{args.model}, {args.strategy_client}]: ClientsPerRound: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha}'
         per_ = f' - PerLayer: {args.per_layer}' if args.per_layer is not None else ''
         meta_ = f' - Beta: {args.beta}' if args.strategy_client != 'FedAvg' and args.strategy_client != 'FedAvgMeta' else ''
         loss_title = '[LOSS] ' + base_title + meta_ + per_
         acc_title = f'[ACC: {acc}] ' + base_title + meta_ + per_
 
         # save result
-        with open(f"./experiments/[{args.model}, {args.strategy_client}, Train] ClientsPerRound {args.min_fit_clients}, Epochs {args.epochs}, Batch size {args.batch_size}, Alpha {args.alpha}, Beta {args.beta}.json", "w") as outfile:
+        with open(f"./experiments/[Train]{base_title + meta_ + per_}.json", "w") as outfile:
             json.dump(self.training_history, outfile)
-        with open(f"./experiments/[{args.model}, {args.strategy_client}, Val] ClientsPerRound {args.min_fit_clients}, Epochs {args.epochs}, Batch size {args.batch_size}, Alpha {args.alpha}, Beta {args.beta}.json", "w") as outfile:
+        with open(f"./experiments/[Test]{base_title + meta_ + per_}.json", "w") as outfile:
             json.dump(self.valid_history, outfile)
 
         fig = go.Figure()
@@ -138,6 +138,7 @@ class MyFedAvg(FedAvg):
         fig.update_layout(title=loss_title,
                         xaxis_title='Round communication',
                         yaxis_title='Loss')
+        fig.write_html(f'./experiments/img/{loss_title}.html')
 
         fig1 = go.Figure()
         fig1.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.training_history['acc']),
@@ -149,6 +150,7 @@ class MyFedAvg(FedAvg):
         fig1.update_layout(title=acc_title,
                         xaxis_title='Round communication',
                         yaxis_title='Accuracy')
+        fig1.write_html(f'./experiments/img/{acc_title}.html')
 
         fig.show()
         fig1.show()

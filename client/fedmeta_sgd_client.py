@@ -29,9 +29,18 @@ class FedMetaSGDClient(BaseClient):
         # assgin personalized layer to local model 
         if self.per_layer is not None:
             try:
-                with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as input:
-                    personalized_weight = pickle.load(input)
-                weights[self.per_layer:] = personalized_weight
+                # load weight
+                num_weight = len(self.model_wrapper.model.state_dict()) # ex: 3layer -> num_weight = 12 (3 weight, 3 bias, 6 alpha)
+                with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as file_weight:
+                    personalized_weight = pickle.load(file_weight)
+                weights[-num_weight//2 + self.per_layer:-num_weight//2] = personalized_weight
+                file_weight.close()
+
+                # load alpha
+                with open(f'./personalized_weight/{self.cid}_alpha.pickle', 'rb') as file_alpha:
+                    personalized_alpha = pickle.load(file_alpha)
+                weights[self.per_layer:] = personalized_alpha
+                file_alpha.close()
             except:
                 pass
 
@@ -53,10 +62,18 @@ class FedMetaSGDClient(BaseClient):
 
         # save personalized layer to file
         if self.per_layer is not None:
-            personalized_weight = new_weights[self.per_layer:]
-            with open(f'./personalized_weight/{self.cid}.pickle', 'wb') as fp:
-                pickle.dump(personalized_weight, fp)
-            fp.close()
+            # save weight
+            num_weight = len(self.model_wrapper.model.state_dict()) # ex: 3layer -> num_weight = 12 (3 weight, 3 bias, 6 alpha)
+            personalized_weight = new_weights[-num_weight//2 + self.per_layer:-num_weight//2]
+            with open(f'./personalized_weight/{self.cid}.pickle', 'wb') as file_weight:
+                pickle.dump(personalized_weight, file_weight)
+            file_weight.close()
+
+            # save alpha
+            personalized_alpha = new_weights[self.per_layer:]
+            with open(f'./personalized_weight/{self.cid}_alpha.pickle', 'wb') as file_alpha:
+                pickle.dump(personalized_alpha, file_alpha)
+            file_alpha.close()
 
         return FitRes(
             parameters=new_params,
