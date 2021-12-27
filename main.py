@@ -54,8 +54,8 @@ def main():
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
-        client_resources={"num_cpus": 4},
-        # client_resources={"num_cpus": 2, "num_gpus": 1},
+        # client_resources={"num_cpus": 1},
+        client_resources={"num_cpus": 1, "num_gpus": 0.1},
         num_rounds=args.rounds,
         strategy=strategy
     )

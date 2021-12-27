@@ -18,7 +18,7 @@ class MetaSGDTrainer(BaseTrainer):
         query_loader, num_query_sample = self.get_loader(support=False)
 
         print(f'[Client {self.cid}]: Fit {self.epochs} epoch(s) on {len(support_loader)} batch(es) using {self.device}')
-        learner: MetaSGDModelWrapper = self.model_wrapper.model.clone()
+        learner: MetaSGDModelWrapper = self.model_wrapper.model.module.clone()
         opt = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=self.beta)
 
         for epoch in range(self.epochs):
@@ -52,7 +52,7 @@ class MetaSGDTester(BaseTester):
 
         support_loader, _ = self.get_loader(support=True)
         query_loader, num_query_sample = self.get_loader(support=False)
-        learner: MetaSGDModelWrapper = self.model_wrapper.model.clone()
+        learner: MetaSGDModelWrapper = self.model_wrapper.model.module.clone()
 
         print(f'[Client {self.cid}]: Evaluate {self.epochs} epoch(s) on {len(support_loader)} batch(es) using {self.device}')
         for e in range(self.epochs):

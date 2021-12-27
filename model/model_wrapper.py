@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import flwr as fl
 from flwr.common import Weights
 from collections import OrderedDict
 from learn2learn.algorithms.meta_sgd import MetaSGD, meta_sgd_update, clone_module, clone_parameters
