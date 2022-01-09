@@ -113,7 +113,7 @@ class MyFedAvg(FedAvg):
         return loss_aggregated, {"accuracy": acc_aggregated}
 
     def visualize_result(self, args):
-        acc = round(sum(self.valid_history['acc'][-5:])/5, 4)
+        acc = round(sum(self.valid_history['acc'][-20:])/20, 4)
         self.valid_history['final_acc'] = acc
 
         base_title = f'[{args.model}, {args.strategy_client}]: ClientsPerRound: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha}'
