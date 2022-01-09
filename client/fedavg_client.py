@@ -24,9 +24,6 @@ class FedAvgClient(BaseClient):
         batch_size = int(config['batch_size'])
         lr = float(config['alpha'])
 
-        # set weight of server to client
-        self.model_wrapper.set_weights(weights)
-
         # assgin personalized layer to local model 
         if self.per_layer is not None:
             try:
@@ -35,6 +32,9 @@ class FedAvgClient(BaseClient):
                 weights[self.per_layer:] = personalized_weight
             except:
                 pass
+
+        # set weight of server to client
+        self.model_wrapper.set_weights(weights)
 
         # train model
         trainer = ConventionalTrainer(
@@ -75,6 +75,15 @@ class FedAvgClient(BaseClient):
             batch_size = int(config['batch_size'])
             epochs = int(config['epochs'])
             lr = float(config['alpha'])
+            
+            # assgin personalized layer to local model 
+            if self.per_layer is not None:
+                try:
+                    with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as input:
+                        personalized_weight = pickle.load(input)
+                    weights[self.per_layer:] = personalized_weight
+                except:
+                    pass
 
             # set weight of server to client
             self.model_wrapper.set_weights(weights)
@@ -105,6 +114,15 @@ class FedAvgClient(BaseClient):
             # get training config
             current_round = int(config['current_round'])
             batch_size = int(config['batch_size'])
+
+            # assgin personalized layer to local model 
+            if self.per_layer is not None:
+                try:
+                    with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as input:
+                        personalized_weight = pickle.load(input)
+                    weights[self.per_layer:] = personalized_weight
+                except:
+                    pass
 
             # set weight of server to client
             self.model_wrapper.set_weights(weights)

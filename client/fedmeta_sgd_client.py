@@ -21,10 +21,7 @@ class FedMetaSGDClient(BaseClient):
         current_round = int(config["current_round"])
         epochs = int(config["epochs"])
         batch_size = int(config["batch_size"])
-        beta = float(config["beta"])
-
-        # set weight of server to client
-        self.model_wrapper.set_weights(weights)
+        beta = float(config["beta"])      
 
         # assgin personalized layer to local model 
         if self.per_layer is not None:
@@ -43,6 +40,9 @@ class FedMetaSGDClient(BaseClient):
                 file_alpha.close()
             except:
                 pass
+        
+        # set weight of server to client
+        self.model_wrapper.set_weights(weights)
 
         # train the model
         trainer = MetaSGDTrainer(
@@ -87,6 +87,24 @@ class FedMetaSGDClient(BaseClient):
         current_round = int(config["current_round"])
         batch_size = int(config["batch_size"])
         epochs = int(config['epochs'])
+
+        # assgin personalized layer to local model 
+        if self.per_layer is not None:
+            try:
+                # load weight
+                num_weight = len(self.model_wrapper.model.state_dict()) # ex: 3layer -> num_weight = 12 (3 weight, 3 bias, 6 alpha)
+                with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as file_weight:
+                    personalized_weight = pickle.load(file_weight)
+                weights[-num_weight//2 + self.per_layer:-num_weight//2] = personalized_weight
+                file_weight.close()
+
+                # load alpha
+                with open(f'./personalized_weight/{self.cid}_alpha.pickle', 'rb') as file_alpha:
+                    personalized_alpha = pickle.load(file_alpha)
+                weights[self.per_layer:] = personalized_alpha
+                file_alpha.close()
+            except:
+                pass
 
         self.model_wrapper.set_weights(weights)
 

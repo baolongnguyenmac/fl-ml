@@ -76,6 +76,15 @@ class FedMetaMAMLClient(BaseClient):
         epochs = int(config["epochs"])
         batch_size = int(config["batch_size"])
 
+        # assgin personalized layer to local model 
+        if self.per_layer is not None:
+            try:
+                with open(f'./personalized_weight/{self.cid}.pickle', 'rb') as input:
+                    personalized_weight = pickle.load(input)
+                weights[self.per_layer:] = personalized_weight
+            except:
+                pass
+            
         # Set model parameters
         self.model_wrapper.set_weights(weights)
 
