@@ -18,8 +18,7 @@ class ConventionalTrainer(BaseTrainer):
         for batch in query_loader:
             train_loader.append(batch)
         num_train_sample = num_support_sample + num_query_sample
-        opt = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=self.lr, weight_decay=0.01)
-        # opt = torch.optim.SGD(self.model_wrapper.model.parameters(), lr=self.lr)
+        opt = torch.optim.Adam(self.model_wrapper.model.parameters(), lr=self.lr)
 
         print(f'[Client {self.cid}]: Fit {self.epochs} epoch(s) on {len(train_loader)} batch(es) using {self.device}')
         for e in range(self.epochs):
