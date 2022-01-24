@@ -3,11 +3,8 @@
 .ipynb_checkpoints
 
 # dataset
-test
-test_json
-train
-train_json
-cifar
+test*
+train*
 tmp
 *.csv
 *.zip
