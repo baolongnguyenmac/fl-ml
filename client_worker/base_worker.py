@@ -3,62 +3,50 @@ import torch.nn as nn
 import random
 random.seed(42)
 
-from model.model_wrapper import ModelWrapper, FEMNIST_MODEL, MNIST_MODEL, CIFAR_MODEL
+from model.model_wrapper import MNIST_MODEL, CIFAR_MODEL
 from data.dataloaders.femnist import get_loader as f_loader
 from data.dataloaders.mnist import get_loader as mn_loader
 from data.dataloaders.cifar import get_loader as ci_loader
 
 class BaseWorker:
-    def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int) -> None:
-        self.model_wrapper = model_wrapper
+    def __init__(
+        self,
+        device: torch.device,
+        cid: str,
+        new_client: bool
+    ) -> None:
         self.device = device
         self.cid = cid
-        self.current_round = current_round
-        self.loader = self._get_loader()
-        self.batch_size = batch_size
         self.loss_fn = nn.functional.cross_entropy
+        self.new_client = new_client
 
-    def _get_loader(self):
-        if self.model_wrapper.model_name == FEMNIST_MODEL:
-            return f_loader
-        elif self.model_wrapper.model_name == MNIST_MODEL:
-            return mn_loader
-        elif self.model_wrapper.model_name == CIFAR_MODEL:
-            return ci_loader
+    def get_loader(self, support:bool, train:bool, model_name:str, batch_size:int):
+        loader = ci_loader if model_name==CIFAR_MODEL else mn_loader if model_name==MNIST_MODEL else f_loader
+        t = 'train' if train else 'new_test' if self.new_client else 'local_test'
+        s = 'support' if support else 'query'
 
-    def _training_step(self, model: nn.Module, batch):
+        return loader(path_to_pickle=f'./data/{model_name}/{t}/{self.cid}/{s}.pickle', batch_size=batch_size, shuffle=True)
+
+    def _training_step(self, model: nn.Module, batch, return_prob=False):
         features, labels = batch[0].to(self.device), batch[1].to(self.device)
         outputs = model(features)
-        loss = self.loss_fn(outputs, labels)       
+        loss = self.loss_fn(outputs, labels)
         _, preds = torch.max(outputs, dim=1)
         acc = (preds == labels).sum()
 
+        if return_prob:
+            return loss, outputs, labels
         return loss, acc
 
-    def _valid_step(self, model: nn.Module, batch):
+    def _valid_step(self, model: nn.Module, batch, return_prob=False):
         with torch.no_grad():
-            return self._training_step(model, batch)
+            return self._training_step(model, batch, return_prob)
 
-class BaseTrainer(BaseWorker):
-    def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int, epochs: int) -> None:
-        super().__init__(model_wrapper, device, cid, current_round, batch_size)
-        self.epochs = epochs
+# from model.mnist_model import Mnist
 
-    def get_loader(self, support: bool):
-        s = 'support' if support else 'query'
-        id_set = self.cid
+# worker = BaseWorker(torch.device('cpu'), 1)
+# loader, num_sample = worker.get_loader(True, True, 'mnist', 32)
 
-        return self.loader(path_to_pickle=f'./data/{self.model_wrapper.model_name}/train/{id_set}/{s}.pickle', batch_size=self.batch_size, shuffle=True)
-
-class BaseTester(BaseWorker):
-    def __init__(self, model_wrapper: ModelWrapper, device: torch.device, cid: str, current_round: int, batch_size: int, num_eval_clients: int, mode: str) -> None:
-        super().__init__(model_wrapper, device, cid, current_round, batch_size)
-        self.num_eval_clients = num_eval_clients
-        self.mode = mode # mode = {'val', 'test'}
-
-    def get_loader(self, support: bool):
-        s = 'support' if support else 'query'
-        # id_set = random.choice(list(range(self.num_eval_clients)))
-        id_set = self.cid
-        
-        return self.loader(path_to_pickle=f'./data/{self.model_wrapper.model_name}/{self.mode}/{id_set}/{s}.pickle', batch_size=self.batch_size, shuffle=True)
+# for batch in loader:
+#     worker._training_step(Mnist(), batch)
+#     break
