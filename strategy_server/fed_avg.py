@@ -40,7 +40,8 @@ class MyFedAvg(FedAvg):
         self.valid_history['loss'] = []
         self.valid_history['acc'] = []
 
-        self.x_axis = []
+        self.x_axis_train = []
+        self.x_axis_val = []
 
     def aggregate_fit(
         self,
@@ -71,7 +72,7 @@ class MyFedAvg(FedAvg):
             ]
         )
 
-        self.x_axis.append(rnd)
+        self.x_axis_train.append(rnd)
         self.training_history['loss'].append(loss_aggregated)
         self.training_history['acc'].append(acc_aggregated)
 
@@ -93,46 +94,54 @@ class MyFedAvg(FedAvg):
         if not self.accept_failures and failures:
             return None, {}
 
-        loss_aggregated, acc_aggregated = weighted_loss_acc_avg(
-            [
-                (
-                    evaluate_res.num_examples,
-                    evaluate_res.loss,
-                    evaluate_res.metrics['acc'],
-                )
-                for _, evaluate_res in results
-            ]
-        )
+        # if evaluate_res is not None:
+        try:
+            loss_aggregated, acc_aggregated = weighted_loss_acc_avg(
+                [
+                    (
+                        evaluate_res.num_examples,
+                        evaluate_res.loss,
+                        evaluate_res.metrics['acc'],
+                    )
+                    for _, evaluate_res in results
+                ]
+            )
 
-        self.valid_history['loss'].append(loss_aggregated)
-        self.valid_history['acc'].append(acc_aggregated)
-
-        print(f'[Round {rnd}]: Valid loss: {loss_aggregated}')
-        print(f'[Round {rnd}]: Valid accuracy: {acc_aggregated}')
+            self.x_axis_val.append(rnd)
+            self.valid_history['loss'].append(loss_aggregated)
+            self.valid_history['acc'].append(acc_aggregated)
+            print(f'[Round {rnd}]: Valid loss: {loss_aggregated}')
+            print(f'[Round {rnd}]: Valid accuracy: {acc_aggregated}')
+        except:
+            loss_aggregated, acc_aggregated = 0, 0
 
         return loss_aggregated, {"accuracy": acc_aggregated}
 
     def visualize_result(self, args):
-        acc = round(sum(self.valid_history['acc'][-20:])/20, 4)
+        if args.new_client == 1:
+            acc = round(self.valid_history['acc'][-1], 4)
+        else:
+            acc = round(sum(self.valid_history['acc'][-20:])/len(self.valid_history['acc'][-20:]), 4)
         self.valid_history['final_acc'] = acc
 
         base_title = f'[{args.model}, {args.strategy_client}]: ClientsPerRound: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha}'
         per_ = f' - PerLayer: {args.per_layer}' if args.per_layer is not None else ''
         meta_ = f' - Beta: {args.beta}' if args.strategy_client != 'FedAvg' and args.strategy_client != 'FedAvgMeta' else ''
-        loss_title = '[LOSS] ' + base_title + meta_ + per_
-        acc_title = f'[ACC: {acc}] ' + base_title + meta_ + per_
+        new_client_ = f' - NewClient' if args.new_client == 1 else ''
+        loss_title = '[LOSS] ' + base_title + meta_ + per_ + new_client_
+        acc_title = f'[ACC: {acc}] ' + base_title + meta_ + per_ + new_client_
 
         # save result
-        with open(f"./experiments/[Train]{base_title + meta_ + per_}.json", "w") as outfile:
+        with open(f"./experiments/[Train]{base_title + meta_ + per_ + new_client_}.json", "w") as outfile:
             json.dump(self.training_history, outfile)
-        with open(f"./experiments/[Test]{base_title + meta_ + per_}.json", "w") as outfile:
+        with open(f"./experiments/[Test]{base_title + meta_ + per_ + new_client_}.json", "w") as outfile:
             json.dump(self.valid_history, outfile)
 
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.training_history['loss']),
+        fig.add_trace(go.Scatter(x=np.array(self.x_axis_train), y=np.array(self.training_history['loss']),
                             mode='lines+markers',
                             name='training loss'))
-        fig.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.valid_history['loss']),
+        fig.add_trace(go.Scatter(x=np.array(self.x_axis_val), y=np.array(self.valid_history['loss']),
                             mode='lines+markers',
                             name='valid loss'))
         fig.update_layout(title=loss_title,
@@ -141,10 +150,10 @@ class MyFedAvg(FedAvg):
         fig.write_html(f'./experiments/img/{loss_title}.html')
 
         fig1 = go.Figure()
-        fig1.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.training_history['acc']),
+        fig1.add_trace(go.Scatter(x=np.array(self.x_axis_train), y=np.array(self.training_history['acc']),
                             mode='lines+markers',
                             name='training acc'))
-        fig1.add_trace(go.Scatter(x=np.array(self.x_axis), y=np.array(self.valid_history['acc']),
+        fig1.add_trace(go.Scatter(x=np.array(self.x_axis_val), y=np.array(self.valid_history['acc']),
                             mode='lines+markers',
                             name='valid acc'))
         fig1.update_layout(title=acc_title,
