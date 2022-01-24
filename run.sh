@@ -1,30 +1,19 @@
 #!/bin/bash
 
-# - strategy:
-#     - FedAvg
-#     - FedMetaMAML
-#     - FedAvgMeta
-#     - FedMetaSGD
-
-# - model:
-#     - femnist
-#     - mnist
-#     - cifar
+# - strategy: FedAvg, FedMetaMAML, FedAvgMeta, FedMetaSGD
+# - model: femnist, mnist, cifar
 
 python main.py \
     --num_clients=50 \
-    --num_eval_clients=50 \
-    --rounds=100 \
+    --rounds=1 \
     --epochs=1 \
     --batch_size=32 \
-    --fraction_fit=0 \
-    --fraction_eval=0 \
     --min_fit_clients=5 \
     --min_eval_clients=50 \
     --min_available_clients=50 \
-    --alpha=0.001 \
-    --beta=0.001 \
-    --strategy_client='FedMetaSGD' \
+    --alpha=0.00001 \
+    --beta=0.0005 \
+    --strategy_client='FedAvgMeta' \
     --model='mnist' \
-    --mode='test' \
-    --per_layer=1
+    --per_layer=1 \
+    --new_client=1
