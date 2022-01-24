@@ -16,34 +16,36 @@ from strategy_server.fed_avg import MyFedAvg
 import os
 
 def main():
-    # delete all personalized weight
-    filenames = os.listdir('./personalized_weight')
-    for filename in filenames:
-        os.remove(f'./personalized_weight/{filename}')
+    if not os.path.exists('./personalized_weight'):
+        os.mkdir('./personalized_weight')
+    else:
+        # delete all personalized weight
+        filenames = os.listdir('./personalized_weight')
+        for filename in filenames:
+            os.remove(f'./personalized_weight/{filename}')
 
     parser = argparse.ArgumentParser(description="Flower")
     parser.add_argument("--num_clients", type=int, required=True, help="Num clients for training")
-    parser.add_argument("--num_eval_clients", type=int, required=True, help="Num clients for eval")
     parser.add_argument("--rounds", type=int, default=1, help="Number of rounds of federated learning (default: 1)")
     parser.add_argument("--epochs", type=int, default=1, help="Epochs of inner task (default: 1)")
     parser.add_argument("--batch_size", type=int, default=32, help="Batch size of inner task (default: 32)")
-    parser.add_argument("--fraction_fit", type=float, default=0.3, help="Fraction of available clients used for fit (default: 0.3)")
-    parser.add_argument("--fraction_eval", type=float, default=0.3, help="Fraction of available clients used for evaluate (default: 0.3)")
+    # parser.add_argument("--fraction_fit", type=float, default=0.3, help="Fraction of available clients used for fit (default: 0.3)")
+    # parser.add_argument("--fraction_eval", type=float, default=0.3, help="Fraction of available clients used for evaluate (default: 0.3)")
     parser.add_argument("--min_fit_clients", type=int, default=2, help="Minimum number of clients used for fit (default: 2)")
     parser.add_argument("--min_eval_clients", type=int, default=2, help="Minimum number of clients used for evaluate (default: 2)")
     parser.add_argument("--min_available_clients", type=int, default=2, help="Minimum number of available clients required for sampling (default: 2)")
     parser.add_argument("--alpha", type=float, default=0.01, help="Meta-learning rate for FedMeta algorithms (default: 0.01)")
     parser.add_argument("--beta", type=float, default=0.001, help="Meta-learning rate for FedMeta algorithms (default: 0.001)")
-    parser.add_argument("--strategy_client", type=str, required=True, help="FedAvg, FedMetaMAML, FedAvgMeta, FedMetaSGD")
-    parser.add_argument("--model", type=str, required=True, help="cifar, mnist, femnist")
-    parser.add_argument("--mode", type=str, required=True, help="val or test")
+    parser.add_argument("--strategy_client", type=str, required=True, help="FedAvg, FedMetaMAML, FedAvgMeta, FedMetaSGD", choices=["FedAvg", "FedMetaMAML", "FedAvgMeta", "FedMetaSGD"])
+    parser.add_argument("--model", type=str, required=True, help="cifar, mnist, femnist", choices=["cifar", "mnist"])
     parser.add_argument("--per_layer", type=int, required=False, help="number of personalized layers (count from the buttom)")
+    parser.add_argument("--new_client", type=int, required=False, help="1: test on new client, 0: test on local client", choices=[0, 1])
 
     args = parser.parse_args()
 
     strategy = MyFedAvg(
-        fraction_fit=args.fraction_fit,
-        fraction_eval= args.fraction_eval,
+        fraction_fit=0,
+        fraction_eval=0,
         min_fit_clients=args.min_fit_clients,
         min_eval_clients=args.min_eval_clients,
         min_available_clients=args.min_available_clients,
@@ -54,8 +56,8 @@ def main():
     fl.simulation.start_simulation(
         client_fn=client_fn_config(args),
         num_clients=args.num_clients,
-        # client_resources={"num_cpus": 1},
-        client_resources={"num_cpus": 1, "num_gpus": 0.1},
+        client_resources={"num_cpus": 1},
+        # client_resources={"num_cpus": 1, "num_gpus": 0.1},
         num_rounds=args.rounds,
         strategy=strategy
     )
@@ -85,14 +87,19 @@ def client_fn_config(args):
 
 def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     strategy = args.strategy_client
+    new_client = bool(args.new_client)
     if strategy == FED_AVG:
-        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, False, args.per_layer)
+        model_wrapper = ModelWrapper(model, args.model)
+        client = FedAvgClient(model_wrapper, cid, False, args.per_layer, new_client)
     elif strategy == FED_AVG_META:
-        client = FedAvgClient(ModelWrapper(model, args.model), cid, args.mode, args.num_eval_clients, True, args.per_layer)
+        model_wrapper = ModelWrapper(model, args.model)
+        client = FedAvgClient(model_wrapper, cid, True, args.per_layer, new_client)
     elif strategy == FED_META_MAML:
-        client = FedMetaMAMLClient(ModelWrapper(MAML(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients, args.per_layer)
+        model_wrapper = ModelWrapper(MAML(model, args.alpha), args.model)
+        client = FedMetaMAMLClient(model_wrapper, cid, args.per_layer, new_client)
     elif strategy == FED_META_SGD:
-        client = FedMetaSGDClient(ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model), cid, args.mode, args.num_eval_clients, args.per_layer)
+        model_wrapper = ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model)
+        client = FedMetaSGDClient(model_wrapper, cid, args.per_layer, new_client)
 
     return client
 
