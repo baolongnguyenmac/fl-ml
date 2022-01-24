@@ -12,44 +12,6 @@ class FedMetaSGDClient(BaseClient):
         super().__init__(model_wrapper, cid, per_layer, new_client)
         self.worker = MetaSGDWorker(device=DEVICE, cid=self.cid, new_client=self.new_client)
 
-    def save_personalization_weight(self):
-        raise NotImplementedError('save_personalization_weight method of base client is no longer in use')
-        # weights = self.model_wrapper.get_weights()
-        # num_weight = len(weights) # ex: 3layer -> num_weight = 12 (3 weight, 3 bias, 6 alpha)
-
-        # # save weight
-        # personalized_weight = weights[-num_weight//2 + self.per_layer:-num_weight//2]
-        # with open(f'./personalized_weight/{self.cid}.pickle', 'wb') as file_weight:
-        #     pickle.dump(personalized_weight, file_weight)
-        # file_weight.close()
-
-        # # save alpha (is contained by weights)
-        # personalized_alpha = weights[self.per_layer:]
-        # with open(f'./personalized_weight/{self.cid}_alpha.pickle', 'wb') as file_alpha:
-        #     pickle.dump(personalized_alpha, file_alpha)
-        # file_alpha.close()
-
-    def load_personalization_weight(self, id, weights):
-        raise NotImplementedError('load_personalization_weight method of base client is no longer in use')
-        # try:
-        #     # load weight
-        #     num_weight = len(self.model_wrapper.model.state_dict()) # ex: 3layer -> num_weight = 12 (3 weight, 3 bias, 6 alpha)
-        #     with open(f'./personalized_weight/{id}.pickle', 'rb') as file_weight:
-        #         personalized_weight = pickle.load(file_weight)
-        #     weights[-num_weight//2 + self.per_layer:-num_weight//2] = personalized_weight
-        #     file_weight.close()
-
-        #     # load alpha
-        #     with open(f'./personalized_weight/{id}_alpha.pickle', 'rb') as file_alpha:
-        #         personalized_alpha = pickle.load(file_alpha)
-        #     weights[self.per_layer:] = personalized_alpha
-        #     file_alpha.close()
-        # except:
-        #     pass
-
-        # # set new weight to the model
-        # self.model_wrapper.set_weights(weights)
-
     def fit(self, ins: FitIns) -> FitRes:
         weights: Weights = parameters_to_weights(ins.parameters)
         config = ins.config
@@ -128,3 +90,19 @@ class FedMetaSGDClient(BaseClient):
             batch_size=batch_size,
             epochs=epochs,
             current_round=current_round)
+
+    def get_best_evaluate(self, ins: EvaluateIns) -> EvaluateRes:
+        # get config
+        weights = parameters_to_weights(ins.parameters)
+        config = ins.config
+        current_round = int(config["current_round"])
+        batch_size = int(config["batch_size"])
+        epochs = int(config['epochs'])
+
+        return self.worker.best_test(
+            model_wrapper=self.model_wrapper,
+            batch_size=batch_size,
+            epochs=epochs,
+            current_round=current_round,
+            weights=weights,
+            per_layer=self.per_layer)

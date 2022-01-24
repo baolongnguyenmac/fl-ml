@@ -136,3 +136,24 @@ class FedAvgClient(BaseClient):
                 model_wrapper=self.model_wrapper,
                 batch_size=batch_size,
                 current_round=current_round)
+
+    def get_best_evaluate(self, ins: EvaluateIns) -> EvaluateRes:
+        if self.meta:
+            # get training config
+            config = ins.config
+            weights:Weights = parameters_to_weights(ins.parameters)
+            current_round = int(config['current_round'])
+            batch_size = int(config['batch_size'])
+            epochs = int(config['epochs'])
+            lr = float(config['alpha'])
+
+            return self.worker.best_test(
+                model_wrapper=self.model_wrapper,
+                batch_size=batch_size,
+                lr=lr,
+                epochs=epochs,
+                current_round=current_round,
+                weights=weights,
+                per_layer=self.per_layer)
+        else:
+            raise NotImplementedError('get_best_evaluate method is not implemented for FedAvg algorithm')

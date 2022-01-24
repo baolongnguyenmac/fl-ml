@@ -91,3 +91,19 @@ class FedMetaMAMLClient(BaseClient):
             batch_size=batch_size,
             epochs=epochs,
             current_round=current_round)
+
+    def get_best_evaluate(self, ins: EvaluateIns) -> EvaluateRes:
+        # Get training config
+        weights: Weights = parameters_to_weights(ins.parameters)
+        config = ins.config
+        current_round = int(config['current_round'])
+        epochs = int(config["epochs"])
+        batch_size = int(config["batch_size"])
+
+        return self.worker.best_test(
+            model_wrapper=self.model_wrapper,
+            batch_size=batch_size,
+            epochs=epochs,
+            current_round=current_round,
+            weights=weights,
+            per_layer=self.per_layer)
