@@ -67,14 +67,12 @@ class ModelWrapper:
                     personalized_weight = pickle.load(file_weight)
                     file_weight.close()
                 weights[-num_weight//2 + per_layer:-num_weight//2] = personalized_weight
-                file_weight.close()
 
                 # load alpha
                 with open(f'./personalized_weight/{cid}_alpha.pickle', 'rb') as file_alpha:
                     personalized_alpha = pickle.load(file_alpha)
                     file_alpha.close()
                 weights[per_layer:] = personalized_alpha
-                file_alpha.close()
             else:
                 # load local weight from file
                 with open(f'./personalized_weight/{cid}.pickle', 'rb') as file_input:

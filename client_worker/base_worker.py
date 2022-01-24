@@ -22,7 +22,7 @@ class BaseWorker:
 
     def get_loader(self, support:bool, train:bool, model_name:str, batch_size:int):
         loader = ci_loader if model_name==CIFAR_MODEL else mn_loader if model_name==MNIST_MODEL else f_loader
-        t = 'train' if train else 'new_test' if self.new_client else 'local_test'
+        t = 'train' if train else 'test_new' if self.new_client else 'test_local'
         s = 'support' if support else 'query'
 
         return loader(path_to_pickle=f'./data/{model_name}/{t}/{self.cid}/{s}.pickle', batch_size=batch_size, shuffle=True)
@@ -44,8 +44,8 @@ class BaseWorker:
 
 # from model.mnist_model import Mnist
 
-# worker = BaseWorker(torch.device('cpu'), 1)
-# loader, num_sample = worker.get_loader(True, True, 'mnist', 32)
+# worker = BaseWorker(torch.device('cpu'), 1, False)
+# loader, num_sample = worker.get_loader(True, False, 'mnist', 32)
 
 # for batch in loader:
 #     worker._training_step(Mnist(), batch)

@@ -118,7 +118,7 @@ class FedMetaSGDClient(BaseClient):
         # assgin personalized layer to local model if the self.per_layer is specified
         if self.per_layer:
             # self.load_personalization_weight(self.cid, weights)
-            self.model_wrapper.load_personalization_weight(self.cid, weights, meta_sgd=True)
+            self.model_wrapper.load_personalization_weight(self.cid, weights, self.per_layer, meta_sgd=True)
         else:
             self.model_wrapper.set_weights(weights)
 
