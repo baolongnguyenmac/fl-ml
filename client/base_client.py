@@ -25,24 +25,6 @@ class BaseClient(fl.client.Client):
     def get_properties(self, ins):
         return self.properties
 
-    def evaluate(self, ins: EvaluateIns) -> EvaluateRes:
-        if self.new_client and self.per_layer:
-            current_round = int(ins.config['current_round'])
-            if current_round % 20 == 0 or current_round == 1:
-                # # run ensemble
-                # val_loss, val_acc, num_val_sample = self.ensemble_evaluate(ins)
-
-                # choose the personalization weight that fit best to the new client
-                val_loss, val_acc, num_val_sample = self.get_best_evaluate(ins)
-            else:
-                return None
-        else:
-            val_loss, val_acc, num_val_sample = self.single_evaluate(ins)
-
-        return EvaluateRes(
-            loss=val_loss, num_examples=num_val_sample, metrics={'acc': val_acc}
-        )
-
     def get_best_evaluate(self, ins: EvaluateIns) -> EvaluateRes:
         raise NotImplementedError('get_best_evaluate method of base client has not been override yet')
 
@@ -51,3 +33,34 @@ class BaseClient(fl.client.Client):
 
     def single_evaluate(self, ins: EvaluateIns) -> EvaluateRes:
         raise NotImplementedError('single_evaluate method of base client has not been override yet')
+
+    # def evaluate(self, ins: EvaluateIns) -> EvaluateRes:
+    #     if self.new_client and self.per_layer:
+    #         current_round = int(ins.config['current_round'])
+    #         if current_round % 20 == 0 or current_round == 1:
+    #             # # run ensemble
+    #             # val_loss, val_acc, num_val_sample = self.ensemble_evaluate(ins)
+
+    #             # choose the personalization weight that fit best to the new client
+    #             val_loss, val_acc, num_val_sample = self.get_best_evaluate(ins)
+    #         else:
+    #             return None
+    #     else:
+    #         val_loss, val_acc, num_val_sample = self.single_evaluate(ins)
+
+    #     return EvaluateRes(
+    #         loss=val_loss, num_examples=num_val_sample, metrics={'acc': val_acc}
+    #     )
+
+    def evaluate(self, ins: EvaluateIns) -> EvaluateRes:
+        current_round = int(ins.config['current_round'])
+        if current_round % 20 == 0 or current_round == 1:
+            if self.new_client and self.per_layer:
+                # choose the personalization weight that fit best to the new client
+                val_loss, val_acc, num_val_sample = self.get_best_evaluate(ins)
+            else:
+                val_loss, val_acc, num_val_sample = self.single_evaluate(ins)
+
+            return EvaluateRes(
+                loss=val_loss, num_examples=num_val_sample, metrics={'acc': val_acc}
+            )
