@@ -16,10 +16,10 @@ import numpy as np
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
 import plotly.graph_objects as go
-
+import math
 import json
 
-def weighted_loss_acc_avg(results: List[Tuple[int, float, Optional[float]]]) -> float:
+def weighted_loss_acc_avg(results: List[Tuple[int, float, Optional[float]]]):
     """Aggregate evaluation results obtained from multiple clients."""
     num_total_evaluation_examples = sum(
         [num_examples for num_examples, _, _ in results]
@@ -28,6 +28,11 @@ def weighted_loss_acc_avg(results: List[Tuple[int, float, Optional[float]]]) -> 
     weighted_acc = [num_examples * acc for num_examples, _, acc in results]
 
     return sum(weighted_losses) / num_total_evaluation_examples, sum(weighted_acc) / num_total_evaluation_examples
+
+def calculate_final_acc(results: List[Tuple[int, float, Optional[float]]]):
+    average_client_acc = sum([acc for _, _, acc in results])/len(results)
+    std_client_acc = math.sqrt(sum([(acc - average_client_acc)**2 for _, _, acc in results])/len(results))
+    return average_client_acc, std_client_acc
 
 class MyFedAvg(FedAvg):
     def __init__(self, fraction_fit: float = 0.1, fraction_eval: float = 0.1, min_fit_clients: int = 2, min_eval_clients: int = 2, min_available_clients: int = 2, eval_fn: Optional[Callable[[Weights], Optional[Tuple[float, Dict[str, Scalar]]]]] = None, on_fit_config_fn: Optional[Callable[[int], Dict[str, Scalar]]] = None, on_evaluate_config_fn: Optional[Callable[[int], Dict[str, Scalar]]] = None, accept_failures: bool = True, initial_parameters: Optional[Parameters] = None) -> None:
@@ -39,6 +44,7 @@ class MyFedAvg(FedAvg):
         self.valid_history = {}
         self.valid_history['loss'] = []
         self.valid_history['acc'] = []
+        self.valid_history['avg_client_acc'] = []
 
         self.x_axis_train = []
         self.x_axis_val = []
@@ -96,16 +102,14 @@ class MyFedAvg(FedAvg):
 
         # if evaluate_res is not None:
         try:
-            loss_aggregated, acc_aggregated = weighted_loss_acc_avg(
-                [
-                    (
-                        evaluate_res.num_examples,
-                        evaluate_res.loss,
-                        evaluate_res.metrics['acc'],
-                    )
-                    for _, evaluate_res in results
-                ]
-            )
+            rs = [(
+                evaluate_res.num_examples,
+                evaluate_res.loss,
+                evaluate_res.metrics['acc']) for _, evaluate_res in results
+            ]
+            loss_aggregated, acc_aggregated = weighted_loss_acc_avg(rs)
+            avg_client_acc, std_client_acc = calculate_final_acc(rs)
+            self.valid_history['avg_client_acc'] = (avg_client_acc, std_client_acc)
 
             self.x_axis_val.append(rnd)
             self.valid_history['loss'].append(loss_aggregated)
@@ -118,11 +122,12 @@ class MyFedAvg(FedAvg):
         return loss_aggregated, {"accuracy": acc_aggregated}
 
     def visualize_result(self, args):
-        if args.new_client == 1:
-            acc = round(self.valid_history['acc'][-1], 4)
-        else:
-            acc = round(sum(self.valid_history['acc'][-20:])/len(self.valid_history['acc'][-20:]), 4)
-        self.valid_history['final_acc'] = acc
+        # if args.new_client == 1:
+        #     acc = round(self.valid_history['acc'][-1], 4)
+        # else:
+        #     acc = round(sum(self.valid_history['acc'][-20:])/len(self.valid_history['acc'][-20:]), 4)
+        acc = round(self.valid_history['acc'][-1], 4)
+        self.valid_history['final_acc'] = round(self.valid_history['acc'][-1], 4)
 
         base_title = f'[{args.model}, {args.strategy_client}]: ClientsPerRound: {args.min_fit_clients} - Epochs: {args.epochs} - Batch size: {args.batch_size} - Alpha: {args.alpha}'
         per_ = f' - PerLayer: {args.per_layer}' if args.per_layer is not None else ''
