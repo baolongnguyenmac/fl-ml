@@ -1,6 +1,8 @@
-# End of https://www.toptal.com/developers/gitignore/api/c++
+# tmp file of system
 .vscode
 .ipynb_checkpoints
+.DS_Store
+__pycache__
 
 # dataset
 test*
@@ -12,21 +14,27 @@ tmp
 # run_split script
 data_gen.sh
 
-# ds store
-.DS_Store
-
-# pycache
-__pycache__
-
 # nhap folder
 nhap
 
-# debug for client and server
-# run_client.sh
-# run_server.sh
-# client_main.py 
-# server
+# main for fine-tune
 main_experiment.py
 
 # temp weight
 personalized_weight
+
+# latex stuff
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.xml
+*.toc
+*.gz
+*.wsp
+main-blx.bib
