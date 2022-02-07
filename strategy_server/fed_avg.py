@@ -44,7 +44,6 @@ class MyFedAvg(FedAvg):
         self.valid_history = {}
         self.valid_history['loss'] = []
         self.valid_history['acc'] = []
-        self.valid_history['avg_client_acc'] = []
 
         self.x_axis_train = []
         self.x_axis_val = []

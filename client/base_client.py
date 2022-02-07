@@ -56,6 +56,9 @@ class BaseClient(fl.client.Client):
         current_round = int(ins.config['current_round'])
         if current_round % 20 == 0 or current_round == 1:
             if self.new_client and self.per_layer:
+                # # run ensemble
+                # val_loss, val_acc, num_val_sample = self.ensemble_evaluate(ins)
+
                 # choose the personalization weight that fit best to the new client
                 val_loss, val_acc, num_val_sample = self.get_best_evaluate(ins)
             else:
