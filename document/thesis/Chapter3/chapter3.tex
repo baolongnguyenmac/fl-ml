@@ -1,0 +1,120 @@
+\chapter{Hướng dẫn sử dụng template}
+\label{Chapter3}
+
+\section{Trích dẫn tài liệu}
+
+Dùng lệnh $\textbackslash cite$ để trích dẫn một hoặc nhiều tài liệu tham khảo.
+Tài liệu tham khảo có thể là trang web~\cite{Listings,HDLVThS}, bài báo khoa học~\cite{1994-Cavnar}, sách~\cite{1984-TeX-Knuth,2006-DDien,2006-NPTV}, bài tạp chí~\cite{1989-TED} hoặc các nguồn tham khảo khác. 
+Lưu ý khi trích dẫn tài liệu tham khảo, cần viết câu sao cho bỏ phần trong cặp ngoặc vuông đi thì câu vẫn đầy đủ ý nghĩa.
+Ví dụ, thay vì viết ``Nghiên cứu~\cite{1989-TED} chỉ ra rằng ... '' thì nên viết ``Nghiên cứu của Zhang~\cite{1989-TED} chỉ ra rằng ...''.
+Một ví dụ khác, thay vì viết ``... như trong công trình nghiên cứu~\cite{1994-Cavnar}.'' thì nên viết ``... như trong công trình nghiên cứu của Cavnar và Trenkle~\cite{1994-Cavnar}.''
+
+\section{Chèn mã nguồn}
+
+Để chèn mã nguồn, cần dùng package listings~\cite{Listings}:
+
+\begin{lstlisting}
+\usepackage{listings}
+\end{lstlisting}
+
+Mã nguồn có thể được chèn trực tiếp như sau:
+
+\begin{lstlisting}[language=Python]
+print "Hello, World!"
+\end{lstlisting}
+
+hoặc chèn thông qua tập tin chứa mã nguồn trong thư mục $SourceCode$ như sau:
+
+\lstinputlisting[language=C++]{SourceCode/hello.cpp}
+
+Để chèn mã giả, cần dùng package algorithm~\cite{Algorithm}:
+
+\begin{lstlisting}
+\usepackage{algorithm}
+\end{lstlisting}
+
+Có thể chèn mã giả vào như sau:
+
+\begin{algorithm}
+\caption{My algorithm}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{MyProcedure}{}
+\State $\textit{stringlen} \gets \text{length of }\textit{string}$
+\State $i \gets \textit{patlen}$
+\BState \emph{top}:
+\If {$i > \textit{stringlen}$} \Return false
+\EndIf
+\State $j \gets \textit{patlen}$
+\BState \emph{loop}:
+\If {$\textit{string}(i) = \textit{path}(j)$}
+\State $j \gets j-1$.
+\State $i \gets i-1$.
+\State \textbf{goto} \emph{loop}.
+\State \textbf{close};
+\EndIf
+\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+\State \textbf{goto} \emph{top}.
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\section{Hình ảnh}
+
+Để chèn hình ảnh, cần dùng package graphicx~\cite{Figures}:
+
+\begin{lstlisting}
+\usepackage{graphicx}
+\end{lstlisting}
+
+Hình \ref{fig:vd1}, hình \ref{fig:vd2} là một số ví dụ về chèn hình ảnh.
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=6 cm]{images/logo-khtn.png}
+\caption{Hình ví dụ 1}
+\label{fig:vd1}
+\end{figure}
+
+\begin{figure*}[htp]
+\centering
+\includegraphics[width=40 mm]{images/logo-khtn.png}
+\caption{Hình ví dụ 2}
+\label{fig:vd2}
+\end{figure*}
+
+\section{Bảng biểu}
+
+Để tạo bảng biểu, tham khảo thêm tại sharelatex.com~\cite{Tables}.
+Bảng~\ref{tab:vd1} là một ví dụ về bảng.
+Ngoài ra, có một số tool online~\footnote{Như trang http://www.tablesgenerator.com/} có thể được dùng để tạo bảng biểu một cách trực quan.
+
+\begin{table}[ht]
+\caption{Bảng ví dụ 1}
+
+\label{tab:vd1}%
+\begin{center}
+\begin{tabular}{ |p{3cm}||p{3cm}|p{3cm}|p{3cm}|  }
+ \hline
+ \multicolumn{4}{|c|}{Country List} \\
+ \hline
+ Country Name     or Area Name& ISO ALPHA 2 Code &ISO ALPHA 3 Code&ISO numeric Code\\
+ \hline
+ Afghanistan   & AF    &AFG&   004\\
+ Aland Islands&   AX  & ALA   &248\\
+ Albania &AL & ALB&  008\\
+ Algeria    &DZ & DZA&  012\\
+ American Samoa&   AS  & ASM&016\\
+ Andorra& AD  & AND   &020\\
+ Angola& AO  & AGO&024\\
+ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\section{Công thức}
+
+Công thức có thể chèn vào trong cùng một dòng như $ \sqrt{a^2+b^2} $ hoặc nằm trên dòng riêng như công thức~\ref{eu_eqn}.
+
+\begin{equation} \label{eu_eqn}
+x = a_0 + \frac{1}{a_1 + \frac{1}{a_2 + \frac{1}{a_3 + a_4}}}
+\end{equation}
