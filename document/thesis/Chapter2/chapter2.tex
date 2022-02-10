@@ -1,116 +1,117 @@
-\chapter{Trình bày báo cáo}
+\chapter{Tổng quan lý thuyết}
 \label{Chapter2}
 
-\section{Quy định chung}
+\section{Hệ thống Federated Learning}
 
-Báo cáo phải được trình bày ngắn gọn, rõ ràng, mạch lạc, sạch sẽ, không được tẩy xóa, có đánh số trang, đánh số bảng biểu, hình vẽ, đồ thị. 
+\subsection{Định nghĩa}
 
-Nội dung báo cáo được phân thành các chương. Số thứ tự của các chương, mục được đánh số bằng hệ thống số Ả-rập, không dùng số La mã. Các mục và tiểu mục được đánh số bằng các nhóm hai hoặc ba chữ số, cách nhau một dấu chấm: số thứ nhất chỉ số chương, chỉ số thứ hai chỉ số mục, số thứ ba chỉ số tiểu mục.
+\textbf{Định nghĩa về FL} \cite{yang2019federated}: Giả sử có $n$ máy khách, máy khách thứ $i$ ký hiệu là $c_i$ $(i\in [1, n])$, chứa tập dữ liệu $D_i$. FL là một quá trình học mà ở đó, các chủ sở hữu dữ liệu (ở đây có thể hiểu là các thiết bị biên) cùng hợp tác huấn luyện một mô hình $\mathcal{M}$ và đạt được độ chính xác $f$ nhưng không có bất kỳ chủ sở hữu dữ liệu $c_i$ nào chia sẻ tập dữ liệu $\mathcal{D}_i$ của chúng.
 
+Gọi $\bar{\mathcal{M}}$ là mô hình máy học được huấn luyện trên tập dữ liệu $\mathcal{D}  = \mathcal{D}_1 \cup \mathcal{D}_2 \cup ... \cup \mathcal{D}_n$ và cho độ chính xác $\bar{f}$. $f$ và $\bar{f}$ chỉ được phép chênh lệch nhau một khoảng nhỏ. Gọi $\delta$ là một giá trị thực không âm, nếu $\mid f-\bar{f}\mid < \delta$ ta nói mô hình $\mathcal{M}$ có \textit{$\delta$ - accuracy loss}.
 
-%Báo cáo cần dùng LaTEX để viết và trình bày theo mẫu đã được cung cấp.
+\textbf{Định nghĩa về tính hợp lệ} \cite{li2021survey}: Ký hiệu $\mathcal{M}_i$ là mô hình được huấn luyện trên tập dữ liệu $\mathcal{D}_i$ và cho độ chính xác $f_i$. Mô hình $\mathcal{M}$ được gọi là hợp lệ nếu tồn tại $i\in [1,n]$ sao cho $f>f_i$.
 
- Báo cáo trình bày sử dụng khổ giấy với việc canh lề như sau: Lề trên 3 cm, lề dưới 2,5 cm, lề trái 3 cm, lề phải 2 cm. Đánh số trang ở giữa bên dưới. Đánh số trang ở giữa bên dưới.
+\subsection{Một hệ thống Federated Learning điển hình}
 
-Font chữ dùng trong báo cáo (Times New Roman) với kích cỡ (size) 13-14pt, sử dụng chế độ dãn dòng (line spacing) chế độ 1.5 lines.
-
-%Các bảng biểu trình bày theo chiều ngang khổ giấy thì đầu bảng là lề trái của trang. 
-
-
-\section{Bố cục của báo cáo}
-
-Nội dung của báo cáo tối thiểu 50 trang khổ A4 và không nên vượt quá 100 trang (không kể các trang bìa, lời cám ơn, mục lục, tài liệu tham khảo \ldots) theo trình tự như sau:
+\textbf{Thành phần và các tương tác trong hệ thống.} Một hệ thống FL (Hình \ref{fig:fl}) thường bao gồm hai thành phần chính: máy chủ (đóng vai trò là đối tượng duy trì mô hình toàn cục) và máy khách (đóng vai trò là đối tượng nắm giữ dữ liệu huấn luyện). Hai thành phần này tương tác với nhau theo ba bước sau \cite{lim2020federated}:
 
 \begin{itemize}
-\item MỞ ĐẦU (thường đặt tên là ``Giới thiệu''): Trình bày lý do chọn đề tài, mục đích, đối tượng và phạm vi nghiên cứu.
-Mô tả bài toán mà đề tài giải quyết.
-Bài toán này có gì hay?
-Tại sao lại cần giải quyết bài toán này?
-Bài toán này có gì khó?
-Có những hướng nào để giải quyết bài toán này?
-Những hướng giải quyết trước đây có những vấn đề gì chưa giải quyết được?
-Các câu hỏi nghiên cứu mà đề tài trả lời hoặc những vấn đề mà đề tài sẽ giải quyết.
-Các đóng góp của đề tài.
+    \item \textit{Khởi tạo.} Máy chủ khởi tạo trọng số $w_G^0$ cho mô hình toàn cục và các siêu tham số cho quá trình huấn luyện. Thông tin này sau đó được gửi đến một tập hợp con các máy khách được chọn để tiến hành huấn luyện.
 
-\item TỔNG QUAN (thường đặt tên là ``Các công trình liên quan''): Phân tích đánh giá các hướng nghiên cứu đã có của các tác giả trong và ngoài nước liên quan đến đề tài; nêu những vấn đề còn tồn tại (những vấn đề nào mà các công trình khác chưa giải quyết được); chỉ ra những vấn đề mà đề tài cần tập trung, nghiên cứu giải quyết.
+    \item \textit{Huấn luyện và cập nhật mô hình cục bộ.} Tại bước huấn luyện thứ $t$, máy khách $c_i$ nhận trọng số $w_G^t$ từ máy chủ và tiến hành huấn luyện cục bộ trên tập dữ liệu $D_i$. Tham số $\theta_i^{t}$ thu được sau quá trình huấn luyện (có thể là trọng số $w_i^{t}$ hoặc đạo hàm hàm lỗi $g_i$) được máy khách gửi về máy chủ để tổng hợp.
 
-\item NGHIÊN CỨU THỰC NGHIỆM HOẶC LÝ THUYẾT (thường đặt tên là ``Phương pháp đề xuất''): Trình bày cơ sở lý thuyết, lý luận, giả thiết khoa học và phương pháp nghiên cứu đã được sử dụng trong đề tài.
-
-Nếu đề xuất hướng giải quyết mới, mô hình mới thì cần mô tả chi tiết cách giải quyết của mình (chi tiết tới mức người khác có thể dựa vào phần này mà cài đặt lại được đúng hoàn toàn phương pháp của mình đề ra).
-
-\item TRÌNH BÀY, ĐÁNH GIÁ BÀN LUẬN VỀ CÁC KẾT QUẢ (thường đặt tên là ``Kết quả thí nghiệm''): Mô tả các kết quả nghiên cứu khoa học hoặc kết quả thực nghiệm.
-Đối với  đề tài ứng dụng có kết quả là sản phẩm phần mềm phải có hồ sơ thiết kế, cài đặt,\ldots theo một trong các mô hình đã học (UML,\ldots).
-
-Thông thường cần mô tả môi trường thí nghiệm trước như sử dụng dữ liệu nào, dùng độ đo nào để đánh giá, môi trường chạy thí nghiệm (cấu hình máy nếu cần phân tích thông tin về thời gian chạy thực nghiệm). Sau đó, nêu kết quả thực nghiệm, bàn luận và giải thích kết quả.
-
-\item KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN (thường đặt tên là ``Kết luận''): Trình bày những kết quả đạt được, những đóng góp mới và những đề xuất mới, kiến nghị về những hướng nghiên cứu tiếp theo.
-
-\item DANH MỤC TÀI LIỆU THAM KHẢO: Chỉ bao gồm các tài liệu được trích dẫn, sử dụng và đề cập tới để bàn luận trong báo cáo.
-Phần này các bạn chuẩn bị 1 file BIB để lưu các tài liệu trích dẫn.
-Khi các bạn trích dẫn một tài liệu nào đó, LaTeX sẽ tự động thêm vào danh mục tài liệu tham khảo giúp các bạn.
-Các bạn xem hướng dẫn cách trích dẫn ở chương sau.
-
-\item PHỤ LỤC: Phần này bao gồm nội dung cần thiết nhằm minh họa hoặc hỗ trợ cho nội dung báo cáo như số liệu, mẫu biểu, tranh ảnh,\ldots Phụ lục không được dày hơn phần chính của báo cáo.
-Nếu có công trình công bố thì để vào phần phụ lục này.
+    \item \textit{Tổng hợp và cập nhật mô hình toàn cục.} Máy chủ nhận tham số $\theta_i^{t}$ gửi về từ các máy khách được chọn trước đó, tiến hành tổng hợp $w_G^{t+1}$ - trọng số mới của mô hình toàn cục và gửi trọng số này đến một tập hợp con các máy khách khác để bắt đầu bước huấn luyện toàn cục mới.
 \end{itemize}
 
-\section{Bảng biểu, hình vẽ, phương trình}
+Máy chủ sẽ lặp lại bước 2 và bước 3 cho đến khi độ lỗi hội tụ hoặc độ chính xác đạt đến một ngưỡng nhất định. Khi quá trình huấn luyện kết thúc, tham số của mô hình toàn cục sẽ được phân phối đến toàn bộ máy khách trong hệ thống.
 
-%Những qui định dưới này các bạn có thể bỏ qua hoặc đọc để hiểu thêm.
-%Những định dạng này LaTeX đều tự động giúp các bạn.
-%Các bạn xem hướng dẫn chi tiết hơn ở chương sau.
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[scale=0.85]{images/fl.png}
+        \caption{Hai thành phần chính và quá trình tương tác giữa chúng trong hệ thống FL \cite{chandorikar_2020}}
+        \label{fig:fl}
+    \end{center}
+\end{figure}
 
-Việc đánh số bảng biểu, hình vẽ, phương trình phải gắn với số chương; ví dụ hình 3.4 có nghĩa là hình thứ 4 trong Chương 3.
-Mọi đồ thị, bảng biểu, hình vẽ lấy từ các nguồn khác phải được trích dẫn đầy đủ.
+\textbf{Mục tiêu của hệ thống FL.} Chúng tôi khảo sát hai mục tiêu của hệ thống FL: (1) - Mục tiêu cục bộ; (2) - Mục tiêu toàn cục.
 
-\subsection{Bảng biểu, hình vẽ}
+Các máy khách trong hệ thống hướng đến việc thực hiện mục tiêu cục bộ. Ban đầu, máy khách $c_i$ nhận một trọng số toàn cục $w_G$ từ máy chủ. Máy khách này sau đó sẽ cố gắng tìm kiếm một trọng số $w_i^*$ giúp cực tiểu hóa hàm lỗi cục bộ. Nói cách khác, $w_i^*$ phải thỏa mãn thỏa mãn:
+
+\begin{equation}
+    \label{eq:opt_client}
+    w_i^* = \arg\min_{w_i}{f_{local}(w_i)}
+\end{equation}
+
+Trong đó, $f_{local}(w_i)$ là hàm lỗi trên tập dữ liệu của $c_i$. Với $\alpha$ là siêu tham số học cục bộ, $w_{i(j)}$ là trọng số tại bước huấn luyện $j$ của $c_i$, lời giải của phương trình \ref{eq:opt_client} theo phương pháp SGD có thể được viết như sau:
+
+\begin{equation}
+    \begin{cases}
+        w_{i(0)} = w_G\\
+        w_{i(j)} = w_{i(j-1)} - \alpha \nabla f_{local}(w_{i(j-1)})
+    \end{cases}
+\end{equation}
+
+Mặt khác, mục tiêu toàn cục, cũng là mục tiêu chính của hệ thống FL, được máy chủ thực hiện bằng cách tìm kiếm một trọng số $w_G^*$ giúp tối thiểu hóa hàm lỗi của cả hệ thống \cite{yin2021comprehensive}:
+
+\begin{dmath}
+    \label{eq:opt_server}
+    w_G^* = \arg \min_{w_G}{f_{global}(w_G)}
+        = \arg \min_{w_G}{\frac{1}{n} \sum_{i=1}^n{f_{local}(w_i)}}
+\end{dmath}
+
+Trong đó, $f_{global}(w_G)$ là hàm lỗi toàn cục của hệ thống. Để giải phương trình \ref{eq:opt_server}, máy chủ thực hiện tổng hợp tham số gửi về từ máy khách bằng một trong hai cách: lấy trung bình trọng số \parencite{mcmahan2017communication, aono2017privacy, yoon2021fedmix} hoặc lấy trung bình đạo hàm \parencite{chen2018federated, mcmahan2017learning}.
+
+Đặt $n_i = |\mathcal{D}_i|$ là số điểm dữ liệu của tập $\mathcal{D}_i$, $N = \sum_{i=1}^n{n_i}$ là tổng số điểm dữ liệu có trong cả hệ thống. Phương pháp lấy trung bình trọng số tính toán $w_G^{t+1}$ từ các trọng số của máy khách như sau \cite{mcmahan2017communication}:
+
+\begin{equation}
+    w_G^{t+1} = \sum_{i=1}^n{\frac{n_i}{N} w_i^t}
+\end{equation}
+
+Trái lại, phương pháp lấy trung bình đạo hàm đòi hỏi máy khách gửi về đạo hàm hàm lỗi sau khi kết thúc quá trình huấn luyện cục bộ. Với $\beta$ là siêu tham số học toàn cục, quá trình tổng hợp được biểu diễn theo công thức:
+
+\begin{dmath}
+    w_G^{t+1} = w_G^t - \beta \left[ \frac{1}{n} \sum_{i=1}^n{\frac{n_i}{N} \nabla f_{local}(w_i)} \right]
+        = w_G^t - \beta g^t
+\end{dmath}
+
+Sau khi khảo sát cả hai phương pháp tổng hợp tham số của máy chủ, nghiên cứu \cite{yin2021comprehensive} chỉ ra rằng, việc lấy trung bình trọng số giúp hệ thống có khả năng chịu được việc mất cập nhật, nhưng không đảm bảo việc hội tụ. Trái lại, việc lấy trung bình đạo hàm giúp hệ thống đảm bảo sự hội tụ nhưng tiêu tốn nhiều chi phí truyền tin hơn. Trong nghiên cứu này, chúng tôi tổng hợp trọng số toàn cục bằng phương pháp lấy trung bình trọng số để phù hợp hơn với giới hạn về chi phí giao tiếp và lưu trữ.
+
+\textbf{Phân loại hệ thống Federated Learning.} Nghiên cứu \cite{yin2021comprehensive} đề xuất các phân loại các hệ thống FL dựa trên phân bố dữ liệu đầu vào của chúng. Theo đó, ba phân bố dữ liệu: (1) - Phân bố dữ liệu theo chiều ngang (Horizontal data partitioning), (2) - Phân bố dữ liệu theo chiều dọc (Vertical data partitioning), (3) - Phân bố dữ liệu hỗn hợp (Hybrid data partitioning) sẽ ứng với ba loại hệ thống FL (Hình \ref{fig:taxonomy_fl}): (1) - Hệ thống FL theo chiều ngang (Horizontal FL), (2) - Hệ thống FL theo chiều dọc (Vertical FL), (3) - Hệ thống học chuyển giao tri thức (Federated Transfer Learning).
+
+\textit{Hệ thống Horizontal FL.} Phân bố dữ liệu theo chiều ngang là kiểu phân bố dữ liệu mà ở đó các bên tham gia vào hệ thống cùng sở hữu các đặc tính dữ liệu giống nhau nhưng giá trị định danh của mẫu dữ liệu của các bên là khác nhau. Ví dụ, khi các bên tham gia hệ thống là các trường đại học, họ sẽ muốn quản lý các thông tin giống nhau về sinh viên như họ và tên, mã số sinh viên,... nhưng không có một sinh viên nào tham gia hai trường đại học cùng một lúc. Kiến trúc Horizontal FL rất phù hợp để huấn luyện mô hình học tuân theo phân phối này \cite{yin2021comprehensive}.
+
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[height=20cm]{images/taxonomy_fl.png}
+        \caption{Ba loại hệ thống FL với phân bố dữ liệu tương ứng \cite{yang2019federated}}
+        \label{fig:taxonomy_fl}
+    \end{center}
+\end{figure}
+
+Dựa vào kiến trúc giao tiếp, có thể chia Horizontal FL ra làm hai loại: Kiến trúc client-server và kiến trúc peer-to-peer (P2P). Kiến trúc client-server, hay còn gọi là kiến trúc FL tập trung, về cơ bản sẽ thực hiện các bước huấn luyện giống như đã trình bày trong phần \textbf{Thành phần và các tương tác trong hệ thống}. Trong khi đó, kiến trúc P2P, hay còn gọi là kiến trúc FL phân tán không có một máy chủ cố định. Tại mỗi bước huấn luyện toàn cục, một máy khách trong hệ thống được chọn làm máy chủ. Quá trình huấn luyện sau đó được thực hiện giống như kiến trúc client-server.
+
+Một hệ thống Horizontal FL thường có số lượng máy khách rất lớn, khả năng lưu trữ và tính toán tại các máy khách không cần quá cao (ví dụ như điện thoại thông minh, máy tính bảng) và tần suất một máy khách tham gia huấn luyện là rất thấp.
+
+\textit{Hệ thống Vertical FL.} Đây là kiến trúc phù hợp với phân bố dữ liệu theo chiều dọc. Trong phân bố dữ liệu dạng này, các bên tham gia hệ thống sở hữu các đặc tính dữ liệu khác nhau nhưng giá trị định danh của mẫu dữ liệu của các bên là giống nhau. Ví dụ, khi các bên tham gia hệ thống là ngân hàng và trường đại học. Thuộc tính mà ngân hàng và trường đại học lưu trữ là rất khác nhau nhưng lại chứa thông tin của cùng một người dùng.
+
+\textit{Hệ thống Federated Transfer Learning.} Khi phân bố dữ liệu của các bên tham gia hệ thống không sở hữu chung các đặc tính dữ liệu hay giá trị định danh của từng mẫu, người ta gọi đây là phân bố dữ liệu hỗn hợp. Ví dụ, khi các bên tham gia hệ thống là một ngân hàng ở Hoa Kỳ và một trường đại học ở Việt Nam. Do cản trở địa lý và nhu cầu quản lý thông tin khác nhau, chủ sở hữu dữ liệu này sẽ không có chung thuộc tính hay giá trị định danh nào. Trong trường hợp này, FTL có thể được sử dụng để chuyển giao tri thức giữa các bên tham gia.
+
+Dựa vào các đặc điểm phân loại nêu trên, chúng tôi xếp nghiên cứu của mình vào nhóm hệ thống Horizontal FL tập trung.
+
+\section{Hệ thống Federated Learning trên dữ liệu Non-IID}
+
+Dữ liệu tại các máy khách thường được sinh ra dựa trên nhu cầu của người dùng cuối. Do đó, loại dữ liệu này thường có tính cá nhân hóa cao và không đồng nhất. Nói cách khác, không có bất kỳ phân phối dữ liệu cục bộ nào có thể đại diện cho phân phối trên toàn bộ dữ liệu, phân phối dữ liệu trên hai máy khách khác nhau là khác nhau \cite{zhu2021federated}. Đây chính là ý tưởng mà thuật ngữ \textit{dữ liệu Non-IID} muốn truyền đạt.
+
+Mặt khác, nghiên cứu \cite{zhao2018federated} chỉ ra rằng hệ thống FL có thể bị giảm hiệu quả nghiêm trọng khi đối mặt với dữ liệu Non-IID. Trong phần này, dựa trên nghiên cứu \cite{zhu2021federated} chúng tôi tiến hành khảo sát các kịch bản về dữ liệu Non-IID, các hướng tối ưu hệ thống trên loại dữ liệu này. Trong đó, đi sâu vào hai hướng: Sử dụng Meta Learning và Personalization Layer trong tối ưu hệ thống FL.
+
+\subsection{Các kịch bản Non-IID}
 
 
 
-Đầu đề của bảng biểu ghi phía trên bảng, đầu đề của hình vẽ ghi phía dưới hình.
+\subsection{Tối ưu hệ thống Federated Learning trên dữ liệu Non-IID}
 
-Thông thường, những bảng ngắn và đồ thị phải đi liền với phần nội dung đề cập tới các bảng và đồ thị này ở lần thứ nhất.
-Các bảng dài có thể để ở những trang riêng nhưng cũng phải tiếp theo ngay phần nội dung đề cập tới bảng này ở lần đầu tiên.
-Các bảng rộng vẫn nên trình bày theo chiều đứng dài 297mm của trang giấy, chiều rộng của trang giấy có thể hơn 210mm.
-Chú ý gấp trang giấy sao cho số và đầu đề của hình vẽ hoặc bảng vẫn có thể nhìn thấy ngay mà không cần mở rộng tờ giấy.
-Tuy nhiên hạn chế sử dụng các bảng quá rộng này.
+\textbf{Tối ưu dựa trên dữ liệu.}
 
-Đối với những trang giấy có chiều đứng hơn 297mm (bản đồ, bản vẽ,\ldots) thì có thể để trong một phong bì cứng đính bên trong bìa sau của báo cáo.
+\subsubsection{Meta Learning}
 
-Các hình vẽ phải sạch sẽ bằng mực đen để có thể sao chụp lại; có đánh số và ghi đầy đủ đầu đề, cỡ chữ phải bằng cỡ chữ sử dụng trong báo cáo.
-
-Khi đề cập đến các bảng biểu và hình vẽ phải nêu rõ số của hình và bảng biểu đó, ví dụ ``... được nêu trong Bảng 4.1'' hoặc ``xem Hình 3.2'' mà không được viết ``… được nêu trong bảng dưới đây'' hoặc ``trong đồ thị của X và Y sau''.
-
-\subsection{Phương trình toán học}
-
-Việc trình bày phương trình toán học trên một dòng đơn hoặc dòng kép tùy ý, tuy nhiên phải thống nhất trong toàn báo cáo.
-
-Khi ký hiệu xuất hiện lần đầu tiên thì phải giải thích và đơn vị tính phải đi kèm ngay trong phương trình có ký hiệu đó.
-Nếu cần thiết, danh mục của tất cả các ký hiệu, chữ viết tắt và nghĩa của chúng cần được liệt kê và để ở phần đầu của báo cáo.
-
-Tất cả các phương trình cần được đánh số và để trong ngoặc đơn đặt bên phía lề phải.
-Nếu một nhóm phương trình mang cùng một số thì những số này cũng được để trong ngoặc, hoặc mỗi phương trình trong nhóm phương trình (5.1) có thể được đánh số là (5.1.1), (5.1.2), (5.1.3).
-
-\section{Viết tắt}
-
-\textbf{Không lạm dụng việc viết tắt} trong báo cáo.
-Chỉ viết tắt những từ, cụm từ hoặc thuật ngữ được sử dụng nhiều lần trong báo cáo.
-Không viết tắt những cụm từ  dài, những mệnh đề; không viết tắt những cụm từ ít xuất hiện trong báo cáo.
-Nếu cần viết tắt những từ thuật ngữ, tên các cơ quan, tổ chức,\ldots thì được viết tắt sau lần viết thứ nhất có kèm theo chữ viết tắt trong ngoặc đơn.
-Nếu báo cáo có nhiều chữ viết tắt thì phải có bảng danh mục các chữ viết tắt (xếp theo thứ tự ABC) ở phần đầu báo cáo.
-
-Nhắc lại: \textbf{không lạm dụng việc viết tắt} trong báo cáo.
-Khi các bạn sử dụng từ viết tắt, người đọc sẽ phải lật lại những phần đã đọc, để tìm lại xem từ viết tắt đó nghĩa là gì.
-Việc này sẽ làm chậm tốc độ đọc và sẽ khiến người đọc khó theo dõi báo cáo của bạn hơn.
-Nếu có thể, hạn chế hoàn toàn việc dùng viết tắt.
-
-\section{Tài liệu tham khảo và cách trích dẫn}
-
-Mọi ý kiến, khái niệm có ý nghĩa, mang tính chất gợi ý không phải của riêng tác giả và mọi tham khảo khác phải được trích dẫn và chỉ ra nguồn trong danh mục Tài liệu tham khảo của báo cáo. Nguồn được trích dẫn phải được liệt kê chính xác trong danh mục Tài liệu tham khảo.
-
-Việc trích dẫn, tham khảo chủ yếu nhằm thừa nhận nguồn của những ý tưởng có giá trị giúp người đọc theo được mạch suy nghĩ của tác giả, không làm trở ngại việc đọc.
-
-
-Không trích dẫn những kiến thức phổ biến, mọi người đều biết cũng như không làm báo cáo nặng nề với những tham khảo trích dẫn.
-
-Nếu không có điều kiện tiếp cận được một tài liệu gốc mà phải trích dẫn thông qua một tài liệu khác thì phải nêu ra trích dẫn này, đồng thời tài liệu gốc đó không được liệt kê trong danh mục tài liệu tham khảo của báo cáo.
+\subsubsection{Personalization Layer}

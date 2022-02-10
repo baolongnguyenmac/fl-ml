@@ -13,6 +13,9 @@
 \usepackage[utf8]{inputenc}
 \DeclareTextSymbolDefault{\DH}{T1}
 
+% equation
+\usepackage{breqn}
+
 % Tài liệu tham khảo
 \usepackage[
 	sorting=nty,
@@ -64,16 +67,21 @@
 \def\BState{\State\hskip-\ALG@thistlm}
 \makeatother
 
+% chèn inline code
+\usepackage{xparse}
+\NewDocumentCommand{\codeword}{v}{%
+    \texttt{\textcolor{blue}{#1}}%
+}
+
 % Bảng biểu
 \usepackage{multirow}
+\usepackage{rotating}
+\usepackage{vcell}
 \usepackage{array}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
-
-
- 
 % Đổi tên mặc định
 \renewcommand{\chaptername}{Chương}
 \renewcommand{\figurename}{Hình}
@@ -92,10 +100,10 @@
 
 \titleformat{\section}
     {\normalfont\bfseries\large}{\thesection}{1em}{}
- 
+
 \titleformat{\subsection}
     {\normalfont\bfseries\normalsize}{\thesubsection}{1em}{}
-  
+
 % Dãn dòng 1.5
 \usepackage{setspace}
 \onehalfspacing
@@ -105,13 +113,13 @@
 
 % Canh lề
 \usepackage[
-  top=20mm,
-  bottom=10mm,
-  left=30mm,
-  right=20mm,
-  footskip = 15mm,
-  includefoot]{geometry}
-  
+    top=20mm,
+    bottom=10mm,
+    left=30mm,
+    right=20mm,
+    footskip = 15mm,
+    includefoot]{geometry}
+
 % Trang bìa
 \usepackage{tikz}
 \usetikzlibrary{calc}
@@ -120,7 +128,7 @@
 % ========================================================================================= %
 % CHÚ Ý: Thông tin chung về KLTN - sinh viên điền vào đây để tự động update các trang khác  %
 % ========================================================================================= %
-\newcommand{\tenSV}{Nguyễn~Văn~A~-~Trần~Văn~B} % Dấu ~ là khoảng trắng không được tách (các chữ nối với nhau bằng dấu ~ sẽ nằm cùng 1 dòng
+\newcommand{\tenSV}{Nguyễn~Bảo~Long~-~Cao~Tất~Cường} % Dấu ~ là khoảng trắng không được tách (các chữ nối với nhau bằng dấu ~ sẽ nằm cùng 1 dòng
 \newcommand{\mssv}{1234567}
 \newcommand{\tenKL}{Sử~dụng~LaTeX trong Khoá~luận~tốt~nghiệp} % Chú ý dấu ~ trong tên khóa luận
 \newcommand{\tenGVHD}{Tên~Giáo~Viên}
@@ -136,20 +144,20 @@
 %\addcontentsline{toc}{chapter}{Lời cam đoan}
 %\include{Appendix/reassurances}
 
-\addcontentsline{toc}{chapter}{Lời cảm ơn}
-\include{Appendix/thanks}
+\addcontentsline{toc}{chapter}{Tóm tắt}
+\include{Appendix/abstract}
 
 \addcontentsline{toc}{chapter}{Đề cương chi tiết}
-\include{Appendix/decuong}
+\include{Appendix/proposal}
+
+\addcontentsline{toc}{chapter}{Lời cảm ơn}
+\include{Appendix/thanks}
 
 % Mục lục, danh sách hình, danh sách bảng
 \addcontentsline{toc}{chapter}{Mục lục}
 \tableofcontents
 \listoffigures
 \listoftables
-
-\addcontentsline{toc}{chapter}{Tóm tắt}
-\include{Appendix/tomtat}
 
 \clearpage
 
@@ -162,26 +170,29 @@
 
 \include{Chapter3/chapter3}
 
-% Công trình của tác giả (nếu không có thì comment 02 dòng dưới)
-\addcontentsline{toc}{chapter}{Danh mục công trình của tác giả}
-\include{Appendix/publish}
+\include{Chapter4/chapter4}
+
+\include{Chapter5/chapter5}
+
+\include{Chapter6/chapter6}
 
 % In tài liệu tham khảo
 \addcontentsline{toc}{chapter}{Tài liệu tham khảo}
 \printbibheading[title={Tài liệu tham khảo}]
+\printbibliography[heading=subbibliography]
 
-\printbibliography[heading=subbibliography, title={Tiếng Việt}, keyword=Viet, resetnumbers=true]
+% \printbibliography[heading=subbibliography, title={Tiếng Việt}, resetnumbers=true]
 
-\DeclareNameAlias{sortname}{last-first}
-\DeclareNameAlias{default}{last-first}
+% \DeclareNameAlias{sortname}{last-first}
+% \DeclareNameAlias{default}{last-first}
 
-\printbibliography[heading=subbibliography, title={Tiếng Anh}, notkeyword=Viet, resetnumbers=4] 
+% \printbibliography[heading=subbibliography, title={Tiếng Anh}, notkeyword=Viet, resetnumbers=5] 
 % ===================================================================== %
 % CHÚ Ý: phải gán lại resetnumbers=số tài liệu tham khảo tiếng Việt + 1 %
 % ===================================================================== %
 
-% Phần phụ lục
-\include{Appendix/appendix1}
-\include{Appendix/appendix2}
+% % Phần phụ lục
+% \include{Appendix/appendix1}
+% \include{Appendix/appendix2}
 
 \end{document} 

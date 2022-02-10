@@ -1,16 +1,60 @@
-\chapter{Ngôn ngữ}
+\chapter{Giới thiệu}
 \label{Chapter1}
 
-Ngôn ngữ để viết và trình bày báo cáo khóa luận tốt nghiệp, đồ án tốt nghiệp, thực tập tốt nghiệp (sau đây gọi chung là báo cáo) là tiếng Việt hoặc tiếng Anh. 
-Trường hợp chọn ngôn ngữ tiếng Anh để viết và trình bày báo cáo,  sinh viên cần có đơn đề nghị, được cán bộ hướng dẫn (CBHD) đồng ý và nộp cho bộ phận Giáo vụ của Khoa vào thời điểm đăng ký đề tài để xin ý kiến.
-Báo cáo viết và trình bày bằng tiếng Anh phải có bản tóm tắt viết bằng tiếng Việt.
+\section{Đặt vấn đề \& Động lực}
 
+Hiện nay, các thiết bị biên như điện thoại, máy tính bảng, thậm chí máy giặt, máy hút bụt thông minh có thể sinh ra lượng lớn dữ liệu trong quá trình hoạt động. Lượng dữ liệu này, nếu tận dụng được, có thể mang lại sự cải thiện rất lớn về độ chính xác cho các mô hình máy học hiện tại. Ví dụ, dữ liệu thu thập được từ bàn phím điện thoại có thể phục vụ tối ưu cho các mô hình ngôn ngữ; ảnh chụp được lưu trữ trong bộ nhớ điện thoại hoàn toàn có thể được sử dụng làm dữ liệu để huấn luyện cho mô hình nhận dạng ảnh; hay lịch sử duyệt web của người dùng có thể được dùng cho bài toán đề xuất sản phẩm. Những lý do trên trở thành một động lực to lớn, thúc đẩy việc tìm ra một phương pháp giúp tận dụng nguồn dữ liệu dồi dào này.
 
-%Tóm tắt luận văn được trình bày nhiều nhất trong 24 trang in trên hai mặt giấy, cỡ chữ Times New Roman 11 của hệ soạn thảo Winword hoặc phần mềm soạn thảo Latex đối với các chuyên ngành thuộc ngành Toán.
+Việc ngày càng nhiều dữ liệu được sinh ra tại các thiết bị biên khiến cho phương pháp huấn luyện mô hình theo cách tiếp cận truyền thống (được gọi là huấn luyện tập trung) bộc lộ nhiều khuyết điểm. Ba điểm yếu khiến cho các tiếp cận này không còn mạnh mẽ có thể kể đến: sự vi phạm về quyền riêng tư dữ liệu, chi phí truyền tin và chi phí phần cứng máy chủ.
 
-%Mật độ chữ bình thường, không được nén hoặc kéo dãn khoảng cách giữa các chữ.
-%Chế độ dãn dòng là Exactly 17pt.
-%Lề trên, lề dưới, lề trái, lề phải đều là 1.5 cm.
-%Các bảng biểu trình bày theo chiều ngang khổ giấy thì đầu bảng là lề trái của trang.
-%Tóm tắt luận án phải phản ảnh trung thực kết cấu, bố cục và nội dung của luận án, phải ghi đầy đủ toàn văn kết luận của luận án.
-%Mẫu trình bày trang bìa của tóm tắt luận văn (phụ lục 1).
+\textbf{Sự vi phạm về quyền riêng tư dữ liệu.} Phương pháp truyền thống đòi hỏi phải gửi dữ liệu người dùng về một máy chủ để tiến hành huấn luyện mô hình. Các thông tin nhạy cảm của người dùng hoàn toàn có thể bị nghe lén bởi kẻ tấn công hoặc bị khai thác khi máy chủ bị nhiễm mã độc. Điều này ảnh hưởng nghiêm trọng đến quyền riêng tư dữ liệu của người dùng - một vấn đề mà hiện nay đang nhận được rất nhiều sự quan tâm từ cả người dùng lẫn chính phủ.
+
+\textbf{Chi phí truyền tin.} Dữ liệu sinh ra tại thiết bị biên đang ngày một tăng lên do văn hóa sử dụng và sự phát triển của công nghệ. Một người dùng điện thoại thông minh giờ đây có thể thực hiện giao dịch tài chính, nghe nhạc, lướt web, xem phim ngay trên thiết bị của mình. Một máy hút bụi thông minh được trang bị các cảm biến nên hoàn toàn có thể sử dụng dữ liệu cảm biến này như một “time series”. Chi phí truyền tin từ các thiết bị biên đến máy chủ để huấn luyện trở nên tốn kém và có thể gây mất thông tin, ảnh hưởng đến hiệu suất học của mô hình.
+
+\textbf{Chi phí phần cứng máy chủ.} Sau khi dữ liệu được gửi về máy chủ, cần một cấu hình máy mạnh mẽ cùng khả năng lưu trữ lớn để có thể xử lý hết lượng dữ liệu khổng lồ trên trong thời gian giới hạn.
+
+Việc các phương pháp tiếp cận máy học theo hướng truyền thống đang dần bộc lộ các nhược điểm về chi phí vận hành và bảo trì ngày càng cao, cũng như các mối nguy hiểm tiềm tàng có thể xảy ra đối với dữ liệu của người dùng, một lần nữa thúc đẩy việc nghiên cứu về một phương pháp huấn luyện giúp làm giảm chi phí phần cứng (sử dụng cho đường truyền và máy chủ), đồng thời đảm bảo tính riêng tư dữ liệu cho người dùng. Khái niệm federated learning (FL) và thuật toán \codeword{FedAvg} được đưa ra vào năm 2016 bởi Google trong nghiên cứu \cite{mcmahan2017communication} nhằm mục đích huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt được phân bố trên các thiết bị biên (được gọi là huấn luyện phân tán). Do đó, một hệ thống FL không cần một máy chủ quá mạnh để vận hành (thậm chí có thể sử dụng một máy khách để vận hành \cite{yin2021comprehensive} , không đòi hỏi chi phí truyền tin quá lớn và đảm bảo được quyền riêng tư dữ liệu của người dùng vì không diễn ra bất cứ quá trình thu thập dữ liệu từ người dùng nào (điều mà mô hình huấn luyện tập trung bắt buộc phải làm). Dễ thấy rằng, phần lớn quá trình tính toán được chuyển đến các thiết bị biên. Tuy nhiên, khả năng lưu trữ và tính toán tại các thiết bị này ngày càng được cải thiện, khiến cho việc việc huấn luyện phân tán dần trở nên khả thi và đạt hiệu quả cao hơn.
+
+Mặt khác, nghiên cứu \cite{zhu2021federated} chỉ ra rằng, hệ thống FL hoạt động trên nền thuật toán \codeword{FedAvg} bị giảm hiệu suất nghiêm trọng khi xử lý dữ liệu đầu vào tuân theo phân phối Non-IID. Trong khi đó, dữ liệu phân bố trên máy khách là không đồng nhất và có tính cá nhân hóa tất cao. Nói cách khác, các tập dữ liệu này tuân theo phân phối Non-IID. Do đó, việc nghiên cứu và cải tiến hệ thống FL để thu được kết quả cao trên dữ liệu Non-IID là rất cần thiết. Đây chính là vấn đề mà khóa luận hướng tới giải quyết.
+
+\section{Phạm vi đề tài}
+
+Nghiên cứu \cite{yin2021comprehensive} chỉ ra ba hướng nghiên cứu chính khi đề cập đến một hệ thống FL: (1) - Cải thiện hiệu suất của hệ thống FL, (2) - Cải thiện khả năng bảo mật của hệ thống FL, (3) - Cải thiện vấn đề về quyền riêng tư của người dùng trong hệ thống FL.
+
+Về việc phân loại hệ thống FL, dựa trên dữ liệu đầu vào, hệ thống FL được chia thành ba loại \cite{yin2021comprehensive}: (1) - Horizontal FL, (2) - Vertical FL, (3) - Federated transfer learning.
+
+Về việc phân loại các kịch bản Non-IID, nghiên cứu \cite{zhu2021federated} chỉ ra bốn kịch bản chính: (1) - Phân phối thuộc tính khác nhau giữa các máy khách, (2) - Phân phối nhãn khác nhau giữa các máy khách, (3) - Phân phối thời gian khác nhau giữa các máy khách, (4) - Các kịch bản khác.
+
+Chúng tôi giới hạn phạm vi và xây dựng phương án giải quyết của đề tài dựa trên ba giả định sau:
+
+\begin{itemize}
+    \item Loại hệ thống: Môi trường thí nghiệm (bao gồm các yếu tố như số lượng người dùng, dữ liệu, cấu hình, khả năng lưu trữ của thiết bị cuối,...) tuân theo đặc điểm của hệ thống Horizontal FL.
+    \item Bảo mật \& quyền riêng tư: Hệ thống đã đảm bảo tính bảo mật cũng như duy trì tốt quyền riêng tư của người dùng.
+    \item Kịch bản Non-IID: Phân phối nhãn dữ liệu trên các máy khách là khác nhau.
+\end{itemize}
+
+\section{Đóng góp chính}
+
+Chúng tôi chia các đóng góp chính của mình thành hai loại: đóng góp về mặt lý thuyết và đóng góp về mặt thực nghiệm.
+
+\subsection{Đóng góp lý thuyết}
+
+\begin{itemize}
+    \item Nghiên cứu hệ thống FL và thách thức về phân phối dữ liệu mà hệ thống Horizontal FL gặp phải.
+    \item Khảo sát các phương pháp tối ưu hóa hệ thống Horizontal FL trên dữ liệu dạng Non-IID. Trong đó, tập trung nghiên cứu các phương pháp theo hướng Personalized Federated Averaging \parencite{fallah2020personalized, chen2018federated} và Personalization Layer \parencite{liang2020think, arivazhagan2019federated}.
+    \item Phương pháp đề xuất của chúng tôi đã cho thấy khả năng đạt độ chính xác cao hơn trong quá trình kiểm thử với hai đối tượng người dùng (người dùng cục bộ và người dùng mới) so với các phương pháp trước đó (chỉ sử dụng \codeword{FedAvg}, chỉ sử dụng Personalized Federated Averaging, hoặc chỉ sử dụng Personalization Layer).
+\end{itemize}
+
+\subsection{Đóng góp thực nghiệm}
+
+\begin{itemize}
+    \item Tổ chức bộ dữ liệu MNIST và CIFAR-10 theo hai hướng IID và Non-IID để tiến hành thí nghiệm.
+    \item Cài đặt thuật toán \codeword{FedAvg}, \codeword{FedAvgMeta}, các thuật toán kết hợp giữa \codeword{FedAvg} và ML (thuật toán \codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)}).
+    \item Cài đặt thuật toán kết hợp giữa \codeword{FedAvg} và PL (thuật toán \codeword{FedPer}, \codeword{LG-FedAvg}).
+    \item Kết hợp các thuật toán ML và PL vào hệ thống FL.
+    \item Fine-tune các siêu tham số như số lượng máy khách tham gia huấn luyện, số bước huấn luyện cục bộ, các siêu tham số học để mô hình đạt độ chính xác tốt nhất.
+\end{itemize}
+
+\section{Bố cục}
+
+Trong luận văn này, chương \ref{Chapter2} trình bày về tổng quan lý thuyết được sử dụng trong khóa luận, các lý thuyết này làm nền tảng cho nghiên cứu và đề xuất thuật toán; chương 3 đề xuất thuật toán giúp giải quyết vấn đề vừa nêu ở chương \ref{Chapter1}; chương \ref{Chapter4} trình bày về cài đặt thực nghiệm để kiểm chứng tính hiệu quả của thuật toán; chương \ref{Chapter5} đi vào phân tích kết quả đạt được; chương \ref{Chapter6} nêu kết luận, những điều chưa làm được và hướng phát triển tương lai của khóa luận.

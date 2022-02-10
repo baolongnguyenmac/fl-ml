@@ -1,88 +1,553 @@
-%%
-%% WinShell 3.3.2.6
-%% http://www.winshell.org/
-%%
+% fl on non-iid data is suck :v
+@article{zhao2018federated,
+  title={Federated learning with non-iid data},
+  author={Zhao, Yue and Li, Meng and Lai, Liangzhen and Suda, Naveen and Civin, Damon and Chandra, Vikas},
+  journal={arXiv preprint arXiv:1806.00582},
+  year={2018}
+}
 
-% Strings
+% paper về PerFed đầu tiên
+@article{fallah2020personalized,
+  title={Personalized federated learning: A meta-learning approach},
+  author={Fallah, Alireza and Mokhtari, Aryan and Ozdaglar, Asuman},
+  journal={arXiv preprint arXiv:2002.07948},
+  year={2020}
+}
 
+% personalized layer with LG-FedAvg
+@article{liang2020think,
+  title={Think locally, act globally: Federated learning with local and global representations},
+  author={Liang, Paul Pu and Liu, Terrance and Ziyin, Liu and Allen, Nicholas B and Auerbach, Randy P and Brent, David and Salakhutdinov, Ruslan and Morency, Louis-Philippe},
+  journal={arXiv preprint arXiv:2001.01523},
+  year={2020}
+}
 
-% Preamble
+% personalized layer with FedPer
+@article{arivazhagan2019federated,
+  title={Federated learning with personalization layers},
+  author={Arivazhagan, Manoj Ghuhan and Aggarwal, Vinay and Singh, Aaditya Kumar and Choudhary, Sunav},
+  journal={arXiv preprint arXiv:1912.00818},
+  year={2019}
+}
 
+% meta learning survey
+@article{hospedales2020meta,
+  title={Meta-learning in neural networks: A survey},
+  author={Hospedales, Timothy and Antoniou, Antreas and Micaelli, Paul and Storkey, Amos},
+  journal={arXiv preprint arXiv:2004.05439},
+  year={2020}
+}
 
-% BibTeX Entries
-@book{1984-TeX-Knuth,
- author               = {Donald E. Knuth},
- publisher            = {Addison-Wesley},
- title                = {The {{\TeX}book}},
- year                 = {1984},
- }
+% kiến trúc k-anonymous 
+@incollection{ciriani2008k,
+  title={k-anonymous data mining: A survey},
+  author={Ciriani, Valentina and Di Vimercati, S De Capitani and Foresti, Sara and Samarati, Pierangela},
+  booktitle={Privacy-preserving data mining},
+  pages={105--136},
+  year={2008},
+  publisher={Springer}
+}
 
-@article{1989-TED,
- author               = {Kaizhong Zhang and Dennis Shasha},
- journal              = {SIAM Journal on Computing, Volume 18 Issue 6},
- pages                = {1245-1262},
- title                = {{Simple fast algorithms for the editing distance between trees and related problems}},
- year                 = {1989},
- }
+% chuyển data sang 1 chiều không gian khác để bảo mật thông tin
+% áp dụng trong IoT
+@inproceedings{jiang2019lightweight,
+  title={On lightweight privacy-preserving collaborative learning for internet-of-things objects},
+  author={Jiang, Linshan and Tan, Rui and Lou, Xin and Lin, Guosheng},
+  booktitle={Proceedings of the International Conference on Internet of Things Design and Implementation},
+  pages={70--81},
+  year={2019}
+}
 
-@inproceedings{1994-Cavnar,
- author               = {William B. Cavnar and John M. Trenkle},
- booktitle            = {In Proceedings of SDAIR-94, 3rd Annual Symposium on Document Analysis and Information Retrieval},
- pages                = {161--175},
- title                = {N-Gram-Based Text Categorization},
- year                 = {1994},
- }
+% chuyển data sang 1 chiều không gian khác để bảo mật thông tin
+@inproceedings{gade2018privacy,
+  title={Privacy-preserving distributed learning via obfuscated stochastic gradients},
+  author={Gade, Shripad and Vaidya, Nitin H},
+  booktitle={2018 IEEE Conference on Decision and Control (CDC)},
+  pages={184--191},
+  year={2018},
+  organization={IEEE}
+}
 
-@book{2006-DDien,
- author               = {Đinh Điền},
- keywords             = {Viet},
- publisher            = {Nhà xuất bản Đại học Quốc gia TP.HCM},
- title                = {Xử lý ngôn ngữ tự nhiên},
- year                 = {2006},
- }
+% chứng minh rằng việc thêm nhiễu vào tham số or gradient không làm giảm acc của FL
+@article{chamikara2021privacy,
+  title={Privacy preserving distributed machine learning with federated learning},
+  author={Chamikara, Mahawaga Arachchige Pathum and Bertok, Peter and Khalil, Ibrahim and Liu, Dongxi and Camtepe, Seyit},
+  journal={Computer Communications},
+  volume={171},
+  pages={112--125},
+  year={2021},
+  publisher={Elsevier}
+}
 
-@book{2006-NPTV,
- author               = {Diệp Quang Ban and Hoàng Van Thung},
- keywords             = {Viet},
- publisher            = {Nhà xuất bản Giáo dục Việt Nam},
- title                = {Ngữ pháp tiếng Việt},
- year                 = {2006},
- }
+% thêm nhiễu vào local để bảo mật
+@article{bhowmick2018protection,
+  title={Protection against reconstruction and its applications in private federated learning},
+  author={Bhowmick, Abhishek and Duchi, John and Freudiger, Julien and Kapoor, Gaurav and Rogers, Ryan},
+  journal={arXiv preprint arXiv:1812.00984},
+  year={2018}
+}
 
-@online{Figures,
- author               = {Online},
- title                = {LaTeX/Floats, Figures and Captions},
- url                  = {http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions},
- urldate              = {2015-06-06},
- }
+% thêm nhiễu vào local để bảo mật
+@inproceedings{abadi2016deep,
+  title={Deep learning with differential privacy},
+  author={Abadi, Martin and Chu, Andy and Goodfellow, Ian and McMahan, H Brendan and Mironov, Ilya and Talwar, Kunal and Zhang, Li},
+  booktitle={Proceedings of the 2016 ACM SIGSAC conference on computer and communications security},
+  pages={308--318},
+  year={2016}
+}
 
-@online{HDLVThS,
- author               = {Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM},
- keywords             = {Viet},
- title                = {Quy định và hướng dẫn thực hiện luận văn thạc sĩ},
- url                  = {http://www.hcmus.edu.vn/index.php?option=com_content&task=blogcategory&id=142&Itemid=506},
- urldate              = {2015-06-06},
- year                 = {2011},
- }
+% thêm nhiễu để bảo mật theo cấp độ user
+@article{mcmahan2017learning,
+  title={Learning differentially private recurrent language models},
+  author={McMahan, H Brendan and Ramage, Daniel and Talwar, Kunal and Zhang, Li},
+  journal={arXiv preprint arXiv:1710.06963},
+  year={2017}
+}
 
-@online{Listings,
- author               = {Online},
- title                = {LaTeX/Source Code Listings},
- url                  = {http://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings},
- urldate              = {2015-06-06},
- }
+% thêm nhiễu vào local gradien
+@inproceedings{hao2019towards,
+  title={Towards efficient and privacy-preserving federated deep learning},
+  author={Hao, Meng and Li, Hongwei and Xu, Guowen and Liu, Sen and Yang, Haomiao},
+  booktitle={ICC 2019-2019 IEEE International Conference on Communications (ICC)},
+  pages={1--6},
+  year={2019},
+  organization={IEEE}
+}
 
-@online{Tables,
- author               = {Online},
- title                = {LaTeX/Tables},
- url                  = {http://en.wikibooks.org/wiki/LaTeX/Tables},
- urldate              = {2015-06-06},
- }
+% suy luận thuộc tính dữ liệu
+@article{naseri2020toward,
+  title={Toward robustness and privacy in federated learning: Experimenting with local and central differential privacy},
+  author={Naseri, Mohammad and Hayes, Jamie and De Cristofaro, Emiliano},
+  journal={arXiv preprint arXiv:2009.03561},
+  year={2020}
+}
 
-@misc{URL-DLMF,
- author               = {{National Institute of Standards and Technology}},
- howpublished         = {\url{http://dlmf.nist.gov}},
- month                = {Nov},
- title                = {Digital library of mathematical functions},
- year                 = {2013},
- }
+% tấn công đầu độc mô hình
+@inproceedings{bhagoji2019analyzing,
+  title={Analyzing federated learning through an adversarial lens},
+  author={Bhagoji, Arjun Nitin and Chakraborty, Supriyo and Mittal, Prateek and Calo, Seraphin},
+  booktitle={International Conference on Machine Learning},
+  pages={634--643},
+  year={2019},
+  organization={PMLR}
+}
+
+% tấn công tại thời điểm huấn luyện mô hình
+@inproceedings{biggio2011support,
+  title={Support vector machines under adversarial label noise},
+  author={Biggio, Battista and Nelson, Blaine and Laskov, Pavel},
+  booktitle={Asian conference on machine learning},
+  pages={97--112},
+  year={2011},
+  organization={PMLR}
+}
+
+% tấn công tại thời điểm sử dụng mô hình
+@inproceedings{barreno2006can,
+  title={Can machine learning be secure?},
+  author={Barreno, Marco and Nelson, Blaine and Sears, Russell and Joseph, Anthony D and Tygar, J Doug},
+  booktitle={Proceedings of the 2006 ACM Symposium on Information, computer and communications security},
+  pages={16--25},
+  year={2006}
+}
+
+% phương pháp mã hóa
+% Homomorphic encryption: mã hóa đồng hình
+@article{rivest1978data,
+  title={On data banks and privacy homomorphisms},
+  author={Rivest, Ronald L and Adleman, Len and Dertouzos, Michael L and others},
+  journal={Foundations of secure computation},
+  volume={4},
+  number={11},
+  pages={169--180},
+  year={1978},
+  publisher={Citeseer}
+}
+@article{chen2020fedhealth,
+  title={Fedhealth: A federated transfer learning framework for wearable healthcare},
+  author={Chen, Yiqiang and Qin, Xin and Wang, Jindong and Yu, Chaohui and Gao, Wen},
+  journal={IEEE Intelligent Systems},
+  volume={35},
+  number={4},
+  pages={83--93},
+  year={2020},
+  publisher={IEEE}
+}
+@article{aono2017privacy,
+  title={Privacy-preserving deep learning via additively homomorphic encryption},
+  author={Aono, Yoshinori and Hayashi, Takuya and Wang, Lihua and Moriai, Shiho and others},
+  journal={IEEE Transactions on Information Forensics and Security},
+  volume={13},
+  number={5},
+  pages={1333--1345},
+  year={2017},
+  publisher={IEEE}
+}
+% Secret sharing 
+@article{shamir1979share,
+  title={How to share a secret},
+  author={Shamir, Adi},
+  journal={Communications of the ACM},
+  volume={22},
+  number={11},
+  pages={612--613},
+  year={1979},
+  publisher={ACm New York, NY, USA}
+}
+@inproceedings{riazi2020heax,
+  title={Heax: An architecture for computing on encrypted data},
+  author={Riazi, M Sadegh and Laine, Kim and Pelton, Blake and Dai, Wei},
+  booktitle={Proceedings of the Twenty-Fifth International Conference on Architectural Support for Programming Languages and Operating Systems},
+  pages={1295--1309},
+  year={2020}
+}
+@inproceedings{gao2019privacy,
+  title={Privacy-preserving heterogeneous federated transfer learning},
+  author={Gao, Dashan and Liu, Yang and Huang, Anbu and Ju, Ce and Yu, Han and Yang, Qiang},
+  booktitle={2019 IEEE International Conference on Big Data (Big Data)},
+  pages={2552--2559},
+  year={2019},
+  organization={IEEE}
+}
+@inproceedings{bonawitz2017practical,
+  title={Practical secure aggregation for privacy-preserving machine learning},
+  author={Bonawitz, Keith and Ivanov, Vladimir and Kreuter, Ben and Marcedone, Antonio and McMahan, H Brendan and Patel, Sarvar and Ramage, Daniel and Segal, Aaron and Seth, Karn},
+  booktitle={proceedings of the 2017 ACM SIGSAC Conference on Computer and Communications Security},
+  pages={1175--1191},
+  year={2017}
+}
+@article{dwork2011firm,
+  title={A firm foundation for private data analysis},
+  author={Dwork, Cynthia},
+  journal={Communications of the ACM},
+  volume={54},
+  number={1},
+  pages={86--95},
+  year={2011},
+  publisher={ACM New York, NY, USA}
+}
+@article{samarati1998protecting,
+  title={Protecting privacy when disclosing information: k-anonymity and its enforcement through generalization and suppression},
+  author={Samarati, Pierangela and Sweeney, Latanya},
+  year={1998},
+  publisher={technical report, SRI International}
+}
+
+% type of attack: random attack or targeted attack
+@inproceedings{huang2011adversarial,
+  title={Adversarial machine learning},
+  author={Huang, Ling and Joseph, Anthony D and Nelson, Blaine and Rubinstein, Benjamin IP and Tygar, J Doug},
+  booktitle={Proceedings of the 4th ACM workshop on Security and artificial intelligence},
+  pages={43--58},
+  year={2011}
+}
+
+% model poisoning (backdoor a FL sys)
+@inproceedings{bagdasaryan2020backdoor,
+  title={How to backdoor federated learning},
+  author={Bagdasaryan, Eugene and Veit, Andreas and Hua, Yiqing and Estrin, Deborah and Shmatikov, Vitaly},
+  booktitle={International Conference on Artificial Intelligence and Statistics},
+  pages={2938--2948},
+  year={2020},
+  organization={PMLR}
+}
+
+% dirty label (data poisoning attack)
+@article{gu2017badnets,
+  title={Badnets: Identifying vulnerabilities in the machine learning model supply chain},
+  author={Gu, Tianyu and Dolan-Gavitt, Brendan and Garg, Siddharth},
+  journal={arXiv preprint arXiv:1708.06733},
+  year={2017}
+}
+
+% clean label (data poisoning attack)
+@article{shafahi2018poison,
+  title={Poison frogs! targeted clean-label poisoning attacks on neural networks},
+  author={Shafahi, Ali and Huang, W Ronny and Najibi, Mahyar and Suciu, Octavian and Studer, Christoph and Dumitras, Tudor and Goldstein, Tom},
+  journal={arXiv preprint arXiv:1804.00792},
+  year={2018}
+}
+
+% classification of privacy-preserving methods on machine learning
+@article{chabanne2017privacy,
+  title={Privacy-preserving classification on deep neural network},
+  author={Chabanne, Herv{\'e} and De Wargny, Amaury and Milgram, Jonathan and Morel, Constance and Prouff, Emmanuel},
+  journal={Cryptology ePrint Archive},
+  year={2017}
+}
+
+% comparison of communication efficiency of split learning and fl
+@article{singh2019detailed,
+  title={Detailed comparison of communication efficiency of split learning and federated learning},
+  author={Singh, Abhishek and Vepakomma, Praneeth and Gupta, Otkrist and Raskar, Ramesh},
+  journal={arXiv preprint arXiv:1909.09145},
+  year={2019}
+}
+
+% paper for split learning
+@article{gong2020survey,
+  title={A survey on differentially private machine learning},
+  author={Gong, Maoguo and Xie, Yu and Pan, Ke and Feng, Kaiyuan and Qin, Alex Kai},
+  journal={IEEE Computational Intelligence Magazine},
+  volume={15},
+  number={2},
+  pages={49--64},
+  year={2020},
+  publisher={IEEE}
+}
+
+% 2 schemas in distributed machine learning
+@article{verbraeken2020survey,
+  title={A survey on distributed machine learning},
+  author={Verbraeken, Joost and Wolting, Matthijs and Katzy, Jonathan and Kloppenburg, Jeroen and Verbelen, Tim and Rellermeyer, Jan S},
+  journal={ACM Computing Surveys (CSUR)},
+  volume={53},
+  number={2},
+  pages={1--33},
+  year={2020},
+  publisher={ACM New York, NY, USA}
+}
+
+% reference attack
+% Suy luận mẫu đại diện
+@inproceedings{hitaj2017deep,
+  title={Deep models under the GAN: information leakage from collaborative deep learning},
+  author={Hitaj, Briland and Ateniese, Giuseppe and Perez-Cruz, Fernando},
+  booktitle={Proceedings of the 2017 ACM SIGSAC Conference on Computer and Communications Security},
+  pages={603--618},
+  year={2017}
+}
+% suy luận thành viên
+@inproceedings{shokri2017membership,
+  title={Membership inference attacks against machine learning models},
+  author={Shokri, Reza and Stronati, Marco and Song, Congzheng and Shmatikov, Vitaly},
+  booktitle={2017 IEEE Symposium on Security and Privacy (SP)},
+  pages={3--18},
+  year={2017},
+  organization={IEEE}
+}
+% suy luận thuộc tính dữ liệu huấn luyện
+@inproceedings{melis2019exploiting,
+  title={Exploiting unintended feature leakage in collaborative learning},
+  author={Melis, Luca and Song, Congzheng and De Cristofaro, Emiliano and Shmatikov, Vitaly},
+  booktitle={2019 IEEE Symposium on Security and Privacy (SP)},
+  pages={691--706},
+  year={2019},
+  organization={IEEE}
+}
+% suy luận dữ liệu huấn luyện với nhãn tương ứng
+@incollection{zhu2020deep,
+  title={Deep leakage from gradients},
+  author={Zhu, Ligeng and Han, Song},
+  booktitle={Federated learning},
+  pages={17--31},
+  year={2020},
+  publisher={Springer}
+}
+% improve thằng (suy luận dữ liệu huấn luyện với nhãn tương ứng)
+@article{zhao2020idlg,
+  title={idlg: Improved deep leakage from gradients},
+  author={Zhao, Bo and Mopuri, Konda Reddy and Bilen, Hakan},
+  journal={arXiv preprint arXiv:2001.02610},
+  year={2020}
+}
+
+% fl with non-iid data
+@article{zhu2021federated,
+  title={Federated Learning on Non-IID Data: A Survey},
+  author={Zhu, Hangyu and Xu, Jinjin and Liu, Shiqing and Jin, Yaochu},
+  journal={arXiv preprint arXiv:2106.06843},
+  year={2021}
+}
+
+% challenges and future direction of fl
+@article{li2020federated,
+  title={Federated learning: Challenges, methods, and future directions},
+  author={Li, Tian and Sahu, Anit Kumar and Talwalkar, Ameet and Smith, Virginia},
+  journal={IEEE Signal Processing Magazine},
+  volume={37},
+  number={3},
+  pages={50--60},
+  year={2020},
+  publisher={IEEE}
+}
+
+% paper provides fl process (does not base on server-client or p2p architecture)
+@article{kairouz2019advances,
+  title={Advances and open problems in federated learning},
+  author={Kairouz, Peter and McMahan, H Brendan and Avent, Brendan and Bellet, Aur{\'e}lien and Bennis, Mehdi and Bhagoji, Arjun Nitin and Bonawitz, Kallista and Charles, Zachary and Cormode, Graham and Cummings, Rachel and others},
+  journal={arXiv preprint arXiv:1912.04977},
+  year={2019}
+}
+
+% example for vfl: health care
+@misc{featurecloud_2021,
+  title   = {Our vision},
+  url     = {https://featurecloud.eu/about/our-vision/},
+  journal = {FeatureCloud},
+  year    = {2021},
+  month   = {Jul}
+}
+
+% example for hfl in keyboard
+@article{ramaswamy2019federated,
+  title   = {Federated learning for emoji prediction in a mobile keyboard},
+  author  = {Ramaswamy, Swaroop and Mathews, Rajiv and Rao, Kanishka and Beaufays, Fran{\c{c}}oise},
+  journal = {arXiv preprint arXiv:1906.04329},
+  year    = {2019}
+}
+@article{yang2018applied,
+  title   = {Applied federated learning: Improving google keyboard query suggestions},
+  author  = {Yang, Timothy and Andrew, Galen and Eichner, Hubert and Sun, Haicheng and Li, Wei and Kong, Nicholas and Ramage, Daniel and Beaufays, Fran{\c{c}}oise},
+  journal = {arXiv preprint arXiv:1812.02903},
+  year    = {2018}
+}
+
+% papers about fl, whose communication info is weight of model
+@article{phuong2019privacy,
+  title     = {Privacy-preserving deep learning via weight transmission},
+  author    = {Phuong, Tran Thi and others},
+  journal   = {IEEE Transactions on Information Forensics and Security},
+  volume    = {14},
+  number    = {11},
+  pages     = {3003--3015},
+  year      = {2019},
+  publisher = {IEEE}
+}
+@article{yoon2021fedmix,
+  title   = {Fedmix: Approximation of mixup under mean augmented federated learning},
+  author  = {Yoon, Tehrim and Shin, Sumin and Hwang, Sung Ju and Yang, Eunho},
+  journal = {arXiv preprint arXiv:2107.00233},
+  year    = {2021}
+}
+
+% papers about fl, whose communication info is gradient
+% dựa trên sự nhiễu loạn tại global update
+@article{geyer2017differentially,
+  title   = {Differentially private federated learning: A client level perspective},
+  author  = {Geyer, Robin C and Klein, Tassilo and Nabi, Moin},
+  journal = {arXiv preprint arXiv:1712.07557},
+  year    = {2017}
+}
+
+% survey about data partitioning
+@article{mahmud2020survey,
+  title     = {A survey of data partitioning and sampling methods to support big data analysis},
+  author    = {Mahmud, Mohammad Sultan and Huang, Joshua Zhexue and Salloum, Salman and Emara, Tamer Z and Sadatdiynov, Kuanishbay},
+  journal   = {Big Data Mining and Analytics},
+  volume    = {3},
+  number    = {2},
+  pages     = {85--101},
+  year      = {2020},
+  publisher = {TUP}
+}
+
+% 2 main roles and their communication in FL system
+@article{lim2020federated,
+  title     = {Federated learning in mobile edge networks: A comprehensive survey},
+  author    = {Lim, Wei Yang Bryan and Luong, Nguyen Cong and Hoang, Dinh Thai and Jiao, Yutao and Liang, Ying-Chang and Yang, Qiang and Niyato, Dusit and Miao, Chunyan},
+  journal   = {IEEE Communications Surveys \& Tutorials},
+  volume    = {22},
+  number    = {3},
+  pages     = {2031--2063},
+  year      = {2020},
+  publisher = {IEEE}
+}
+
+% img of FL (fig. 2.1)
+@misc{chandorikar_2020,
+  title     = {Introduction to Federated Learning and Privacy Preservation},
+  url       = {https://towardsdatascience.com/introduction-to-federated-learning-and-privacy-preservation-75644686b559},
+  journal   = {Medium},
+  publisher = {Towards Data Science},
+  author    = {Chandorikar, Kapil},
+  year      = {2020},
+  month     = {Feb}
+}
+
+% definition of validaty
+@article{li2021survey,
+  title     = {A survey on federated learning systems: vision, hype and reality for data privacy and protection},
+  author    = {Li, Qinbin and Wen, Zeyi and Wu, Zhaomin and Hu, Sixu and Wang, Naibo and Li, Yuan and Liu, Xu and He, Bingsheng},
+  journal   = {IEEE Transactions on Knowledge and Data Engineering},
+  year      = {2021},
+  publisher = {IEEE}
+}
+
+% read the title :v
+@article{yang2019federated,
+  title     = {Federated machine learning: Concept and applications},
+  author    = {Yang, Qiang and Liu, Yang and Chen, Tianjian and Tong, Yongxin},
+  journal   = {ACM Transactions on Intelligent Systems and Technology (TIST)},
+  volume    = {10},
+  number    = {2},
+  pages     = {1--19},
+  year      = {2019},
+  publisher = {ACM New York, NY, USA}
+}
+
+% cite to show a big achievement of computer vision
+@inproceedings{zhu2020neural,
+  title        = {Neural Architecture Search for Microscopy Cell Segmentation},
+  author       = {Zhu, Yanming and Meijering, Erik},
+  booktitle    = {International Workshop on Machine Learning in Medical Imaging},
+  pages        = {542--551},
+  year         = {2020},
+  organization = {Springer}
+}
+
+% cite to show a big achievement of language processing
+@article{devlin2018bert,
+  title   = {Bert: Pre-training of deep bidirectional transformers for language understanding},
+  author  = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  journal = {arXiv preprint arXiv:1810.04805},
+  year    = {2018}
+}
+
+% explode data at edge devices
+@article{hu2016energy,
+  title     = {Energy big data analytics and security: challenges and opportunities},
+  author    = {Hu, Jiankun and Vasilakos, Athanasios V},
+  journal   = {IEEE Transactions on Smart Grid},
+  volume    = {7},
+  number    = {5},
+  pages     = {2423--2436},
+  year      = {2016},
+  publisher = {IEEE}
+}
+
+@article{lyu2020threats,
+  title   = {Threats to federated learning: A survey},
+  author  = {Lyu, Lingjuan and Yu, Han and Yang, Qiang},
+  journal = {arXiv preprint arXiv:2003.02133},
+  year    = {2020}
+}
+
+@article{yin2021comprehensive,
+  title     = {A Comprehensive Survey of Privacy-preserving Federated Learning: A Taxonomy, Review, and Future Directions},
+  author    = {Yin, Xuefei and Zhu, Yanming and Hu, Jiankun},
+  journal   = {ACM Computing Surveys (CSUR)},
+  volume    = {54},
+  number    = {6},
+  pages     = {1--36},
+  year      = {2021},
+  publisher = {ACM New York, NY, USA}
+}
+
+% original paper of fedAvg
+@inproceedings{mcmahan2017communication,
+  title        = {Communication-efficient learning of deep networks from decentralized data},
+  author       = {McMahan, Brendan and Moore, Eider and Ramage, Daniel and Hampson, Seth and y Arcas, Blaise Aguera},
+  booktitle    = {Artificial intelligence and statistics},
+  pages        = {1273--1282},
+  year         = {2017},
+  organization = {PMLR}
+}
+
+% paper of huawei, optimize a fl system
+@article{chen2018federated,
+  title   = {Federated meta-learning with fast convergence and efficient communication},
+  author  = {Chen, Fei and Luo, Mi and Dong, Zhenhua and Li, Zhenguo and He, Xiuqiang},
+  journal = {arXiv preprint arXiv:1802.07876},
+  year    = {2018}
+}

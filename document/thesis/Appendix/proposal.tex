@@ -1,0 +1,121 @@
+\chapter*{Đề cương chi tiết}
+\label{proposal}
+
+\section*{Thông tin chung}
+
+\begin{itemize}
+    \item Tên đề tài: Ứng dụng của Meta Learning và Personalization Layer trong hệ thống Federated Learning
+    \item Giảng viên hướng dẫn: GS. TS. Lê Hoài Bắc
+    \item Nhóm sinh viên thực hiện:
+    \begin{itemize}
+        \item Nguyễn Bảo Long - MSSV: 18120201
+        \item Cao Tất Cường - MSSV: 18120296
+    \end{itemize}
+
+    \item Thời gian thực hiện: Từ 09/2021 đến 03/2022
+    \item Loại đề tài: Nghiên cứu
+\end{itemize}
+
+\section*{Nội dung thực hiện}
+
+\subsection*{Giới thiệu đề tài}
+
+Trong bối cảnh bùng nổ thông tin cũng như việc đề cao tính riêng tư dữ liệu người dùng như hiện nay, các mô hình huấn luyện tập trung truyền thống dần bộc lộ nhiều điểm yếu khiến chúng không còn phù hợp. Ba điểm yếu làm cho cách tiếp cận cũ này trở nên tốn kém, không năng suất và ảnh hưởng đến quyền riêng tư của người dùng có thể kể đến:
+
+\begin{itemize}
+    \item Việc truyền dữ liệu từ máy người dùng về máy chủ để tiến hành huấn luyện tiềm ẩn nguy cơ lộ dữ liệu quan trọng của người dùng.
+    \item Chi phí truyền dữ liệu từ người dùng về máy chủ để huấn luyện ngày càng lớn do lượng dữ liệu sinh ra tại thiết bị cuối ngày càng tăng cao.
+    \item Cần một máy chủ thật mạnh mẽ để huấn luyện mô hình với lượng dữ liệu lớn như vậy.
+\end{itemize}
+
+Khái niệm federated learning (FL) được Google lần đầu giới thiệu trong nghiên cứu \cite{mcmahan2017communication} với ý tưởng chính là huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt được phân bố trên các thiết bị biên (được gọi là huấn luyện phân tán). Với ý tưởng này, việc triển khi mô hình máy học đến người dùng không còn gặp phải vấn đề về chi phí truyền tin, giúp bảo vệ quyền riêng tư dữ liệu và không đòi hỏi một máy chủ quá mạnh để huấn luyện mô hình. Tuy nhiên, dữ liệu của người dùng trong hệ thống thường không đồng nhất và có tính cá nhân hóa rất cao (tuân theo phân phối Non-IID). Điều này khiến cho hiệu suất của hệ thống FL suy giảm nghiêm trọng \cite{zhu2021federated}.
+
+Một cách ngắn gọn, hiệu suất của mô hình bị giảm là do mô hình không khái quát tốt trên tập dữ liệu của người dùng. Các thuật toán meta learning (ML) được biết đến với khả năng thích ứng nhanh trên tập dữ liệu mới \cite{hospedales2020meta}. Điều này giải quyết chính xác vấn đề dữ liệu FL đang gặp phải. Song song với đó, để tăng thêm tính các nhân hóa mô hình cho từng người dùng, các nghiên cứu \parencite{arivazhagan2019federated, liang2020think} đề xuất sử dụng kỹ thuật personalization layer (PL), giúp tăng đáng kể hiệu suất trên hệ thống FL. Tuy nhiên, các phương pháp tối ưu kể trên vẫn tồn tại nhiều khuyết điểm và có khả năng bù trừ cho nhau. Do đó, chúng tôi tiến hành nghiên cứu về ML, PL. Từ đó, kết hợp chúng vào hệ thống FL để đạt được hiệu suất tốt hơn.
+
+\subsection*{Mục tiêu đề tài}
+
+Mục tiêu chính của đề tài này bao gồm: (1) - nghiên cứu, khảo sát các thuật toán theo hướng FL, ML, PL và (2) - kết hợp cài đặt các thuật toán trên, giúp nâng cao hiệu suất của hệ thống FL khi đối mặt với dữ liệu dạng Non-IID.
+
+Việc nghiên cứu, khảo sát các thuật toán nhằm đưa ra đánh giá về ưu, nhược điểm của từng thuật toán. Từ đó, biết cách kết hợp chúng để đạt hiệu suất tốt.
+
+Việc kết hợp cài đặt nhằm mục đích chứng minh thực nghiệm tính hiệu quả của thuật toán đề xuất khi làm việc với dữ liệu Non-IID.
+
+\subsection*{Phạm vi đề tài}
+
+Nghiên cứu \cite{yin2021comprehensive} chỉ ra ba hướng nghiên cứu chính khi đề cập đến một hệ thống FL: (1) - Cải thiện hiệu suất của hệ thống FL, (2) - Cải thiện khả năng bảo mật của hệ thống FL, (3) - Cải thiện vấn đề về quyền riêng tư của người dùng trong hệ thống FL.
+
+Về việc phân loại hệ thống FL, dựa trên dữ liệu đầu vào, hệ thống FL được chia thành ba loại \cite{yin2021comprehensive}: (1) - Horizontal FL, (2) - Vertical FL, (3) - Federated transfer learning.
+
+Về việc phân loại các kịch bản Non-IID, nghiên cứu \cite{zhu2021federated} chỉ ra bốn kịch bản chính: (1) - Phân phối thuộc tính khác nhau giữa các máy khách, (2) - Phân phối nhãn khác nhau giữa các máy khách, (3) - Phân phối thời gian khác nhau giữa các máy khách, (4) - Các kịch bản khác.
+
+Chúng tôi giới hạn phạm vi và xây dựng phương án giải quyết của đề tài dựa trên ba giả định sau:
+
+\begin{itemize}
+    \item Loại hệ thống: Môi trường thí nghiệm (bao gồm các yếu tố như số lượng người dùng, dữ liệu, cấu hình, khả năng lưu trữ của thiết bị cuối,...) tuân theo đặc điểm của hệ thống Horizontal FL.
+    \item Bảo mật \& quyền riêng tư: Hệ thống đã đảm bảo tính bảo mật cũng như duy trì tốt quyền riêng tư của người dùng.
+    \item Kịch bản Non-IID: Phân phối nhãn dữ liệu trên các máy khách là khác nhau.
+\end{itemize}
+
+\subsection*{Cách tiếp cận}
+
+\textbf{Phương pháp chính.}
+
+Hệ thống FL huấn luyện trực tiếp các mô hình máy học trên các tập dữ liệu của từng người dùng, sau đó tiến hành tổng hợp tham số của mô hình thu được từ các máy khách này để thu được một mô hình toàn cục. Do đó, kiến trúc máy chủ - máy khách nghiễm nhiên trở được nghĩ đến và trở nên phổ biến. Nghiên cứu \cite{yin2021comprehensive} nêu ra các đặc điểm chính của máy chủ và máy khách trong một hệ thống FL:
+
+\begin{itemize}
+    \item Máy chủ: Điều phối các hoạt động huấn luyện mô hình và duy trì một bộ tham số toàn cục bằng cách tổng hợp các tham số mô hình do máy khách gửi về.
+    \item Máy khách: Đóng vai trò là nơi huấn luyện các mô hình học theo sự chỉ đạo của máy chủ. Chúng nhận tham số toàn cục từ máy chủ, huấn luyện mô hình dựa trên bộ tham số này và gửi tham số của mô hình mới về máy chủ để tổng hợp.
+\end{itemize}
+
+Phương pháp đề xuất của chúng tôi nhằm tích hợp các thuật toán ML, PL vào hệ thống nêu trên. Trong đó, các thuật toán ML được sử dụng để tạo ra một khởi tạo tốt, giúp máy khách hội tụ mô hình nhanh chóng (chỉ sau một hoặc một vài bước huấn luyện); các thuật toán PL được thêm vào như một phương pháp giúp tăng tính cá nhân hóa của từng mô hình máy học phân bố trên máy khách.
+
+\textbf{Dữ liệu thực nghiệm.} Chúng tôi sử dụng tập dữ liệu CIFAR-10 và tập dữ liệu MNIST trong tất cả các thí nghiệm. Cả hai tập dữ liệu đều sử dụng 25\% số điểm dữ liệu để kiểm thử và 75\% số điểm dữ liệu để huấn luyện.
+
+\textbf{Phương pháp đối sánh.} Chúng tôi sử dụng thuật toán \codeword{FedAvg} làm mô hình baseline. Để so sánh công bằng, chúng tôi cho phép mô hình này fine-tune một hoặc một vài bước trên một phần tập dữ liệu kiểm thử (thuật toán \codeword{FedAvgMeta}) trước khi bước vào kiểm thử thực sự. Các kết quả của thuật toán đề xuất sẽ được đem so sánh với kết quả của \codeword{FedAvg} và \codeword{FedAvgMeta}.
+
+\subsection*{Kết quả đề tài}
+
+Sau khi tiến hành nghiên cứu, chúng tôi kỳ vọng đạt được những kết quả sau:
+
+\begin{itemize}
+    \item Nắm được ý tưởng huấn luyện mô hình của các thuật toán theo hướng FL, ML, PL. Cài đặt mô hình baseline.
+    \item Cài đặt được hệ thống FL có tích hợp ML. So sánh độ chính xác thu được với mô hình baseline.
+    \item Cài đặt hệ thống FL có tích hợp ML và PL. So sánh độ chính xác thu được với mô hình baseline.
+\end{itemize}
+
+\subsection*{Kế hoạch thực hiện}
+
+Kế hoạch thực hiện khóa luận bao gồm 4 giai đoạn, được trình bày trong bảng sau:
+
+\begin{table}[H]
+    \centering
+    \caption{Bảng phân chia công việc}
+    \label{tab:my-table}
+    \begin{tabular}{|c|l|l|} 
+    \hline
+    \begin{tabular}[c]{@{}c@{}}\\Giai đoạn\end{tabular}                                       & \multicolumn{1}{c|}{Công việc}                                                               & \multicolumn{1}{c|}{Người thực hiện}  \\ 
+    \hline
+    \multirow{4}{*}{\begin{tabular}[c]{@{}c@{}}1 \\(01/09/2021\\- 15/09/2021)\end{tabular}}   & Tìm hiểu kiến thức nền tảng về ML                                                            & Nguyễn Bảo Long                       \\ 
+    \cline{2-3}
+                                                                                              & Tìm hiểu kiến thức nền tảng về FL                                                            & Cao Tất Cường                         \\ 
+    \cline{2-3}
+                                                                                              & Tìm hiểu kiến thức nền tảng về PL                                                            & Cao Tất Cường                         \\ 
+    \cline{2-3}
+                                                                                              & Trao đổi 2 mảng kiến thức                                                                    & Cả hai                                \\ 
+    \hline
+    \multirow{4}{*}{\begin{tabular}[c]{@{}c@{}}2\\(16/09/2021 \\- 31/01/2022)\end{tabular}}   & \begin{tabular}[c]{@{}l@{}}Cài đặt các thuật toán FedAvg, \\ FedMeta(Meta-SGD)\end{tabular}  & Nguyễn Bảo Long                       \\ 
+    \cline{2-3}
+                                                                                              & \begin{tabular}[c]{@{}l@{}}Cài đặt các thuật toán FedAvg(Meta), \\ FedAvg(MAML)\end{tabular} & Cao Tất Cường                         \\ 
+    \cline{2-3}
+                                                                                              & \begin{tabular}[c]{@{}l@{}}Cài đặt hệ thống FL có tích hợp ML \\và PL\end{tabular}           & Nguyễn Bảo Long                       \\ 
+    \cline{3-3}
+                                                                                              & Phân tích và đánh giá kết quả                                                                & Cả hai                                \\ 
+    \hline
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}3\\(01/02/2022 \\- 25/02/2022)\\\end{tabular}} & Viết luận văn                                                                                & Nguyễn Bảo Long                       \\ 
+    \cline{2-3}
+                                                                                              & Làm slide thuyết trình                                                                       & Cao Tất Cường                         \\ 
+    \cline{2-3}
+                                                                                              & Tập thuyết trình                                                                             & Cả hai                                \\
+    \hline
+    \end{tabular}
+\end{table}
