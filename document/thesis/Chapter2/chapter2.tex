@@ -33,6 +33,7 @@ Máy chủ sẽ lặp lại bước 2 và bước 3 cho đến khi độ lỗi h
     \end{center}
 \end{figure}
 
+\label{purpose_fl}
 \textbf{Mục tiêu của hệ thống FL.} Chúng tôi khảo sát hai mục tiêu của hệ thống FL: (1) - Mục tiêu cục bộ; (2) - Mục tiêu toàn cục.
 
 Các máy khách trong hệ thống hướng đến việc thực hiện mục tiêu cục bộ. Ban đầu, máy khách $c_i$ nhận một trọng số toàn cục $w_G$ từ máy chủ. Máy khách này sau đó sẽ cố gắng tìm kiếm một trọng số $w_i^*$ giúp cực tiểu hóa hàm lỗi cục bộ. Nói cách khác, $w_i^*$ phải thỏa mãn thỏa mãn:
@@ -51,6 +52,12 @@ Trong đó, $f_{local}(w_i)$ là hàm lỗi trên tập dữ liệu của $c_i$.
     \end{cases}
 \end{equation}
 
+Hay:
+
+\begin{dmath}
+    w_i \leftarrow w_i - \alpha\nabla f_{local}(w_i)
+\end{dmath}
+
 Mặt khác, mục tiêu toàn cục, cũng là mục tiêu chính của hệ thống FL, được máy chủ thực hiện bằng cách tìm kiếm một trọng số $w_G^*$ giúp tối thiểu hóa hàm lỗi của cả hệ thống \cite{yin2021comprehensive}:
 
 \begin{dmath}
@@ -64,6 +71,7 @@ Trong đó, $f_{global}(w_G)$ là hàm lỗi toàn cục của hệ thống. Đ�
 Đặt $n_i = |\mathcal{D}_i|$ là số điểm dữ liệu của tập $\mathcal{D}_i$, $N = \sum_{i=1}^n{n_i}$ là tổng số điểm dữ liệu có trong cả hệ thống. Phương pháp lấy trung bình trọng số tính toán $w_G^{t+1}$ từ các trọng số của máy khách như sau \cite{mcmahan2017communication}:
 
 \begin{equation}
+    \label{eq:agg_w}
     w_G^{t+1} = \sum_{i=1}^n{\frac{n_i}{N} w_i^t}
 \end{equation}
 
@@ -98,20 +106,80 @@ Một hệ thống Horizontal FL thường có số lượng máy khách rất l
 
 Dựa vào các đặc điểm phân loại nêu trên, chúng tôi xếp nghiên cứu của mình vào nhóm hệ thống Horizontal FL tập trung.
 
-\section{Hệ thống Federated Learning trên dữ liệu Non-IID}
+\section{Khảo sát dữ liệu Non-IID}
 
 Dữ liệu tại các máy khách thường được sinh ra dựa trên nhu cầu của người dùng cuối. Do đó, loại dữ liệu này thường có tính cá nhân hóa cao và không đồng nhất. Nói cách khác, không có bất kỳ phân phối dữ liệu cục bộ nào có thể đại diện cho phân phối trên toàn bộ dữ liệu, phân phối dữ liệu trên hai máy khách khác nhau là khác nhau \cite{zhu2021federated}. Đây chính là ý tưởng mà thuật ngữ \textit{dữ liệu Non-IID} muốn truyền đạt.
 
-Mặt khác, nghiên cứu \cite{zhao2018federated} chỉ ra rằng hệ thống FL có thể bị giảm hiệu quả nghiêm trọng khi đối mặt với dữ liệu Non-IID. Trong phần này, dựa trên nghiên cứu \cite{zhu2021federated} chúng tôi tiến hành khảo sát các kịch bản về dữ liệu Non-IID, các hướng tối ưu hệ thống trên loại dữ liệu này. Trong đó, đi sâu vào hai hướng: Sử dụng Meta Learning và Personalization Layer trong tối ưu hệ thống FL.
+Mặt khác, nghiên cứu \cite{zhao2018federated} chỉ ra rằng hệ thống FL có thể bị giảm hiệu quả nghiêm trọng khi đối mặt với dữ liệu Non-IID. Để hiểu rõ vấn đề mình đang đối mặt, dựa trên nghiên cứu \cite{zhu2021federated}, chúng tôi tiến hành khảo sát các kịch bản về dữ liệu Non-IID.
 
-\subsection{Các kịch bản Non-IID}
+Gọi $(x, y)$ là cặp thuộc tính và nhãn dữ liệu. Theo kịch bản dữ liệu Non-IID, phân phối dữ liệu của hai máy khách $c_i, c_j$ bất kỳ là khác nhau: $P_i(x, y) \ne P_j(x, y)$. Nghiên cứu \cite{zhu2021federated} nêu ra bốn kịch bản dữ liệu Non-IID: (1) - Phân phối thuộc tính khác nhau giữa các máy khách, (2) - Phân phối nhãn khác nhau giữa các máy khách, (3) - Phân phối thời gian khác nhau giữa các máy khách, (4) - Các kịch bản khác.
 
+\subsection{Phân phối thuộc tính khác nhau giữa các máy khách}
 
+Với kịch bản này, phân phối thuộc tính $P(x)$ trên các máy khách là đôi một khác nhau. Không gian thuộc tính của các máy khách có thể khác nhau hoàn toàn, trùng lặp một vài thuộc tính hoặc trùng lặp hoàn toàn.
 
-\subsection{Tối ưu hệ thống Federated Learning trên dữ liệu Non-IID}
+Các hệ thống Vertical FL thường rơi vào trường hợp đầu tiên. Ví dụ, trong trường hợp dữ liệu dạng bảng, máy khách $A$ có thể quản lý các thuộc tính $A_1, A_2, A_3$ trong khi máy khách $B$ quản lý các thuộc tính $B_1, B_2$ của cùng một người dùng.
 
-\textbf{Tối ưu dựa trên dữ liệu.}
+Đối với trường hợp thứ hai, hai máy khách có thể cùng quản lý một số thuộc tính dữ liệu. Ví dụ, đối với dữ liệu của một hệ thống camera dám sát, hai camera bất kỳ có thể cùng lưu hình một người với các góc chụp khác nhau.
 
-\subsubsection{Meta Learning}
+Trường hợp cuối chính là đặc điểm chính của hệ thống Horizontal FL. Tại đây, không gian thuộc tính của các máy khách là hoàn toàn giống nhau. Ví dụ, tập dữ liệu MNIST chứa các mẫu chữ viết tay của nhiều người. Do đó, cùng là một chữ số, nhưng độ đậm nhạt, cách viết người dùng $A$ sẽ khác với người dùng $B$.
 
-\subsubsection{Personalization Layer}
+\subsection{Phân phối nhãn khác nhau giữa các máy khách}
+
+Đây là trường hợp dữ liệu Non-IID phổ biến nhất, gây hại nghiêm trọng cho hệ thống FL \cite{zhu2021federated}, cũng chính là trường hợp mà chúng tôi hướng tới giải quyết. Tại đây, phân phối nhãn của hai máy khách $c_i, c_j$ bất kỳ là khác nhau: $P_i(y) \ne P_j(y)$ và xác suất thuộc tính $x$ có nhãn dữ liệu $y$: $P(x|y)$ của các máy khách là như nhau. Một kịch bản thường thấy của trường hợp này được trình bày trong nghiên cứu \cite{mcmahan2017communication}: Mỗi máy khách sẽ chỉ chứa các điểm dữ liệu thuộc về $k$ nhãn. Trong đó, $k$ là một siêu tham số biểu diễn độ mất cân bằng về nhãn. $k$ càng nhỏ, hệ thống mất cân bằng nhãn càng mạnh. Trong khóa luận này, chúng tôi thiết đặt môi trường dữ liệu theo cách tương tự như vậy. \codeword{#todo: chèn thêm ảnh}
+
+Ngoài ra, còn một trường hợp phổ biến khác liên quan đến việc dữ liệu Non-IID trên nhãn. Đối với trường họp này, xác suất thuộc tính $x$ được gán nhãn $y$: $P(y|x)$ là khác nhau giữa các máy khách. Ví dụ, với một bức ảnh trên mạng xã hội, người dùng $A$ có thể gán nhãn "yêu thích", trong khi người dùng $B$ gán nhãn "không yêu thích".
+
+\subsection{Phân phối thời gian khác nhau giữa các máy khách}
+
+Một ví dụ dễ hiệu cho trường hợp này là việc hai người dùng $c_i$, $c_j$ thu thập dữ liệu trong hai khoảng thời gian khác nhau. Dẫn đến việc phân phối $P_i(x, y|t) \ne P_j(x, y|t)$, với $t$ là một thời điểm nhất định. Một trường hợp khác của kịch bản này là phân phối $P(x, y|t)$ của một máy khách bị thay đổi liên tục theo thời gian. Ví dụ, một hệ thống camera giám sát có thể ghi nhận hình ảnh của rất nhiều người vào các ngày làm việc trong tuần nhưng lại có rất ít hình ảnh vào những ngày nghỉ.
+
+\subsection{Các kịch bản khác}
+
+Các kịch bản còn lại thường rơi vào hai trường hợp: (1) - Phân phối thuộc tính và nhãn là khác nhau giữa các máy khách, (2) - Số lượng dữ liệu huấn luyện là khác nhau giữa các máy khách.
+
+\section{Tối ưu hệ thống Federated Learning trên dữ liệu Non-IID}
+
+\subsection{Tối ưu dựa trên dữ liệu}
+
+Việc mô hình toàn cục làm việc với dữ liệu có phân phối không đồng nhất dẫn đến việc các lớp được học một cách không đồng đều (có một số lớp được học ít hơn/nhiều hơn các lớp khác), khiến cho mô hình bị giảm hiệu suất \cite{zhu2021federated}. Hướng tối ưu dựa trên dữ liệu trực tiếp giải quyết vấn đề này bằng hai cách: (1) - Chia sẻ dữ liệu, (2) - Tăng cường dữ liệu.
+
+\textbf{Chia sẻ dữ liệu.} Chia sẻ dữ liệu \cite{zhao2018federated} được thực hiện bằng cách xây dựng một tập dữ liệu chứa dữ liệu của tất cả các nhãn theo phân phối đều. Dữ liệu trong tập này được thu thập trực tiếp từ các máy khách và gửi về máy chủ để kết hợp huấn luyện mô hình toàn cục.
+
+\textbf{Tăng cường dữ liệu.} Cùng với ý tưởng cho phép mô hình toàn cục được học trên các tập dữ liệu có phân phối đều các nhãn trong hệ thống, tăng cường dữ liệu \cite{tanner1987calculation} nhằm mục đích gia tăng sự đa dạng của dữ liệu huấn luyện. Phương pháp này đòi hỏi các máy khách phải gửi phân phối dữ liệu của mình về máy chủ. Máy chủ theo đó yêu cầu các máy khách tạo ra ảnh mới \cite{duan2019astraea} với số lượng và nhãn lớp biết trước, hoặc tự mình tạo ra ảnh mới bằng cách sử dụng GAN \cite{zhu2021federated} để có thể huấn luyện trên một tập dữ liệu chứa tất cả các nhãn với phân phối trung bình.
+
+Các phương pháp nêu trên đều giúp hệ thống FL "chống chịu" tốt trước dữ liệu Non-IID. Tuy nhiên, đỏi hỏi máy khách gửi thông tin cá nhân về máy chủ là vi phạm mục tiêu ban đầu của hệ thống FL - bảo vệ quyền riêng tư dữ liệu của người dùng.
+
+\subsection{Tối ưu dựa trên thuật toán}
+
+\subsubsection{Tinh chỉnh cục bộ}
+
+Tinh chỉnh cục bộ, hay local fine-tuning, là kỹ thuật mạnh mẽ trong việc cá nhân hóa mô hình học cho các tập dữ liệu riêng biệt. Kỹ thuật này hướng đến việc tinh chỉnh mô hình học tại các máy khách sau khi nhận được mô hình từ máy chủ \cite{wang2019federated}.
+
+Một hướng tiếp cận phổ biến được đề ra là sử dụng ML trong việc tạo ra một mô hình toàn cục tốt, có thể thích ứng với tập dữ liệu mới trên máy khách một cách nhanh chóng. Các thuật toán theo hướng này \parencite{chen2018federated, fallah2020personalized} sử dụng các kỹ thuật ML có khả năng tạo ra một khởi tạo tốt như \codeword{Model-Agnostic Meta-Learning (MAML)} \cite{finn2017model} hay \codeword{Meta-SGD} \cite{li2017meta} để huấn luyện mô hình toàn cục. Mô hình toàn cục này, trong quá trình chạy thực tế trên một máy khách mới, hoàn toàn có thể đạt hội tụ chỉ sau một hoặc một vài bước huấn luyện.
+
+\subsubsection{Lớp cá nhân hóa}
+
+Các thuật toán theo hướng này cho phép duy trì một phần của mạng học sâu trên máy khách. Cụ thể, thuật toán chia mạng học sâu thành hai thành phần: phần chung và phần riêng. Phần chung được hợp tác huấn luyện bởi các máy khách và được tổng hợp bởi máy chủ. Phần riêng tồn tại riêng biệt trên từng máy khách, được máy khách trực tiếp duy trì và huấn luyện.
+
+Một thuật toán điển hình theo hướng tiếp cận này là \codeword{FedPer} \cite{arivazhagan2019federated}. \codeword{FedPer} quy định phần chung của mạng học sâu là các lớp rút trích đặc trưng, phần riêng của mạng là các lớp còn lại. Các thí nghiệm đã cho thấy thuật toán này đạt điệu quả cao hơn nhiều so với \codeword{FedAvg} khi làm việc trên dữ liệu Non-IID.
+
+Thuật toán \codeword{LG-FedAvg} \cite{liang2020think} cũng được xếp vào nhóm thuật toán sử dụng lớp cá nhân hóa. Tuy nhiên, ngược lại với \codeword{FedPer}, \codeword{LG-FedAvg} chỉ định phần riêng là các lớp rút trích đặc trưng trong mạng học sâu. Thực nghiệm cho thấy, \codeword{LG-FedAvg} đạt hiệu quả tốt hơn \codeword{FedAvg} trên cả các máy khách sẵn có trong hệ thống lẫn các máy khách chỉ vừa mới tham gia hệ thống.
+
+Bằng các lớp cá nhân hóa, các thuật toán nêu trên đã giải quyết được sự khác nhau về dữ liệu giữa các máy khách, từ đó tránh được phần nào sự giảm hiệu suất trên dữ liệu Non-IID. Nhưng các lớp thuộc phần chung của mạng học sâu vẫn có thể bị thiên kiến (bias) do dữ liệu huấn luyện không tuân theo phân phối đều. \textbf{Vậy có thể làm gì để các lớp này có thể thích ứng nhanh với tập dữ liệu của máy khách chỉ sau một vài bước huấn luyện?}
+
+\subsection{Tối ưu dựa trên hệ thống}
+
+\subsubsection{Gom cụm người dùng}
+
+Các tiếp cận FL truyền thống giả định rằng hệ thống này chỉ bao gồm một máy chủ. Điều này làm cho việc học các đặc tính của tất cả các máy khách trong môi trường dữ liệu Non-IID là khó khả thi. Để giải quyết vấn đề này, một hệ thống huấn luyện với nhiều máy chủ được đề xuất. Câu hỏi đặt ra là: Làm sao để biết một máy khách nên huấn luyện cùng với máy chủ nào? 
+
+Trong ngữ cảnh đa máy chủ, thuật toán \codeword{IFCA} \cite{ghosh2020efficient} trả lời câu hỏi trên bằng cách gửi trọng số của tất cả các máy chủ cho từng máy khách. Các máy khách theo đó tìm ra được trọng số cho độ lỗi nhỏ nhất trên tập dữ liệu cục bộ và gửi thông tin sau khi huấn luyện cục bộ của mình về máy chủ đó để cập nhật mô hình toàn cục. Việc gửi toàn bộ trọng số của các máy chủ đến một máy khách khiến cho thuật toán này tăng chi phí giao tiếp lên gấp $k$ lần, với $k$ là số lượng máy chủ của hệ thống.
+
+Một cách khác để trả lời câu hỏi trên là đánh giá sự tương đồng của trọng số do máy khách gửi về \cite{zhu2021federated}. Một thang độ đo sự tương đồng như độ đo cosine được máy chủ sử dụng trên các trọng số của máy khách. Từ đó biết được nên tổng hợp trọng số của các máy khách nào với nhau.
+
+Với việc lượng dữ liệu và thiết bị biên ngày càng tăng lên, việc duy trì nhiều máy chủ là thực sự cần thiết khi đối mặt với nhu cầu nâng cấp hệ thống học. Tuy nhiên, chi phí giao tiếp và phương pháp gom cụm vẫn là những vấn đề rất lớn cần giải quyết.
+
+% \subsection{Meta Learning}
+
+% \subsection{Personalization Layer}

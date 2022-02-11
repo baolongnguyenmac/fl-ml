@@ -1,2 +1,113 @@
 \chapter{Phương pháp đề xuất}
 \label{Chapter3}
+
+Trong chương này, chúng tôi khảo sát hai và phân tích về ML và PL - hai hướng tiếp cận giúp cải thiện hiệu suất của hệ thống FL trên dữ liệu Non-IID. Từ đó đề xuất thuật toán \codeword{FedMeta-Per}, là sự kết hợp của hai kỹ thuật ML và PL vào hệ thống FL.
+
+\section{Tiếp cận hệ thống theo hướng Meta Learning}
+
+Meta Learning được áp dụng vào hệ thống FL như một phương pháp tối ưu thuộc nhóm "Tinh chỉnh cục bộ (local fine-tuning)" \cite{zhu2021federated}. Các thuật toán ML được sử dụng trong hệ thống FL nhằm mục đích tạo ra một mô hình toàn cục tốt, giúp hội tụ nhanh trên tập dữ liệu phân bố trên các máy khách.
+
+\subsection{Diễn giải Meta Learning}
+
+Đối với phương pháp huấn luyện mô hình học truyền thống, chúng ta huấn luyện mô hình dự đoán $\hat{y} = f_\theta(x)$ trên tập dữ liệu $\mathcal{D} = \{ (x_i, y_i)\}_{i=1}^m$ của nhiệm vụ $T$ gồm các cặp thuộc tính và nhãn tương ứng. Ký hiệu $\mathcal{L}$ là hàm lỗi, $\omega$ là giả định ban đầu của hệ thống học, mục tiêu của việc học là tối thiểu hóa hàm lỗi trên tập dữ liệu $\mathcal{D}$ bằng cách tìm một bộ trọng số $w^*$ thỏa mãn:
+
+\begin{equation}
+    w^* = \arg \min_w \mathcal{L}(\mathcal{D}; w, \omega)
+\end{equation}
+
+Hướng tiếp cận của ML nằm ở chỗ cố gắng học một giả định ban đầu tốt. Điều này đạt được thông qua việc học một phân phối các nhiệm vụ $p(T)$ \cite{hospedales2020meta}. Sau khi học được một giả định ban đầu tốt, có thể áp dụng giả định này cho các nhiệm vụ mới trong cùng phân phối nhiệm vụ: $T \sim p(T)$.
+
+Về mặt công thức, ký hiệu $\mathcal{L}(\mathcal{D}, \omega)$ là hàm số biểu diễn sự hiệu quả việc sử dụng $\omega$ trong huấn luyện nhiệm vụ $T$ có tập dữ liệu $\mathcal{D}$, chúng ta có thể biểu diễn hàm mục tiêu của ML như sau:
+
+\begin{equation}
+    \min_{\omega} \mathop{\mathbb{E}}_{T\sim p(T)} \mathcal{L}(\mathcal{D}, \omega)
+\end{equation}
+
+Trong thực tế, người ta thực hiện mục tiêu trên bằng cách huấn luyện mô hình học trên tập dữ liệu $\mathcal{D}_{train} = \{(\mathcal{D}_{train(i)}^{support}, \mathcal{D}_{train(i)}^{query})\}_{i=1}^{|\mathcal{D}_{train}|}$ và kiểm thử trên tập dữ liệu $\mathcal{D}_{test} = \{(\mathcal{D}_{test(i)}^{support}, \mathcal{D}_{test(i)}^{query})\}_{i=1}^{|\mathcal{D}_{test}|}$. Mục tiêu của việc huấn luyện là tìm ra một giá trị $\omega^*$, sao cho khi sử dụng giá trị này trong huấn luyện một nhiệm vụ $T\sim p(T)$ thì đạt được hiệu quả cao:
+
+\begin{dmath}
+    \label{eq:meta_train}
+    \omega^* = \arg \max_{\omega} \log{p(\omega|\mathcal{D}_{source})}
+\end{dmath}
+
+Trong quá trình kiểm thử, tham số $\omega^*$ được sử dụng trong việc huấn luyện mô hình giải quyết nhiệm vụ $T_{new}$: $w^* = \arg \max_{w} \log{p(w|\omega^*, \mathcal{D}_{test(new)}^{support})}$. Để đánh giá hiệu quả của việc sử dụng $\omega$ trong huấn luyện nhiệm vụ $T_{new}$, người ta dựa vào kết quả của $w^*$ trên tập $\mathcal{D}_{test(new)}^{query}$.
+
+Để giải phương \ref{eq:meta_train}, chúng tôi nhìn nhận ML dưới góc độ một bài toán tối ưu hai cấp độ \cite{hospedales2020meta}. Dưới góc nhìn này, phương trìnhh \ref{eq:meta_train} được giải bằng cách đạt được mục tiêu tại hai cấp độ: (1) - Cấp độ thấp, (2) - Cấp độ cao. Đối với cấp độ thấp, mục tiêu là giải quyết nhiệm vụ $T_i$ dựa vào $\omega$:
+
+\begin{eqnarray}
+    \label{eq:inner_opt}
+    w^*_i(\omega) = \arg \min_{w} \mathcal{L}^{task}(w, \omega, \mathcal{D}_{train(i)}^{support})
+\end{eqnarray}
+
+Giải phương trình \ref{eq:inner_opt} bằng kỹ thuật SGD, ta được lời giải sau:
+
+\begin{equation}
+    \label{sol:inner_opt}
+    \begin{cases}
+        w_{i(0)} = \omega\\
+        w_{i(j)} = w_{i(j-1)} - \alpha \nabla \mathcal{L}^{task}(w_{i(j-1)}, \omega, \mathcal{D}_{train(i)}^{support})
+    \end{cases}
+\end{equation}
+
+Hay:
+
+\begin{dmath}
+    w_i \leftarrow w_i - \alpha\nabla\mathcal{L}^{task}(w_i)
+\end{dmath}
+
+Đối với cấp độ cao, mục tiêu là tìm ra tham số $\omega^*$ tối ưu, giúp việc học một nhiệm vụ mới $T_{new}\sim p(T)$ được thực hiện nhanh chóng và đạt hiệu suất cao:
+
+\begin{eqnarray}
+    \label{eq:outer_opt}
+    \omega^* = \arg \min_{\omega} \sum_{i=1}^{|\mathcal{D}_{souece}|} \mathcal{L}^{meta}(w^*_i(\omega), \omega, \mathcal{D}_{train(i)}^{query})
+\end{eqnarray}
+
+Áp dụng kỹ thuật SGD, lời giải cần tìm của bài toán ML được biểu diễn như sau:
+
+\begin{dmath}
+    \begin{cases}
+        \omega_0 = \Omega, \Omega \text{ là giá trị khởi tạo ngẫu nhiên}\\
+        \omega_j = \omega_{j-1} - \beta \nabla \mathcal{L}^{meta}\left(w_i^*(\omega), \omega, \mathcal{D}_{train(i)}^{query}\right)
+    \end{cases}
+\end{dmath}
+
+Hay:
+
+\begin{dmath}
+    \label{sol:outer_opt}
+    \omega \leftarrow \omega - \beta\nabla\mathcal{L}^{meta}\left(w_i^*(\omega)\right)
+        \leftarrow \omega - \beta\nabla\mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
+        \leftarrow \omega - \beta \left( I - \alpha \nabla^2 \mathcal{L}^{task}(w_i) \right) \times \nabla \mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
+\end{dmath}
+
+\subsection{Tích hợp Meta Learning vào hệ thống Federated Learning}
+
+Đối chiếu hai phương trình \ref{eq:inner_opt} và \ref{eq:outer_opt} với hai mục tiêu của hệ thống FL được trình bày trong phần \ref{purpose_fl}, có thể thấy rõ điểm tương đồng giữa hệ thống FL và hệ thống ML. Theo đó, các mục tiêu cấp thấp trong ML tương đồng với các mục tiêu cục bộ trong hệ thống FL, mục tiêu cấp cao trong hệ thống ML tương đồng với mục tiêu toàn cục của hệ thống FL. Từ đây, có thể dễ dàng kết hợp ML và FL bằng cách thay thế hệ hàm mục tiêu của hệ thống FL bằng hệ hàm mục tiêu của ML.
+
+Thật vậy, nghiên cứu \cite{fallah2020personalized} đã tích hợp thuật toán \codeword{MAML} vào hệ thống FL và biểu diễn lại hàm mục tiêu toàn cục của hệ thống từ phương trình \ref{eq:opt_server} như sau:
+
+\begin{equation}
+    \label{eq:opt_meta_fl}
+    \min_{w_G} \frac{1}{n} \sum_{i=1}^n f_{local}\left(w_i - \alpha \nabla f_{local}(w_i, \mathcal{D}_{train(i)}^{support}), \mathcal{D}_{train(i)}^{query}\right)
+\end{equation}
+
+Từ phương trình tổng hợp mô hình toàn cục bằng phương pháp lấy trung bình trọng số \ref{eq:agg_w}, bằng phương pháp SGD như phương trình \ref{sol:outer_opt}, phương trình tổng hợp mô hình toàn cục trong hệ thống FL tích hợp ML có dạng:
+
+\begin{dmath}
+    w_G^{t+1} = \sum_{i=1}^n{\frac{n_i}{N}\left[ w_i^t - \beta \left( I - \alpha \nabla^2 f_{local}(w_i^t) \right) \times \nabla f_{local}\left( w_i^t - \alpha\nabla f_{local}(w_i^t)\right) \right]}
+\end{dmath}
+
+Cuối cùng, cả hai nghiên cứu \parencite{chen2018federated, fallah2020personalized} đã chứng minh được việc tích hợp ML vào hệ thống FL giúp đạt hiệu quả cao hơn \codeword{FedAvg} về độ chính xác trên cả hai phương diện lý thuyết và thực nghiệm.
+
+\section{Tối ưu hệ thống bằng Personalization Layer}
+
+% trình bày về FedPer
+% trình bày về LG-FedAvg
+% nhận xét về ưu nhược điểm của 2 thằng
+% chỉ ra cách kết hợp của 2 thằng (lấy 2 cái ưu điểm: 1 thằng test được nhiều TH hơn, 1 thằng đạt độ chính xác cao hơn)
+
+Trong phần này, chúng tôi khảo sát hai thuật toán 
+
+\section{Kết hợp Meta Learning và Personalization Layer vào hệ thống Federated Learning}
+
+
