@@ -18,9 +18,9 @@ Gọi $\bar{\mathcal{M}}$ là mô hình máy học được huấn luyện trên
 \begin{itemize}
     \item \textit{Khởi tạo.} Máy chủ khởi tạo trọng số $w_G^0$ cho mô hình toàn cục và các siêu tham số cho quá trình huấn luyện. Thông tin này sau đó được gửi đến một tập hợp con các máy khách được chọn để tiến hành huấn luyện.
 
-    \item \textit{Huấn luyện và cập nhật mô hình cục bộ.} Tại bước huấn luyện thứ $t$, máy khách $c_i$ nhận trọng số $w_G^t$ từ máy chủ và tiến hành huấn luyện cục bộ trên tập dữ liệu $D_i$. Tham số $\theta_i^{t}$ thu được sau quá trình huấn luyện (có thể là trọng số $w_i^{t}$ hoặc đạo hàm hàm lỗi $g_i$) được máy khách gửi về máy chủ để tổng hợp.
+    \item \textit{Huấn luyện và cập nhật mô hình cục bộ.} Tại bước huấn luyện thứ $t$, máy khách $c_i$ nhận trọng số $w_G^t$ từ máy chủ và tiến hành huấn luyện cục bộ trên tập dữ liệu $\mathcal{D}_i$. Tham số $\theta_i^{t+1}$ thu được sau quá trình huấn luyện (có thể là trọng số $w_i^{t+1}$ hoặc đạo hàm hàm lỗi $g_i^{t+1}$) được máy khách gửi về máy chủ để tổng hợp.
 
-    \item \textit{Tổng hợp và cập nhật mô hình toàn cục.} Máy chủ nhận tham số $\theta_i^{t}$ gửi về từ các máy khách được chọn trước đó, tiến hành tổng hợp $w_G^{t+1}$ - trọng số mới của mô hình toàn cục và gửi trọng số này đến một tập hợp con các máy khách khác để bắt đầu bước huấn luyện toàn cục mới.
+    \item \textit{Tổng hợp và cập nhật mô hình toàn cục.} Máy chủ nhận tham số $\theta_i^{t+1}$ gửi về từ các máy khách được chọn trước đó, tiến hành tổng hợp $w_G^{t+1}$ - trọng số mới của mô hình toàn cục và gửi trọng số này đến một tập hợp con các máy khách khác để bắt đầu bước huấn luyện toàn cục mới.
 \end{itemize}
 
 Máy chủ sẽ lặp lại bước 2 và bước 3 cho đến khi độ lỗi hội tụ hoặc độ chính xác đạt đến một ngưỡng nhất định. Khi quá trình huấn luyện kết thúc, tham số của mô hình toàn cục sẽ được phân phối đến toàn bộ máy khách trong hệ thống.
@@ -36,26 +36,27 @@ Máy chủ sẽ lặp lại bước 2 và bước 3 cho đến khi độ lỗi h
 \label{purpose_fl}
 \textbf{Mục tiêu của hệ thống FL.} Chúng tôi khảo sát hai mục tiêu của hệ thống FL: (1) - Mục tiêu cục bộ; (2) - Mục tiêu toàn cục.
 
-Các máy khách trong hệ thống hướng đến việc thực hiện mục tiêu cục bộ. Ban đầu, máy khách $c_i$ nhận một trọng số toàn cục $w_G$ từ máy chủ. Máy khách này sau đó sẽ cố gắng tìm kiếm một trọng số $w_i^*$ giúp cực tiểu hóa hàm lỗi cục bộ. Nói cách khác, $w_i^*$ phải thỏa mãn thỏa mãn:
+Các máy khách trong hệ thống hướng đến việc thực hiện mục tiêu cục bộ. Ban đầu, máy khách $c_i$ nhận một trọng số toàn cục $w_G$ từ máy chủ. Máy khách này sau đó sẽ cố gắng tìm kiếm một trọng số $w_i^{t+1}$ giúp cực tiểu hóa hàm lỗi cục bộ. Nói cách khác, $w_i^{t+1}$ phải thỏa mãn thỏa mãn:
 
 \begin{equation}
     \label{eq:opt_client}
-    w_i^* = \arg\min_{w_i}{f_{local}(w_i)}
+    w_i^{t+1} = \arg\min_{w_i}{f_{local}(w_i^t)}
 \end{equation}
 
-Trong đó, $f_{local}(w_i)$ là hàm lỗi trên tập dữ liệu của $c_i$. Với $\alpha$ là siêu tham số học cục bộ, $w_{i(j)}$ là trọng số tại bước huấn luyện $j$ của $c_i$, lời giải của phương trình \ref{eq:opt_client} theo phương pháp SGD có thể được viết như sau:
+Trong đó, $f_{local}(w_i)$ là hàm lỗi trên tập dữ liệu của $c_i$. Với $\alpha$ là siêu tham số học cục bộ, $w_{i(j)}$ là trọng số tại bước huấn luyện $j$ của $c_i$, lời giải của phương trình \ref{eq:opt_client} theo phương pháp SGD sau $e$ bước huấn luyện có thể được viết:
 
 \begin{equation}
     \begin{cases}
-        w_{i(0)} = w_G\\
-        w_{i(j)} = w_{i(j-1)} - \alpha \nabla f_{local}(w_{i(j-1)})
+        w_{i(0)}^t = w_G^t\\
+        w_{i(j)}^t = w_{i(j-1)}^t - \alpha \nabla f_{local}(w_{i(j-1)}^t)\\
+        w_i^{t+1} = w_{i(e)}^t
     \end{cases}
 \end{equation}
 
 Hay:
 
 \begin{dmath}
-    w_i \leftarrow w_i - \alpha\nabla f_{local}(w_i)
+    w_i^{t+1} \leftarrow w_i^t - \alpha\nabla f_{local}(w_i^t)
 \end{dmath}
 
 Mặt khác, mục tiêu toàn cục, cũng là mục tiêu chính của hệ thống FL, được máy chủ thực hiện bằng cách tìm kiếm một trọng số $w_G^*$ giúp tối thiểu hóa hàm lỗi của cả hệ thống \cite{yin2021comprehensive}:
@@ -68,18 +69,18 @@ Mặt khác, mục tiêu toàn cục, cũng là mục tiêu chính của hệ th
 
 Trong đó, $f_{global}(w_G)$ là hàm lỗi toàn cục của hệ thống. Để giải phương trình \ref{eq:opt_server}, máy chủ thực hiện tổng hợp tham số gửi về từ máy khách bằng một trong hai cách: lấy trung bình trọng số \parencite{mcmahan2017communication, aono2017privacy, yoon2021fedmix} hoặc lấy trung bình đạo hàm \parencite{chen2018federated, mcmahan2017learning}.
 
-Đặt $n_i = |\mathcal{D}_i|$ là số điểm dữ liệu của tập $\mathcal{D}_i$, $N = \sum_{i=1}^n{n_i}$ là tổng số điểm dữ liệu có trong cả hệ thống. Phương pháp lấy trung bình trọng số tính toán $w_G^{t+1}$ từ các trọng số của máy khách như sau \cite{mcmahan2017communication}:
+Đặt $n_i = |\mathcal{D}_i|$ là số điểm dữ liệu của tập $\mathcal{D}_i$, $N = \sum_{i=1}^n{n_i}$ là tổng số điểm dữ liệu có trong cả hệ thống. Phương pháp lấy trung bình trọng số tính toán trọng số toàn cục tại bước huấn luyện thứ $t$ từ các trọng số của máy khách như sau \cite{mcmahan2017communication}:
 
 \begin{equation}
     \label{eq:agg_w}
-    w_G^{t+1} = \sum_{i=1}^n{\frac{n_i}{N} w_i^t}
+    w_G^{t+1} = \sum_{i=1}^n{\frac{n_i}{N} w_i^{t+1}}
 \end{equation}
 
-Trái lại, phương pháp lấy trung bình đạo hàm đòi hỏi máy khách gửi về đạo hàm hàm lỗi sau khi kết thúc quá trình huấn luyện cục bộ. Với $\beta$ là siêu tham số học toàn cục, quá trình tổng hợp được biểu diễn theo công thức:
+Trái lại, phương pháp lấy trung bình đạo hàm đòi hỏi máy khách gửi về đạo hàm hàm lỗi sau khi kết thúc quá trình huấn luyện cục bộ. Với $\beta$ là siêu tham số học toàn cục, quá trình tổng hợp tại bước huấn luyện $t$ được biểu diễn theo công thức:
 
 \begin{dmath}
-    w_G^{t+1} = w_G^t - \beta \left[ \frac{1}{n} \sum_{i=1}^n{\frac{n_i}{N} \nabla f_{local}(w_i)} \right]
-        = w_G^t - \beta g^t
+    w_G^{t+1} = w_G^t - \beta  \sum_{i=1}^n{\frac{n_i}{N} \nabla f_{local}(w_i^{t+1})}
+        = w_G^t - \beta g^{t+1}
 \end{dmath}
 
 Sau khi khảo sát cả hai phương pháp tổng hợp tham số của máy chủ, nghiên cứu \cite{yin2021comprehensive} chỉ ra rằng, việc lấy trung bình trọng số giúp hệ thống có khả năng chịu được việc mất cập nhật, nhưng không đảm bảo việc hội tụ. Trái lại, việc lấy trung bình đạo hàm giúp hệ thống đảm bảo sự hội tụ nhưng tiêu tốn nhiều chi phí truyền tin hơn. Trong nghiên cứu này, chúng tôi tổng hợp trọng số toàn cục bằng phương pháp lấy trung bình trọng số để phù hợp hơn với giới hạn về chi phí giao tiếp và lưu trữ.
@@ -166,6 +167,7 @@ Một thuật toán điển hình theo hướng tiếp cận này là \codeword{
 
 Thuật toán \codeword{LG-FedAvg} \cite{liang2020think} cũng được xếp vào nhóm thuật toán sử dụng lớp cá nhân hóa. Tuy nhiên, ngược lại với \codeword{FedPer}, \codeword{LG-FedAvg} chỉ định phần riêng là các lớp rút trích đặc trưng trong mạng học sâu. Thực nghiệm cho thấy, \codeword{LG-FedAvg} đạt hiệu quả tốt hơn \codeword{FedAvg} trên cả các máy khách sẵn có trong hệ thống lẫn các máy khách chỉ vừa mới tham gia hệ thống.
 
+\label{open_question}
 Bằng các lớp cá nhân hóa, các thuật toán nêu trên đã giải quyết được sự khác nhau về dữ liệu giữa các máy khách, từ đó tránh được phần nào sự giảm hiệu suất trên dữ liệu Non-IID. Nhưng các lớp thuộc phần chung của mạng học sâu vẫn có thể bị thiên kiến (bias) do dữ liệu huấn luyện không tuân theo phân phối đều. \textbf{Vậy có thể làm gì để các lớp này có thể thích ứng nhanh với tập dữ liệu của máy khách chỉ sau một vài bước huấn luyện?}
 
 \subsection{Tối ưu dựa trên hệ thống}
