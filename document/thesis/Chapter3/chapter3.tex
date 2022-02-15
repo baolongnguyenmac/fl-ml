@@ -125,7 +125,8 @@ Tóm lại, cả hai nghiên cứu \parencite{chen2018federated, fallah2020perso
             \EndFor
 
             \State
-            \State // $n_i, N_m$ là số điểm dữ liệu trên máy khách $c_i$ và trên $m$ máy khách
+
+            \State Tính toán {$n_i = \left| \mathcal{D}_{train(i)}^{query} \right|, N_m = \sum_{i=0}^m n_i$}
             \State Cập nhật $w_G^{t+1} \gets w_G^t - \beta \sum_{i=0}^m \frac{n_i}{N_m} g_i^{t+1}$ cho MAML
             \State Cập nhật $(w_G^{t+1}, \alpha^{t+1}) \gets (w_G^t, \alpha^t) - \beta \sum_{i=0}^m \frac{n_i}{N_m} g_i^{t+1}$ cho Meta-SGD
         \EndFor
@@ -211,21 +212,20 @@ Chúng tôi tiến hành khảo sát kết quả của các kỹ thuật tối �
 
 \begin{table}[H]
     \centering
-    \caption{Độ chính xác (\%) của các hệ thống FL trên dữ liệu Non-IID của tập dữ liệu CIFAR-10 \cite{shamsian2021personalized}}
+    \caption{Độ chính xác (\%) của các hệ thống FL trên dữ liệu Non-IID của tập dữ liệu CIFAR-10 \cite{shamsian2021personalized}. Các thuật toán PL được in đậm.}
     \label{tab:acc_paper}
-    \begin{tabular}{|c|c|c|c|} 
-    \hline
-    \diagbox{Thuật toán}{Số máy khách} & 10           & 50           & 100           \\ 
-    \hline
-    Per-FedAvg                         & 76.65 ± 4.84 & 83.03 ± 0.25 & 80.19 ± 1.99  \\ 
-    \hline
-    \textbf{FedPer}                             & 87.27 ± 1.39 & 83.39 ± 0.47 & 80.99 ± 0.71  \\ 
-    \hline
-    pFedMe                             & 87.69 ± 1.93 & 86.09 ± 0.32 & 85.23 ± 0.58  \\ 
-    \hline
-    \textbf{LG-FedAvg}                          & 89.11 ± 2.66 & 85.19 ± 0.58 & 81.49 ± 1.56  \\
-    \hline
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{c|ccc} 
+    \toprule
+    \diagbox{Thuật toán}{\#clients} & 10           & 50           & 100           \\ 
+    \midrule
+    Per-FedAvg                      & 76.65 ± 4.84 & 83.03 ± 0.25 & 80.19 ± 1.99  \\
+    \textbf{FedPer}                 & 87.27 ± 1.39 & 83.39 ± 0.47 & 80.99 ± 0.71  \\
+    pFedMe                          & 87.69 ± 1.93 & 86.09 ± 0.32 & 85.23 ± 0.58  \\
+    \textbf{LG-FedAvg}              & 89.11 ± 2.66 & 85.19 ± 0.58 & 81.49 ± 1.56  \\
+    \bottomrule
     \end{tabular}
+    }
 \end{table}
 
 Tuy nhiên, như câu hỏi đã được nêu ra trong phần \ref{open_question}, chúng tôi nhận thấy, hiệu suất của hệ thống FL cài đặt theo hướng PL vẫn có thể được cải thiện vì các lớp phần chung chưa thực sự mạnh mẽ và còn phụ thuộc nhiều vào dữ liệu. Cụ thể, các lớp phần chung này có thể bị bias do phân bố dữ liệu không đồng đều trong kịch bản Non-IID. Do đó, cần cải thiện cách huấn luyện của các lớp học sâu trong phần chung để chúng bớt phụ thuộc vào dữ liệu hơn. Nói cách khác, các lớp này cần có khả năng làm việc khách quan, "đối xử" công bằng hơn với các tập dữ liệu riêng biệt trong hệ thống FL.
@@ -296,7 +296,7 @@ Kết thúc quá trình huấn luyện cục bộ, $w_{P(n)}^{t+1}$ được lư
             \For{ $c_i\in C_t$}
                 \State Tính toán $(w_{B(i)}^{t+1}, n_i) \gets \text{FEDPER-CLIENT}(c_i, w_B^t)$
             \EndFor
-            \State // $n_i, N_m$ là số điểm dữ liệu trên máy khách $c_i$ và trên $m$ máy khách
+            \State Tính toán $n_i = \left| \mathcal{D}_i \right|, N_m = \sum_{i=1}^m n_i$
             \State Cập nhật $w_B^{t+1} \gets \sum_{i=1}^m \frac{n_i}{N_m} w_{B(i)}^{t+1}$
         \EndFor
     \end{algorithmic}
@@ -326,7 +326,7 @@ Ngoại trừ việc phần chung của mạng học sâu là các lớp tuyến
                 \State Tính toán $w_{B(i)}^{t+1} \gets ClientUpdate(c_i,w_B^t)$
             \EndFor
 
-            \State // $n_i, N_m$ là số điểm dữ liệu trên máy khách $c_i$ và trên $m$ máy khách
+            \State Tính toán $n_i = \left| \mathcal{D}_i \right|, N_m = \sum_{i=1}^m n_i$
             \State Cập nhật $w_B^{t+1} \gets \sum_{i=1}^m\frac{n_i}{N_m} w_{B(i)}^{t+1}$ %\COMMENT{// aggregate updates}
         \EndFor
 
@@ -446,17 +446,21 @@ Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới 
 Máy chủ thi triển thuật toán \ref{alg:fedmeta_per_server} để tổng hợp trọng số mới toàn cục của hệ thống. Tại đây diễn ra ba quá trình cơ bản của một máy chủ FL: gửi tham số toàn cục, nhận tham số cập nhật cục bộ, tổng hợp tham số toàn cục mới (bảng \ref{tab:param_fedmetaper}).
 
 \begin{table}[H]
+    \centering
     \caption{Bảng các tham số tại máy chủ hệ thống FedMeta-Per}
     \label{tab:param_fedmetaper}
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{|c|cc|}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{c|c|c} 
+    \toprule
+    \multirow{2}{*}{} & \multicolumn{2}{c}{Thuật toán}                                               \\ 
+    \cline{2-3}
+                      & MAML                          & Meta-SGD                                     \\ 
     \hline
-    \multirow{2}{*}{}    & \multicolumn{2}{c|}{Thuật toán}                                                 \\ \cline{2-3} 
-                         & \multicolumn{1}{c|}{MAML}             & Meta-SGD                                \\ \hline
-    Gửi tham số       & \multicolumn{1}{c|}{$w_B^t$}          & $(w_B^t, \alpha_B^t)$                   \\ \hline
-    Nhận các tham số      & \multicolumn{1}{c|}{Các trọng số $w_{B(i)}^{t+1}$} & Các tham số $(w_{B(i)}^{t+1}, \alpha_{B(i)}^{t+1})$ \\ \hline
-    Tổng hợp tham số  & \multicolumn{1}{c|}{$w_{B}^{t+1}$}    & $(w_{B}^{t+1}, \alpha_{B}^{t+1})$       \\ \hline
-    \end{tabular}%
+    Gửi tham số       & $w_B^t$                       & $(w_B^t, \alpha_B^t)$                        \\
+    Nhận các tham số  & Các trọng số $w_{B(i)}^{t+1}$ & Các tham số $(w_B(i)^t+1, \alpha_B(i)^t+1)$  \\
+    Tổng hợp tham số  & $w_{B}^{t+1}$                 & $(w_B^t+1, \alpha_B^t+1)$                    \\
+    \bottomrule
+    \end{tabular}
     }
 \end{table}
 
@@ -483,7 +487,7 @@ Máy chủ tổng hợp các tham số nhận về bằng phương pháp lấy t
             \EndFor
 
             \State
-            \State // $n_i, N_m$ là số điểm dữ liệu trên máy khách $c_i$ và trên $m$ máy khách
+            \State Tính toán {$n_i = \left| \mathcal{D}_{train(i)}^{query} \right|, N_m = \sum_{i=0}^m n_i$}
             \State Cập nhật $w_{B}^{t+1} \gets \sum_{i=0}^m \frac{n_i}{N_m} w_{B(i)}^{t+1}$ cho MAML
             \State Cập nhật $(w_B^{t+1}, \alpha_B^{t+1}) \gets \sum_{i=0}^m \frac{n_i}{N_m} (w_i^{t+1}, \alpha_{B(i)}^{t+1})$ cho Meta-SGD
         \EndFor
@@ -496,4 +500,6 @@ Dựa theo quá trình kiểm thử của nghiên cứu \cite{liang2020think}, c
 
 Đối với người dùng cũ, chúng tôi sử dụng lại các lớp học sâu thuộc phần chung để đạt được độ mức cá nhân hóa cao.
 
-Đối với người dùng mới, chúng tôi không sử dụng kỹ thuật ensemble test vì các lý do đã nêu tại phần \ref{ensemble_test} mà cho từng lớp phần riêng đã được xây dựng trước đó kết hợp với lớp phần chung để hoạt động trên bộ dự liệu mới. Tại quá trình tinh chỉnh, chúng tôi sẽ chọn được bộ tham số cho độ lỗi nhỏ nhất. Từ đó sử dụng bộ tham số này để xử lý dữ liệu kiểm thử.
+Đối với người dùng mới, chúng tôi không sử dụng kỹ thuật ensemble test vì các lý do đã nêu tại phần \ref{ensemble_test}, mà cho từng lớp phần riêng đã được xây dựng trước đó kết hợp với lớp phần chung để hoạt động trên bộ dự liệu mới. Tại quá trình tinh chỉnh, chúng tôi sẽ chọn được bộ tham số cho độ lỗi nhỏ nhất. Từ đó sử dụng bộ tham số này để xử lý dữ liệu kiểm thử.
+
+Chúng tôi nhận thấy, các thuật toán \codeword{FedMeta-Per} được phép tinh chỉnh trên tập support của máy khách trong giai đoạn kiểm thử nhưng thuật toán \codeword{FedPer} thì không. Để công bằng trong đánh giá, chúng tôi đề xuất thuật toán \codeword{FedPerMeta}. Thuật toán này cho phép mô hình huấn luyện theo \codeword{FedPer} được phép chạy một hoặc một vài bước huấn luyện trên tập support của máy khách trong lúc đánh giá.
