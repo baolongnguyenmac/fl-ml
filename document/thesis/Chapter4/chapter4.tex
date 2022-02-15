@@ -3,14 +3,112 @@
 
 \section{Mô tả dữ liệu}
 
-% tham khảo bên pFedMe
+Tập dữ liệu CIFAR-10 \cite{cifar-10} là tập dữ liệu hình ảnh được sủ dụng phổ biến trong việc huấn luyện các mô hình máy học hay các thuật toán thị giác máy tính. Đây là một trong các tập dữ liệu được dùng nhiều nhất trong quá trình nghiên cứu máy học. Tập dữ liệu bao gồm 60,000 ảnh màu kích thước $32\times 32$ thuộc 10 phân lớp khác nhau.
+
+Tập dữ liệu MNIST \cite{mnist} là tập dữ liệu hình ảnh được sử dụng trong việc huấn luyện các hệ thống xử lý ảnh. Tập dữ liệu này cũng được sử dụng rộng rãi trong lĩnh vực học máy. Tập dữ liệu có tổng cộng 70,000 ảnh đen trắng các chữ số viết tay được viết bởi nhiều người.
+
+Chúng tôi sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh giá thuật toán đề xuất và các thuật toán được khảo sát. Bằng các đặc tính của hệ thống Horizontal FL và dữ liệu Non-IID, chúng tôi cấu hình mỗi máy khách chỉ gồm 2/10 phân lớp dữ liệu, số lượng nhãn giữa các lớp và số lượng dữ liệu giữa các máy khách là không đồng đều. Thống kê dữ liệu Non-IID được trình bày trong bảng \ref{tab:stat_noniid_data}.
+
+\begin{table}[H]
+    \caption{Thống kê trên hai tập dữ liệu MNIST và CIFAR-10 (dữ liệu Non-IID)}
+    \label{tab:stat_noniid_data}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|c|c|c|c|cccc|c|}
+    \hline
+    \multirow{2}{*}{Dataset} & \multirow{2}{*}{\#clients} & \multirow{2}{*}{\#samples} & \multirow{2}{*}{\#classes} & \multicolumn{4}{c|}{\#samples/client}                                                      & \multirow{2}{*}{\#classes/client} \\ \cline{5-8}
+                             &                            &                            &                            & \multicolumn{1}{c|}{min} & \multicolumn{1}{c|}{mean}  & \multicolumn{1}{c|}{std}   & max   &                                   \\ \hline
+    MNIST                    & 50                         & 69,909                     & 10                         & \multicolumn{1}{c|}{135} & \multicolumn{1}{c|}{1,398} & \multicolumn{1}{c|}{1,424} & 5,201 & 2                                 \\ \hline
+    CIFAR-10                 & 50                         & 52,497                     & 10                         & \multicolumn{1}{c|}{506} & \multicolumn{1}{c|}{1,049} & \multicolumn{1}{c|}{250}   & 1,986 & 2                                 \\ \hline
+    \end{tabular}%
+    }
+\end{table}
+
+Chúng tôi cũng tiến hành các thí nghiệm của mình trên kịch bản dữ liệu IID, nơi các máy khách có phân phối giống nhau và chứa đủ dữ liệu của 10 phân lớp. Chi tiết thống kê được trình bày trong bảng \ref{tab:stat_iid_data}.
+
+\begin{table}[H]
+    \caption{Thống kê trên hai tập dữ liệu MNIST và CIFAR-10 (dữ liệu IID)}
+    \label{tab:stat_iid_data}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|c|c|c|c|cccc|c|}
+    \hline
+    \multirow{2}{*}{Dataset} & \multirow{2}{*}{\#clients} & \multirow{2}{*}{\#samples} & \multirow{2}{*}{\#classes} & \multicolumn{4}{c|}{\#samples/client}                                                      & \multirow{2}{*}{\#classes/client} \\ \cline{5-8}
+                             &                            &                            &                            & \multicolumn{1}{c|}{min} & \multicolumn{1}{c|}{mean}  & \multicolumn{1}{c|}{std}   & max   &                                   \\ \hline
+    MNIST                    & 50                         & 70,000                     & 10                         & \multicolumn{1}{c|}{135} & \multicolumn{1}{c|}{1,400} & \multicolumn{1}{c|}{35} & 1,645 & 10                                 \\ \hline
+    CIFAR-10                 & 50                         & 60,000                     & 10                         & \multicolumn{1}{c|}{506} & \multicolumn{1}{c|}{1,200} & \multicolumn{1}{c|}{0}   & 1,200 & 10                                 \\ \hline
+    \end{tabular}%
+    }
+\end{table}
+
+Dữ liệu trên mỗi máy khách được chia làm hai tập: tập huấn luyện chiếm 75\% tổng số điểm dữ liệu và tập kiểm tra chiếm 25\% tổng số điểm dữ liệu. Theo hướng ML, chúng tôi tiếp tục chia nhỏ dữ liệu trong tập huấn luyện và tập kiểm tra thành hai tập: tập support chiếm 20\% dữ liệu và tập query chiếm 80\% dữ liệu. Như vậy, thực chất mô hình được huấn luyện trên 75\% tổng số điểm dữ liệu (tập huấn luyện), tinh chỉnh trên 5\% dữ liệu (tập support của dữ liệu kiểm tra) và kiểm thử trên 20\% tổng số điểm dữ liệu (tập query của dữ liệu kiểm tra).
+
+Trong quá trình kiểm thử, dữ liệu kiểm thử chứa trong 50 máy khách được cấu hình để tạo ra hai loại người dùng: người dùng cũ và người dùng mới. Dữ liệu của người dùng cũ được chia như đã trình bày ở trên. Đối với người dùng mới, chúng tôi tiến hành chia lại từ 25\% dữ liệu tập kiểm tra sao cho phân phối của những người dùng này khác hoàn toàn với các phân phối đã tồn tại trước đó trong hệ thống.
+
+Tóm lại, ký hiệu $C_{train} = \{c^{train}_1,...,c^{train}_{50}\}$ là tập máy khách dùng trong huấn luyện, $C_{test} = \{c^{test}_1,...,c^{test}_{50}\}$ là tập máy khách dùng trong kiểm thử, $N$ là tổng số điểm dữ liệu, ta có số lượng dữ liệu huấn luyện và kiểm tra lần lượt là:
+
+\begin{equation*}
+    N_{train} = \sum_{i=1}^{50} \left|c^{train}_i\right| = 0.75N
+\end{equation*}
+\begin{equation*}
+    N_{test} = \sum_{i=1}^{50} \left|c^{test}_i\right| = 0.25N
+\end{equation*}
+
+Trong cài đặt ML, ký hiệu $c^{train}_i = \{\mathcal{D}_{train(i)}^{support}, \mathcal{D}_{train(i)}^{query}\}$, $ c^{test}_i = \{\mathcal{D}_{test(i)}^{support}, \mathcal{D}_{test(i)}^{query}\}$. Ta có số lượng dữ liệu chứa trong tập support và query của tất cả các máy khách lần lượt là:
+
+\begin{equation*}
+    N_{train/test(i)}^{support} = \left|\mathcal{D}_{train/test(i)}^{support}\right| = 0.2 \left|c_i^{train/test}\right|
+\end{equation*}
+\begin{equation*}
+    N_{train/test(i)}^{query} = \left|\mathcal{D}_{train/test(i)}^{query}\right| = 0.8 \left|c^{train/test}_i\right|
+\end{equation*}
+
+Người dùng $c_j^{test} \in C_{test}$ được gọi là người dùng cũ nếu tồn tại người dùng $c_i^{train}\in C_{train}$ sao cho $p\left((x,y)\in c_j^{test}\right) = p\left((x,y)\in c_i^{train}\right)$. Ngược lại, $c_j^{test}$ là người dùng mới nếu $p\left((x,y)\in c_j^{test}\right) \ne p\left((x,y)\in c_i^{train}\right)$ với mọi $c_i^{train}\in C_{train}$.
 
 \section{Phương pháp đánh giá}
+
+Sau quá trình huấn luyện mô hình toàn cục sử dụng dữ liệu trong tập $C_{train}$, chúng tôi thực hiện đánh giá mô hình này trên dữ liệu của tập $C_{test}$ bằng cách ghi nhận lại hai thông tin \cite{chen2018federated}: (1) - Độ chính xác trong tương quan với tất cả các điểm dữ liệu, (2) - Độ chính xác trong tương quan với tất cả các máy khách.
+
+Độ chính xác trong tương quan với tất cả các điểm dữ liệu được tính toán bằng cách duyệt qua tất cả các máy khách để thống kê số lượng mẫu dữ liệu được phân lớp đúng và tổng số mẫu dữ liệu, sau đó lấy thương của hai đại lượng này. Gọi $r_i^t, n_i$ lần lượt là số lượng mẫu được phân lớp đúng tại bước huấn luyện thứ $t$, tổng số mẫu dữ liệu trên tập dữ liệu của người dùng $c_i^{test}$ và $n$ là số người dùng tham gia kiểm thử. Độ đo này tại bước huấn luyện toàn cục thứ $t$ được tính như sau:
+
+\begin{equation}
+    AccDataPoint^t = \frac{\sum_{i=1}^{n} r_i^t}{\sum_{i=1}^{n} n_i}
+\end{equation}
+
+Độ chính xác đặt trong tương quan với tất cả các máy khách được tính bằng cách lấy trung bình cộng độ chính xác trên toàn bộ máy khách tham gia kiểm thử. Với $a_i^t$ là độ chính xác của mô hình chạy trên máy khách $c_i^{test}$, tại bước huấn luyện toàn cục thứ $t$, ta tính toán thông tin về độ chính xác và độ lệch chuẩn của $n$ người dùng như sau:
+
+\begin{equation}
+    AccClient^t = \frac{1}{n} \sum_{i=1}^n a_i^t
+\end{equation}
+\begin{equation}
+    \sigma^t = \sqrt{\frac{1}{n} \sum_{i=1}^n {(a_i^t - AccClient^t)^2}}
+\end{equation}
+
+Trong đó, $\sigma^t$ dùng để biểu thị mức độ phân tán trên độ chính xác của người dùng kiểm thử tại bước huấn luyện thứ $t$.
 
 \section{Mô tả thực nghiệm}
 
 \subsection{Kiến trúc mô hình}
+\label{model_schema}
+
+Chúng tôi sử dụng hai mô hình để rút trích đặc trưng và phân lớp dữ liệu cho tập dữ liệu CIFAR-10 và MNIST.
+
+\textbf{CIFAR-10.} Mô hình nhận các ảnh đầu vào có kích thước $(32\times32\times3)$. Hai lớp tích chập (kernel có kích thước $(5\times5)$, số chanel lần lượt là $6$ và $16$) được sử dụng để rút trích đặc trưng. Theo sau mỗi lớp tích chập là một lớp \codeword{MaxPooing} có kích thước $(2\times2)$. Phần phân lớp gồm ba lớp tuyến tính có đầu ra lần lượt là $120$, $84$ và $10$. Các hàm kích hoạt được sử dụng là \codeword{ReLU} và \codeword{Softmax}.
+
+\textbf{MNIST.} Mô hình nhận các ảnh đầu vào đã được làm phẳng có kích thước $(1\times784)$. Sử dụng hai lớp tuyến tính có đầu ra lần lượt là 100 và 10. Các hàm kích hoạt được sử dụng là \codeword{ReLU} và \codeword{Softmax}.
 
 \subsection{Huấn luyện tập trung}
 
+Chúng tôi huấn luyện tập trung dựa theo định nghĩa về hệ thống FL trong nghiên cứu \cite{yin2021comprehensive}. Theo đó, cần cấu hình tập dữ liệu $\mathcal{D}_{train}$ chứa 80\% tổng dữ liệu. Kiến trúc mạng học sâu mô tả trong phần \ref{model_schema} sẽ được huấn luyện trên tập dữ liệu này. Mô hình sau khi huấn luyện được thực thi trên tập dữ liệu $\mathcal{D}_{test}$ chứa 20\% tổng dữ liệu. Các tập $\mathcal{D}_{train}, \mathcal{D}_{test}$ có dữ liệu tuân theo phân phối đều. Kết quả về độ chính xác sau khi kiểm thử gọi là kết quả huấn luyện tập trung.
+
 \subsection{Huấn luyện phân tán}
+
+Trước hết chúng tôi cài đặt và huấn luyện hệ thống FL bằng thuật toán \codeword{FedAvg} để có kết quả đối sánh chính. Thuật toán này được huấn luyện trên toàn bộ dữ liệu của tập $C_{train}$ và thực hiện kiểm thử trên các tập $\mathcal{D}_{test(i)}^{query}$ của từng người dùng trong tập $C_{test}$.
+
+Khi thuật toán \codeword{FedAvg} cập nhật xong mô hình toàn cục, trong lúc kiểm thử, chúng tôi cho phép mô hình này thực hiện tinh chỉnh một hoặc một vài bước huấn luyện trên tập dữ liệu $\mathcal{D}_{test(i)}^{support}$ của những người dùng trong tập $C_{test}$. Đây chính là ý tưởng của thuật toán \codeword{FedAvgMeta}, thuật toán sinh ra nhằm so sánh công bằng với các thuật toán \codeword{FedMeta}.
+
+Các thuật toán \codeword{FedMeta} và \codeword{FedMeta-Per} tiến hành huấn luyện như đã trình bày tại chương \ref{Chapter3}.
+
+Để dễ dàng trong việc tinh chỉnh các mô hình học, chúng tôi cố định một vài tham số: mỗi bước huấn luyện toàn cục sẽ sử dụng 5 máy khách, lượng dữ liệu trong một lô (batch) là 32, số bước huấn luyện cục bộ là 1 bước.
+
+Các thuật toán được chạy trên dữ liệu Non-IID. Riêng thuật toán \codeword{FedAvg} được chạy trên cả dữ liệu IID lẫn Non-IID để minh họa tác động của dữ liệu Non-IID đối với hệ thống.
+
+
