@@ -3,17 +3,24 @@
 
 \section{Kết quả huấn luyện tập trung}
 
+Chúng tôi tiến hành huấn luyện tập trung hai mô hình trên hai tập dữ liệu CIFAR-10, MNIST và thu được kết quả như sau:
+
+\begin{itemize}
+    \item CIFAR-10: Độ chính xác đạt 61.03\%
+    \item MNIST: Độ chính xác đạt 97.19\%
+\end{itemize}
+
 \section{$FedAvg$ trên dữ liệu Non-IID}
 
 Hệ thống FL do Google đề xuất được giới thiệu là có thể thực thi tốt không những trên dữ liệu IID mà còn trên cả dữ liệu Non-IID \cite{mcmahan2017communication}. Tuy nhiên, nhiều nghiên cứu khác (\parencite{chen2018federated, zhao2018federated, zhu2021federated, wang2019federated}) không đồng ý với quan điểm này. Chúng tôi cấu hình hai môi trường dữ liệu IID và Non-IID làm dữ liệu đầu vào cho thuật toán \codeword{FedAvg} và thu được kết quả như bảng \ref{tab:fedavg_acc}. Quan sát bảng kết quả, ta có thể nhận thấy độ chính xác của \codeword{FedAvg} giảm khoảng 6\% trên tập dữ liệu MNIST và giảm lên đến 32\% trên tập dữ liệu CIFAR-10 khi phân phối dữ liệu chuyển từ IID sang Non-IID. Mô hình trên tập dữ liệu CIFAR-10 thậm chí còn không đạt hội tụ.
 
-Kỹ thuật tinh chỉnh cục bộ được thêm vào hệ thống FL dưới dạng đơn giản giúp cải thiện một phần độ chính xác của mô hình. Thật vậy, khi cho phép mô hình học tinh chỉnh bằng dữ liệu của tập support trên máy khách trong lúc kiểm thử, độ chính xác thu được so với trước khi áp dụng kỹ thuật này tăng nhẹ trên tập dữ liệu MNIST và tăng hơn gấp đôi trên tập dữ liệu CIFAR-10. Tuy nhiên, điều đáng buồn ở đây là mô hình trên tập dữ liệu CIFAR-10 vẫn không đạt hội tụ. Độ chính xác thu được không ổn định \codeword{#todo: chèn con hình acc k hội tụ}.
+Kỹ thuật tinh chỉnh cục bộ được thêm vào hệ thống FL dưới dạng đơn giản giúp cải thiện một phần độ chính xác của mô hình. Thật vậy, khi cho phép mô hình học tinh chỉnh bằng dữ liệu của tập support trên máy khách trong lúc kiểm thử, độ chính xác thu được so với trước khi áp dụng kỹ thuật này tăng nhẹ trên tập dữ liệu MNIST và tăng hơn gấp đôi trên tập dữ liệu CIFAR-10. Tuy nhiên, điều đáng buồn ở đây là mô hình trên tập dữ liệu CIFAR-10 vẫn không đạt hội tụ. Độ chính xác thu được không ổn định (hình \ref{fig:cifar_meta_new}, \ref{fig:cifar_meta_old}).
 
 Nguyên nhân dẫn đến việc hiệu suất của hệ thống bị giảm nghiêm trọng là vì mô hình toàn cục không được huấn luyện trên một phân phối đều, dẫn đến việc bị bias trên dữ liệu huấn luyện. Trong quá trình kiểm thử, khi đứng trước một phân phối dữ liệu lạ, mô hình toàn cục không thể nào nắm bắt được đặc trưng dữ liệu một cách hiệu quả dẫn đến việc phân lớp không chính xác. Một cách dễ hiểu, dữ liệu kiểm thử trên các máy khách có tính cá nhân hóa cao và rất khác với những gì mô hình đã được huấn luyện trước đó nên mô hình hoạt động không tốt.
 
 Nắm bắt được nguyên nhân trên, người ta đề xuất duy trì một phần của mạng học sâu tại máy khách. Đây chính là kỹ thuật sử dụng lớp cá nhân hóa. Chúng tôi cài đặt lại thuật toán \codeword{FedPer} để chạy trên dữ liệu của mình. Tuy nhiên, kết quả thu được không tốt lắm (bảng \ref{tab:fedavg_acc}). Trên tập dữ liệu CIFAR-10, độ chính xác không những không được cải thiện mà còn tệ hơn thuật toán \codeword{FedAvg}. Trên tập dữ liệu MNIST, mô hình học bị quá khớp dẫn đến việc giảm hiệu suất từ bước huấn luyện toàn cục thứ 180 từ khoảng 84\% xuống còn như kết quả trong bảng. 
 
-Trong khi đó, như thông tin về độ chính xác được trình bày trong bảng \ref{tab:acc_paper}, độ chính xác của thuật toán \codeword{FedPer} đạt 83.39±0.47\% (hệ thống gồm 50 máy khách trên dữ liệu CIFAR-10 Non-IID). Chúng tôi tìm hiểu và nhận thấy mạng học sâu mà \codeword{FedPer} sử dụng để tạo ra kết quả trên là mạng \codeword{MobileNet-v1} \cite{howard2017mobilenets}, một mạng học sâu phức tạp hơn kiến trúc của chúng tôi rất nhiều lần. Nhờ vào \codeword{MobileNet-v1}, hệ thống FL rút trích được nhiều đặc trưng hơn và đạt kết quả tốt hơn. Tuy nhiên, chi phí phần cứng cho việc duy trì các lớp phần riêng tại máy khách cũng tăng lên. Trái lại, mạng học sâu chúng tôi sử dụng rất đơn giản, giúp làm giảm đáng kể chi phí phần cứng nhưng hiệu quả đem lại rất cao \codeword{#todo: chèn ref tới phần chứng minh cái này}. 
+Trong khi đó, như thông tin về độ chính xác được trình bày trong bảng \ref{tab:acc_paper}, độ chính xác của thuật toán \codeword{FedPer} đạt 83.39±0.47\% (hệ thống gồm 50 máy khách trên dữ liệu CIFAR-10 Non-IID). Chúng tôi tìm hiểu và nhận thấy mạng học sâu mà \codeword{FedPer} sử dụng để tạo ra kết quả trên là mạng \codeword{MobileNet-v1} \cite{howard2017mobilenets}, một mạng học sâu phức tạp hơn kiến trúc của chúng tôi rất nhiều lần. Nhờ vào \codeword{MobileNet-v1}, hệ thống FL rút trích được nhiều đặc trưng hơn và đạt kết quả tốt hơn. Tuy nhiên, chi phí phần cứng cho việc duy trì các lớp phần riêng tại máy khách cũng tăng lên. Trái lại, mạng học sâu chúng tôi sử dụng rất đơn giản, giúp làm giảm đáng kể chi phí phần cứng nhưng hiệu quả đem lại rất cao (hình \ref{fig:cifar_per_new}, \ref{fig:cifar_per_old}).
 
 \begin{table}[H]
     \centering
@@ -134,9 +141,7 @@ Tuy nhiên, điều khiến chúng tôi chưa vừa ý với hệ thống này n
 
 Với hai kỳ vọng vừa trình bày về khả năng thích ứng nhanh trên dữ liệu mới và khả năng cá nhân hóa mô hình học cho từng người dùng, chúng tôi thử nghiệm thuật toán đề xuất trên hai tập dữ liệu CIFAR-10, MNIST và đạt được kết quả như bảng \ref{tab:fedmetaper_acc}. Theo đó, các thuật toán \codeword{FedMeta-Per} luôn cho kết quả cao nhất và cao hơn các thuật toán \codeword{FedPer} và \codeword{FedPerMeta} từ 2 đến 6 lần trên cả hai tập dữ liệu CIFAR-10 và MNIST.
 
-Xét về khả năng thích ứng nhanh trên tập dữ liệu mới, \codeword{FedMeta-Per} cho kết quả tốt hơn hẳn so với \codeword{FedPerMeta} khi chỉ cần thực hiện một bước huấn luyện trên tập dữ liệu support (chỉ chiếm 20\% dữ liệu) của máy khách trong lúc kiểm thử, đã có thể nắm bắt được các đặc tính dữ liệu trong máy khách đó và cho kết quả dự đoán phân lớp với độ chính xác rất cao. Từ hình \ref{fig:fedmetaper_acc}, có thể quan sát thấy việc hội tụ của các thuật toán này cũng xảy ra nhanh hơn rất nhiều với hai thuật toán còn lại. Kết quả này tương đồng với kết quả thí nghiệm của các thuật toán \codeword{FedMeta}. Từ những ý phân tích vừa nêu, chúng tôi kết luận rằng, các thuật toán \codeword{FedMeta-Per} đã thừa hưởng thành công khả năng thích ứng nhanh trên tập dữ liệu mới của các thuật toán ML như chúng tôi đã kỳ vọng trước đó.
-
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Bảng độ chính xác (\%) của thuật toán FedPer và các thuật toán FedMeta-Per tính trên điểm dữ liệu (dữ liệu Non-IID)}
     % \refstepcounter{table}
@@ -157,9 +162,9 @@ Xét về khả năng thích ứng nhanh trên tập dữ liệu mới, \codewor
     }
 \end{table}
 
-Xét về khả năng cá nhân hóa mô hình cho từng người dùng, chúng tôi dựa vào độ chính xác trong tương quan với máy khách được trình bày trong bảng \ref{tab:fedmetaper_client_acc}. Bảy trong số tám các trường hợp các thuật toán \codeword{FedMeta-Per} có độ lệch chuẩn nhỏ hơn thuật toán \codeword{FedPer} (trừ trường hợp kiểm định thuật toán \codeword{FedMeta-Per(MAML)} trên người dùng mới của tập CIFAR-10). Điều này chứng tỏ rằng khả năng cá nhân hóa của thuật toán đề xuất tốt hơn so với thuật toán \codeword{FedPer} và \codeword{FedPerMeta}.
+Xét về khả năng thích ứng nhanh trên tập dữ liệu mới, \codeword{FedMeta-Per} cho kết quả tốt hơn hẳn so với \codeword{FedPerMeta} khi chỉ cần thực hiện một bước huấn luyện trên tập dữ liệu support (chỉ chiếm 20\% dữ liệu) của máy khách trong lúc kiểm thử, đã có thể nắm bắt được các đặc tính dữ liệu trong máy khách đó và cho kết quả dự đoán phân lớp với độ chính xác rất cao. Từ hình \ref{fig:fedmetaper_acc}, có thể quan sát thấy việc hội tụ của các thuật toán này cũng xảy ra nhanh hơn rất nhiều với hai thuật toán còn lại. Kết quả này tương đồng với kết quả thí nghiệm của các thuật toán \codeword{FedMeta}. Từ những ý phân tích vừa nêu, chúng tôi kết luận rằng, các thuật toán \codeword{FedMeta-Per} đã thừa hưởng thành công khả năng thích ứng nhanh trên tập dữ liệu mới của các thuật toán ML như chúng tôi đã kỳ vọng trước đó.
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Bảng độ chính xác (\%) của thuật toán FedPer và các thuật toán FedMeta-Per tính trên máy khách (dữ liệu Non-IID)}
     \label{tab:fedmetaper_client_acc}
@@ -179,9 +184,11 @@ Xét về khả năng cá nhân hóa mô hình cho từng người dùng, chúng
     }
 \end{table}
 
+Xét về khả năng cá nhân hóa mô hình cho từng người dùng, chúng tôi dựa vào độ chính xác trong tương quan với máy khách được trình bày trong bảng \ref{tab:fedmetaper_client_acc}. Bảy trong số tám các trường hợp các thuật toán \codeword{FedMeta-Per} có độ lệch chuẩn nhỏ hơn thuật toán \codeword{FedPer} (trừ trường hợp kiểm định thuật toán \codeword{FedMeta-Per(MAML)} trên người dùng mới của tập CIFAR-10). Điều này chứng tỏ rằng khả năng cá nhân hóa của thuật toán đề xuất tốt hơn so với thuật toán \codeword{FedPer} và \codeword{FedPerMeta}.
+
 Mặt khác, chúng tôi so sánh các thuật toán \codeword{FedMeta} với các thuật toán \codeword{FedMeta-Per} và tổng hợp kết quả trong hai bảng \ref{tab:compare} và \ref{tab:compare_again}. Theo đó, độ chính xác của \codeword{FedMeta-Per} luôn cao hơn \codeword{FedMeta} từ 1\% đến 19\% khi so sánh trên cùng thuật toán huấn luyện cục bộ. Tính cá nhân hóa của \codeword{FedMeta-Per} cũng cao hơn đáng kể so với \codeword{FedMeta} khi thuật toán đề xuất của chúng tôi, trong đa số các trường hợp, đã làm giảm độ lệch chuẩn của độ chính xác xuống từ 2 đến 10 lần xét trên cùng thuật toán huấn luyện cục bộ.
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Bảng so sánh độ chính xác (\%) giữa FedMeta và FedMeta-Per tính trên điểm dữ liệu (dữ liệu Non-IID)}
     \label{tab:compare}
@@ -201,7 +208,7 @@ Mặt khác, chúng tôi so sánh các thuật toán \codeword{FedMeta} với c�
     }
 \end{table}
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Bảng so sánh độ chính xác (\%) giữa FedMeta và FedMeta-Per tính trên máy khách (dữ liệu Non-IID)}
     \label{tab:compare_again}
