@@ -5,118 +5,9 @@
 
 Trong chương này, khóa luận khảo sát bốn thuật toán chính bao gồm \codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)} trong nghiên cứu \cite{chen2018federated} (tích hợp phương pháp huấn luyện của các thuật toán ML vào hệ thống FL) và \codeword{FedPer}, \codeword{LG-FedAvg} trong các nghiên cứu \cite{arivazhagan2019federated}, \cite{liang2020think} (sử dụng kỹ thuật PL trong tối ưu độ chính xác và khả năng cá nhân hóa của hệ thống FL), giúp tạo hình thuật toán đề xuất \codeword{FedMeta-Per}. Từ đó, tiến đến phân tích sự kết hợp của bốn thuật toán này trong \codeword{FedMeta-Per}.
 
-\section{Tiếp cận hệ thống theo hướng Meta Learning}
+\section{Thuật toán $FedMeta(MAML)$ và $FedMeta(Meta-SGD)$}
 
-ML được áp dụng vào hệ thống FL như một phương pháp tối ưu thuộc nhóm "Fine-tune cục bộ". Các thuật toán ML được sử dụng trong hệ thống FL nhằm mục đích tạo ra một mô hình toàn cục tốt, giúp hội tụ nhanh trên tập dữ liệu phân bố trên các máy khách.
-
-\subsection{Diễn giải Meta Learning}
-
-ML là một phương pháp học mới, cho phép mô hình học có thể gia tăng kinh nghiệm qua việc thực hiện nhiều nhiệm vụ khác nhau trong cùng một phân phối nhiệm vụ. Dẫn đến việc các mô hình ML có khả năng thích ứng nhanh trên nhiệm vụ mới chỉ sau một vài bước huấn luyện và dữ liệu huấn luyện giới hạn. Đây là một phát kiến quan trọng, đóng vai trò trong việc đưa cách học tập của máy trở nên tiệm cận với cách học tập của con người \cite{harlow1949formation}.
-
-Đối với phương pháp huấn luyện mô hình học truyền thống, chúng ta huấn luyện mô hình dự đoán $\hat{y} = f_\theta(x)$ trên tập dữ liệu $\mathcal{D} = \{ (x_i, y_i)\}_{i=1}^{|\mathcal{D}|}$ của nhiệm vụ $T$ gồm các cặp thuộc tính và nhãn tương ứng. Ký hiệu $\mathcal{L}$ là hàm lỗi, $\omega$ là giả định ban đầu của hệ thống học, mục tiêu của việc học là tối thiểu hóa hàm lỗi trên tập dữ liệu $\mathcal{D}$ bằng cách tìm một bộ trọng số $w^*$ thỏa mãn:
-
-\begin{equation}
-    w^* = \arg \min_w \mathcal{L}(\mathcal{D}; w, \omega)
-\end{equation}
-
-Hướng tiếp cận của ML nằm ở chỗ cố gắng học một giả định ban đầu $\omega$ thật tốt. Điều này đạt được thông qua việc học một phân phối các nhiệm vụ $p(T)$ \cite{hospedales2020meta}. Sau khi học được một giả định ban đầu tốt, có thể áp dụng giả định này cho các nhiệm vụ mới trong cùng phân phối nhiệm vụ: $T \sim p(T)$.
-
-Về mặt công thức, ký hiệu $\mathcal{L}(\mathcal{D}, \omega)$ là hàm số biểu diễn sự hiệu quả việc sử dụng $\omega$ trong huấn luyện nhiệm vụ $T$ có tập dữ liệu $\mathcal{D}$, chúng ta có thể biểu diễn hàm mục tiêu của ML như sau:
-
-\begin{equation}
-    \min_{\omega} \mathop{\mathbb{E}}_{T\sim p(T)} \mathcal{L}(\mathcal{D}, \omega)
-\end{equation}
-
-Trong thực tế, người ta thực hiện mục tiêu trên bằng cách huấn luyện mô hình học trên tập dữ liệu $\mathcal{D}_{train} = \{(\mathcal{D}_{train(i)}^{support}, \mathcal{D}_{train(i)}^{query})\}_{i=1}^{|\mathcal{D}_{train}|}$ và kiểm thử trên tập dữ liệu $\mathcal{D}_{test} = \{(\mathcal{D}_{test(i)}^{support}, \mathcal{D}_{test(i)}^{query})\}_{i=1}^{|\mathcal{D}_{test}|}$. Mục tiêu của việc huấn luyện là tìm ra một giá trị $\omega^*$, sao cho khi sử dụng giá trị này trong huấn luyện một nhiệm vụ $T\sim p(T)$ thì đạt được hiệu quả cao:
-
-\begin{dmath}
-    \label{eq:meta_train}
-    \omega^* = \arg \max_{\omega} \log{p(\omega|\mathcal{D}_{source})}
-\end{dmath}
-
-Trong quá trình kiểm thử, tham số $\omega^*$ được sử dụng trong việc huấn luyện mô hình giải quyết nhiệm vụ $T_{new}$: $w^* = \arg \max_{w} \log{p(w|\omega^*, \mathcal{D}_{test(new)}^{support})}$. Để đánh giá hiệu quả của việc sử dụng $\omega$ trong huấn luyện nhiệm vụ $T_{new}$, người ta dựa vào kết quả của $w^*$ trên tập $\mathcal{D}_{test(new)}^{query}$.
-
-Để giải phương \ref{eq:meta_train}, nghiên cứu \cite{hospedales2020meta} nhìn nhận ML dưới góc độ một bài toán tối ưu hai cấp độ. Dưới góc nhìn này, phương trìnhh \ref{eq:meta_train} được giải bằng cách đạt được mục tiêu tại hai cấp độ: (1) - Cấp độ thấp, (2) - Cấp độ cao.
-
-Đối với cấp độ thấp, mục tiêu là giải quyết nhiệm vụ $T_i$ dựa vào $\omega$:
-
-\begin{eqnarray}
-    \label{eq:inner_opt}
-    w^*_i(\omega) = \arg \min_{w} \mathcal{L}^{task}(w, \omega, \mathcal{D}_{train(i)}^{support})
-\end{eqnarray}
-
-Giải phương trình \ref{eq:inner_opt} bằng kỹ thuật SGD, ta được lời giải sau:
-
-\begin{equation}
-    \label{sol:inner_opt}
-    \begin{cases}
-        w_{i(0)} = \omega\\
-        w_{i(j)} = w_{i(j-1)} - \alpha \nabla \mathcal{L}^{task}(w_{i(j-1)}, \omega, \mathcal{D}_{train(i)}^{support})
-    \end{cases}
-\end{equation}
-
-Hay:
-
-\begin{dmath}
-    w_i \leftarrow w_i - \alpha\nabla\mathcal{L}^{task}(w_i)
-\end{dmath}
-
-Đối với cấp độ cao, mục tiêu là tìm ra tham số $\omega^*$ tối ưu, giúp việc học một nhiệm vụ mới $T_{new}\sim p(T)$ được thực hiện nhanh chóng và đạt hiệu suất cao:
-
-\begin{eqnarray}
-    \label{eq:outer_opt}
-    \omega^* = \arg \min_{\omega} \sum_{i=1}^{|\mathcal{D}_{souece}|} \mathcal{L}^{meta}(w^*_i(\omega), \omega, \mathcal{D}_{train(i)}^{query})
-\end{eqnarray}
-
-Áp dụng kỹ thuật SGD, lời giải cần tìm cho phương trình \ref{eq:outer_opt} được biểu diễn như sau:
-
-\begin{dmath}
-    \begin{cases}
-        \omega_0 = \Omega, \Omega \text{ là giá trị khởi tạo ngẫu nhiên}\\
-        \omega_j = \omega_{j-1} - \beta \nabla \sum_{i=1}^{|\mathcal{D}_{souece}|} \mathcal{L}^{meta}\left(w_i^*(\omega), \omega, \mathcal{D}_{train(i)}^{query}\right)
-    \end{cases}
-\end{dmath}
-
-Hay:
-
-\begin{dmath}
-    \label{sol:outer_opt}
-    \omega \leftarrow \omega - \beta\nabla \sum_{i=1}^{|\mathcal{D}_{souece}|} \mathcal{L}^{meta}\left(w_i^*(\omega)\right)
-        \leftarrow \omega - \beta\nabla \sum_{i=1}^{|\mathcal{D}_{souece}|} \mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
-        \leftarrow \omega - \beta \sum_{i=1}^{|\mathcal{D}_{souece}|} \left( I - \alpha \nabla^2 \mathcal{L}^{task}(w_i) \right) \times \nabla \mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
-\end{dmath}
-
-\subsection{Hệ thống Federated Learning và Meta Learning}
-
-% Hai phương trình \ref{eq:inner_opt} và \ref{eq:outer_opt} đặt trong tương quan với hai mục tiêu được trình bày trong phần \ref{purpose_fl}, có thể thấy rõ điểm tương đồng giữa hệ thống FL và hệ thống ML. Theo đó, các mục tiêu cấp thấp trong ML tương đồng với các mục tiêu cục bộ trong hệ thống FL, mục tiêu cấp cao trong hệ thống ML tương đồng với mục tiêu toàn cục của hệ thống FL. Từ đây, có thể dễ dàng kết hợp ML và FL bằng cách thay thế hệ hàm mục tiêu của hệ thống FL bằng hệ hàm mục tiêu của ML.
-
-Nhìn nhận hai phương trình \ref{eq:inner_opt} và \ref{eq:outer_opt}, có thể thấy chúng dễ dàng đem thay thế các mục tiêu của một hệ thống FL truyền thống (được trình bày trong phần \ref{purpose_fl}). Theo đó, mục tiêu cấp thấp và cấp cao trong ML có thể lần lượt thay thế cho mục tiêu cục bộ và mục tiêu toàn cục trong hệ thống FL. Từ đây, có thể dễ dàng tích hợp ML vào hệ thống FL.
-
-Thật vậy, nghiên cứu \cite{fallah2020personalized} đã tích hợp thuật toán \codeword{MAML} vào hệ thống FL và biểu diễn lại hàm mục tiêu toàn cục của hệ thống từ phương trình \ref{eq:opt_server} như sau:
-
-\begin{equation}
-    \label{eq:opt_meta_fl}
-    \min_{w_G} f_{global}(w_G)
-        =\min_{w_G} \frac{1}{n} \sum_{i=1}^n f_{local}\left(w_i - \alpha \nabla f_{local}(w_i, \mathcal{D}_{train(i)}^{support}), \mathcal{D}_{train(i)}^{query}\right)
-\end{equation}
-
-Trong hàm số \ref{eq:opt_meta_fl}, ta có thể nhận thấy sự xuất hiện của hai tập dữ liệu $\mathcal{D}_{train(i)}^{support}$ và $\mathcal{D}_{train(i)}^{query}$. Điều này có nghĩa là hệ thống FL huấn luyện theo hướng ML cần phải chia lại tập dữ liệu tại các máy khách theo kiểu ML. Một máy khách $c_i$ tham gia huấn luyện bao gồm hai tập dữ liệu $\mathcal{D}_{train(i)}^{support}$ và $\mathcal{D}_{train(i)}^{query}$. Trong quá trình kiểm thử, dữ liệu của máy khách $c_i$ cũng được chia thành hai tập $\mathcal{D}_{test(i)}^{support}$ và $\mathcal{D}_{test(i)}^{query}$. Trong đó, $c_i$ cần thực hiện fine-tune mô hình trên tập $\mathcal{D}_{test(i)}^{support}$ và đánh giá mô hình trên tập $\mathcal{D}_{test(i)}^{query}$.
-
-Từ phương trình tổng hợp mô hình toàn cục bằng phương pháp lấy trung bình trọng số \ref{eq:agg_w}, áp dụng phương pháp SGD như trong phương trình \ref{sol:outer_opt}, phương trình tổng hợp mô hình toàn cục trong hệ thống FL tích hợp ML tại bước huấn luyện toàn cục thứ $t$ có dạng:
-
-\begin{dmath}
-    \label{eq:agg_fedmeta}
-    w_G^{t+1} = \sum_{i=1}^n{\frac{n_i}{N} w_i^{t+1}}
-        = \sum_{i=1}^n{\frac{n_i}{N}\left[ w_i^t - \beta \left( I - \alpha \nabla^2 f_{local}(w_i^t) \right) \times \nabla f_{local}\left( w_i^t - \alpha\nabla f_{local}(w_i^t)\right) \right]}
-\end{dmath}
-
-Ngoài thuật toán \codeword{MAML}, dựa theo nghiên cứu \cite{chen2018federated}, khóa luận tích hợp thêm vào hệ thống FL thuật toán \codeword{Meta-SGD}. Tương tự như \codeword{MAML}, \codeword{Meta-SGD} được cấu trúc theo hướng tối ưu hai cấp độ. Tuy nhiên, có một thay đổi nhỏ giúp thuật toán này đạt độ chính xác cao hơn \codeword{MAML}: thuật toán coi siêu tham số học $\alpha$ là một tham số có thể học, được cấu hình dưới dạng một mảng có kích thước bằng trọng số mô hình và được tối ưu trong mục tiêu cấp cao.
-
-Tóm lại, cả hai nghiên cứu \parencite{chen2018federated, fallah2020personalized} đã chứng minh được việc tích hợp ML vào hệ thống FL giúp đạt hiệu quả cao hơn \codeword{FedAvg} về độ chính xác trên cả hai phương diện lý thuyết và thực nghiệm. \textbf{Nhờ vào các thuật toán ML, mô hình toàn cục có khả năng cá nhân hóa cao hơn cho từng người dùng và thích ứng nhanh hơn trên tập dữ liệu mới, từ đó hội tụ nhanh và đạt hiệu suất cao hơn khi làm việc trên dữ liệu Non-IID}. Khóa luận dựa theo nghiên cứu \cite{chen2018federated} để cài đặt hai thuật toán \codeword{FedMetaMAML} và \codeword{FedMetaSGD} với mục đích khảo sát khả năng xử lý dữ liệu Non-IID của các thuật toán ML khi được tích hợp vào hệ thống FL.
-
-\subsection{Thuật toán $FedMeta(MAML)$ và $FedMeta(Meta-SGD)$}
-
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{FedMeta(MAML) và FedMeta(Meta-SGD) \cite{chen2018federated}} \label{alg:fedmeta}
     \begin{algorithmic}[1]
         \State \textbf{Server:}
@@ -152,6 +43,8 @@ Tóm lại, cả hai nghiên cứu \parencite{chen2018federated, fallah2020perso
         \State Gửi $g_i^{t+1}$ về máy chủ
     \end{algorithmic}
 \end{algorithm}
+
+\subsection{Thuật toán $FedMeta(MAML)$}
 
 Nghiên cứu \cite{chen2018federated} đề xuất kết hợp \codeword{MAML} và \codeword{Meta-SGD} vào hệ thống FL của họ (thuật toán \ref{alg:fedmeta}). Tuy nhiên, tác giả sử dụng kỹ thuật cập nhật bằng cách lấy trung bình đạo hàm của hàm lỗi. Trước hết, máy khách sau khi nhận được trọng số toàn cục sẽ tiến hành fine-tune trọng số này trên tập dữ liệu support (phương trình \ref{eq:fine-tune_maml} và \ref{eq:fine-tune_metasgd}). Như vậy, mô hình sau khi tinh chỉnh sẽ nắm bắt được các đặc trưng riêng của bộ dữ liệu. Từ đó thích ứng tốt với dữ liệu query.
 
@@ -201,48 +94,24 @@ Tại bước huấn luyện toàn cục thứ $t$ với sự tham gia của $m$
 
 Từ phương trình \ref{eq:prof} và \ref{eq:agg_fedmetamaml}, ta suy ra điều cần chứng minh. Đối với \codeword{Meta-SGD} và các bước thực hiện như trên, ta thu được kết quả chứng minh tương tự.
 
+\subsection{Thuật toán $FedMeta(Meta-SGD)$}
+
 Về phần thuật toán \codeword{Meta-SGD}, nghiên cứu \cite{li2017meta} chỉ ra rằng việc sử dụng một siêu tham số học cục bộ nhỏ, được cố định theo thời gian hoặc một một siêu tham số cục bộ giảm dần theo thời gian chỉ phù hợp cho ngữ cảnh huấn luyện một mô hình với bộ dữ liệu lớn trong thười gian dài. Trong ngữ cảnh dữ liệu gắn nhãn có ít nhưng mô hình cần phải thích ứng nhanh với tập dữ liệu mới, phương pháp chọn siêu tham số như vậy không còn phù hợp nữa.
 
 Nghiên cứu cũng đề ra một hướng tiếp cận mới cho phép tự điều chỉnh và tối ưu siêu tham số cục bộ. Theo đó, ngoài việc tối ưu tri thức tiên nghiệm ($\omega$), thuật toán coi siêu tham số học tại cấp thấp $\alpha$ cũng là một tham số có thể tối ưu. Bằng việc khởi tạo $\alpha$ là một mảng siêu tham số có kích thước giống như $w$, thuật toán hướng tới việc cập nhật cả hướng đi lẫn bước học cho từng phần tử trọng số trong $w$ bằng cách điều chỉnh $\alpha$ tại bước tối ưu cấp cao. Máy khách sau đó sử dụng $\alpha$ bằng cách nhân vô hướng đại lượng này với đạo hàm hàm lỗi cục bộ. Xét trong quan hệ với hệ thống FL, \codeword{Meta-SGD} vừa khiến cho các mô hình học thích ứng nhanh trên các tập dữ liệu cục bộ, vừa đóng góp lớn vào việc cá nhân hóa mô hình học cho từng người dùng.
 
-\section{Tiếp cận hệ thống theo hướng Personalization Layer}
+\section{Thuật toán $FedPer$ và $LG-FedAvg$}
 
 % trình bày về FedPer
 % trình bày về LG-FedAvg
 % nhận xét về ưu nhược điểm của 2 thằng
 % chỉ ra cách kết hợp của 2 thằng (lấy 2 cái ưu điểm: 1 thằng test được nhiều TH hơn, 1 thằng đạt độ chính xác cao hơn)
 
-Khóa luận tiến hành khảo sát kết quả của các kỹ thuật tối ưu hệ thống FL trên dữ liệu Non-IID và nhận thấy các thuật toán theo hướng PL đạt kết quả rất cao và có tiềm năng phát triển thêm (bảng \ref{tab:acc_paper}). Các thuật toán theo hướng này chia mạng học sâu ra làm hai phần \cite{zhu2021federated}: phần chung và phần riêng. Theo đó, phần chung được hợp tác huấn luyện bởi tất cả các máy khách trong hệ thống còn phần riêng được từng máy khách huấn luyện riêng biệt trên tập dữ liệu cục bộ. \textbf{Chính các lớp học sâu trong phần riêng đã làm cho cách tiếp cận này trở nên mạnh mẽ trên dữ liệu có tính cá nhân hóa cao như dữ liệu Non-IID}.
-
-\begin{table}[H]
-    \centering
-    \caption{Độ chính xác (\%) của các hệ thống FL trên dữ liệu Non-IID của tập dữ liệu CIFAR-10 \cite{shamsian2021personalized}. Các thuật toán PL được in đậm.}
-    \label{tab:acc_paper}
-    \resizebox{\linewidth}{!}{%
-    \begin{tabular}{c|ccc} 
-    \toprule
-    \diagbox{Thuật toán}{\#clients} & 10           & 50           & 100           \\ 
-    \midrule
-    Per-FedAvg                      & 76.65 ± 4.84 & 83.03 ± 0.25 & 80.19 ± 1.99  \\
-    \textbf{FedPer}                 & 87.27 ± 1.39 & 83.39 ± 0.47 & 80.99 ± 0.71  \\
-    pFedMe                          & 87.69 ± 1.93 & 86.09 ± 0.32 & 85.23 ± 0.58  \\
-    \textbf{LG-FedAvg}              & 89.11 ± 2.66 & 85.19 ± 0.58 & 81.49 ± 1.56  \\
-    \bottomrule
-    \end{tabular}
-    }
-\end{table}
-
-Tuy nhiên, như câu hỏi đã được nêu ra trong phần \ref{open_question}, hiệu suất của hệ thống FL cài đặt theo hướng PL vẫn có thể được cải thiện vì các lớp phần chung chưa thực sự mạnh mẽ và còn phụ thuộc nhiều vào dữ liệu. Cụ thể, các lớp phần chung này được huấn luyện bằng thuật toán \codeword{FedAvg} nên có thể gặp tình trạng tương tự như \codeword{FedAvg} do phân bố dữ liệu không đồng đều trong kịch bản Non-IID. Do đó, cần cải thiện cách huấn luyện của các lớp học sâu trong phần chung để chúng bớt phụ thuộc vào dữ liệu hơn. Nói cách khác, các lớp này cần có khả năng làm việc khách quan, "đối xử" công bằng hơn với các tập dữ liệu riêng biệt trong hệ thống FL.
-
-Như đã thảo luận trước đó, các thuật toán ML có khả năng thích ứng nhanh trên tập dữ liệu mới thông qua việc học nhiều nhiệm vụ khác nhau. Hơn nữa, dựa vào phân tích tính tương đồng về hệ hàm mục tiêu của FL và ML ở trên, ta có thể coi các nhiệm vụ khác nhau của ML chính là các máy khách trong hệ thống FL. Do đó, khóa luận sử dụng phương pháp huấn luyện mô hình của ML vào huấn luyện các lớp phần chung nhằm thu được các lớp phần chung có khả năng trở thành một khởi tạo tốt dựa vào dữ liệu huấn luyện và thích ứng nhanh trên dữ liệu kiểm tra.
-
-Hai thuật toán điển hình theo hướng PL là \codeword{FedPer} \cite{arivazhagan2019federated} và \codeword{LG-FedAvg} \cite{liang2020think}. Trong phần này, hai thuật toán trên được phân tích và đưa ra các nhận xét về ưu, nhược điểm của từng thuật toán. Từ đó kết hợp chúng với các thuật toán \codeword{FedMeta}.
-
 \subsection{Thuật toán $FedPer$}
 
-Nghiên cứu \cite{arivazhagan2019federated} đề xuất kiến trúc hệ thống FL theo hướng PL bằng cách chia mạng học sâu ra làm hai phần. Phần chung được hợp tác huấn luyện bởi các máy khách trong hệ thống và được tổng hợp bởi máy chủ. Phần riêng được các máy khách độc lập huấn luyện trên dữ liệu của mình (hình \ref{fig:fedper}).
+Nghiên cứu \cite{arivazhagan2019federated} đề xuất kiến trúc hệ thống FL theo hướng PL bằng cách chia mạng học sâu ra làm hai phần. Phần chung được hợp tác huấn luyện bởi các máy khách trong hệ thống và được tổng hợp bởi máy chủ. Phần riêng được các máy khách độc lập huấn luyện trên dữ liệu của mình (Hình \ref{fig:fedper}).
 
-\begin{figure}[H]
+\begin{figure}
     \centering
     \includegraphics[scale=0.8]{../images/perlayer.png}
     \caption{Minh họa thuật toán FedPer \cite{arivazhagan2019federated}}
@@ -280,7 +149,7 @@ Kết thúc quá trình huấn luyện cục bộ, $w_{P(n)}^{t+1}$ được lư
     w_B^{t+1} = \sum_{i=1}^n{\frac{n_i}{N}w_{B(i)}^{t+1}}
 \end{equation}
 
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{FEDPER-CLIENT($c_i, w_B^t$) \cite{arivazhagan2019federated}} \label{alg:fedper_client}
     \begin{algorithmic}[1]
         % \Require $f(.;.,.),e,b,\{(x_{j,i}, y_{j,i}) | i \in \{1,...n_j\}\}$
@@ -296,7 +165,7 @@ Kết thúc quá trình huấn luyện cục bộ, $w_{P(n)}^{t+1}$ được lư
     \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{FEDPER-SERVER \cite{arivazhagan2019federated}} \label{alg:fedper_server}
     \begin{algorithmic}[1]
         \State Khởi tạo $w_{B}^{0}$
@@ -326,7 +195,7 @@ Một lần nữa, bộ trọng số $(w_{P(1)},...,w_{P(n)})$ vốn có tính c
 
 Ngoại trừ việc phần chung của mạng học sâu là các lớp tuyến tính còn phần riêng của mạng là các lớp rút trích đặc trưng, ý tưởng huấn luyện của thuật toán \codeword{LG-FedAvg} (thuật toán \ref{alg:lg_fedavg}) gần như giống hoàn toàn với thuật toán \codeword{FedPer}. Các lớp phần riêng của thuật toán này được kỳ vọng sẽ học những đặc trưng dữ liệu của từng máy khách một cách riêng biệt. Tuy nhiên, khi đối mặt với các phân phối dữ liệu lạ trên các máy khách vừa tham gia vào hệ thống, các lớp phần riêng tỏ ra khó khăn trong việc nắm bắt các đặc trưng mới vì chúng đã được cá nhân hóa rất cao cho các đặc trưng cục bộ trước đó. Dẫn đến việc độ chính xác của hệ thống giảm từ 31\% đến 34\% khi hoạt động trên các máy khách mới khi so sánh với độ chính xác trên các máy khách cũ \cite{liang2020think}.
 
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{LG-FEDAVG \cite{liang2020think}}\label{alg:lg_fedavg}
     \begin{algorithmic}[1]
         \State \textbf{Server:}
@@ -404,7 +273,7 @@ Giai đoạn huấn luyện cục bộ bằng cách sử dụng thuật toán \c
 
 Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới $w_i^{t+1}$ được phân giải thành trọng số phần chung mới $w_{B(i)}^{t+1}$ và trọng số phần riêng mới $w_{P(i)}^{t+1}$. $w_{B(i)}^{t+1}$ được gửi về máy chủ để tổng hợp $w_B^{t+1}$ còn $w_{P(i)}^{t+1}$ được lưu lại tại bộ nhớ của máy khách. Việc phân giải, gửi về máy chủ và lưu trữ tham số tại máy khách cũng diễn ra tương tự với siêu tham số $\alpha_i^t$.
 
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{FedMeta-Per (MAML Client)} \label{alg:fedmaml_per_client}
     \begin{algorithmic}[1]
         \State\textbf{ModelTrainingMAML($c_i, w_B^t$):}
@@ -427,7 +296,7 @@ Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới 
     \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{FedMeta-Per (Meta-SGD Client)} \label{alg:fedsgd_per_client}
     \begin{algorithmic}[1]
         \State\textbf{ModelTrainingMetaSGD($c_i, w_G^t, \alpha_B^t$):}
@@ -454,9 +323,9 @@ Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới 
 
 \subsection{Tổng hợp toàn cục}
 
-Máy chủ thi triển thuật toán \ref{alg:fedmeta_per_server} để tổng hợp trọng số toàn cục mới của hệ thống. Tại đây diễn ra ba quá trình cơ bản của một máy chủ FL: gửi tham số toàn cục, nhận tham số cập nhật cục bộ, tổng hợp tham số toàn cục mới (bảng \ref{tab:param_fedmetaper}).
+Máy chủ thi triển thuật toán \ref{alg:fedmeta_per_server} để tổng hợp trọng số toàn cục mới của hệ thống. Tại đây diễn ra ba quá trình cơ bản của một máy chủ FL: gửi tham số toàn cục, nhận tham số cập nhật cục bộ, tổng hợp tham số toàn cục mới (Bảng \ref{tab:param_fedmetaper}).
 
-\begin{table}[H]
+\begin{table}
     \centering
     \caption{Bảng các tham số tại máy chủ hệ thống FedMeta-Per}
     \label{tab:param_fedmetaper}
