@@ -3,11 +3,11 @@
 
 \section{Mô tả dữ liệu}
 
-Tập dữ liệu CIFAR-10 \cite{cifar-10} là tập dữ liệu hình ảnh được sủ dụng phổ biến trong việc huấn luyện các mô hình máy học hay các thuật toán thị giác máy tính. Đây là một trong các tập dữ liệu được dùng nhiều nhất trong quá trình nghiên cứu máy học. Tập dữ liệu bao gồm 60,000 ảnh màu kích thước $32\times 32$ thuộc 10 phân lớp khác nhau.
+CIFAR-10 \cite{cifar-10} là tập dữ liệu hình ảnh được sủ dụng phổ biến trong việc huấn luyện các mô hình máy học hay các thuật toán thị giác máy tính. Đây là một trong các tập dữ liệu được dùng nhiều nhất trong quá trình nghiên cứu máy học. Tập dữ liệu bao gồm 60,000 ảnh màu kích thước $32\times 32$ thuộc 10 phân lớp khác nhau.
 
-Tập dữ liệu MNIST \cite{mnist} là tập dữ liệu hình ảnh được sử dụng trong việc huấn luyện các hệ thống xử lý ảnh. Tập dữ liệu này cũng được sử dụng rộng rãi trong lĩnh vực học máy. Tập dữ liệu có tổng cộng 70,000 ảnh đen trắng các chữ số viết tay được viết bởi nhiều người.
+MNIST \cite{mnist} là tập dữ liệu hình ảnh được sử dụng trong việc huấn luyện các hệ thống xử lý ảnh. Tập dữ liệu này cũng được sử dụng rộng rãi trong lĩnh vực học máy. Tập dữ liệu có tổng cộng 70,000 ảnh đen trắng các chữ số viết tay từ 0 đến 9 được viết bởi nhiều người.
 
-Chúng tôi sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh giá thuật toán đề xuất và các thuật toán được khảo sát. Bằng các đặc tính của hệ thống Horizontal FL và dữ liệu Non-IID, chúng tôi cấu hình mỗi máy khách chỉ gồm 2/10 phân lớp dữ liệu, số lượng nhãn giữa các lớp và số lượng dữ liệu giữa các máy khách là không đồng đều. Thống kê dữ liệu Non-IID được trình bày trong bảng \ref{tab:stat_noniid_data}.
+Khóa luận sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh giá thuật toán đề xuất và các thuật toán được khảo sát. Bằng các đặc tính của hệ thống Horizontal FL và dữ liệu Non-IID, mỗi máy khách được cấu hình để chỉ 2/10 phân lớp dữ liệu, số lượng nhãn giữa các lớp và số lượng dữ liệu giữa các máy khách là không đồng đều. Thống kê dữ liệu Non-IID được trình bày trong bảng \ref{tab:stat_noniid_data}.
 
 \begin{table}[H]
     \caption{Thống kê trên hai tập dữ liệu MNIST và CIFAR-10 (dữ liệu Non-IID)}
@@ -24,7 +24,7 @@ Chúng tôi sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh gi
     }
 \end{table}
 
-Chúng tôi cũng tiến hành các thí nghiệm của mình trên kịch bản dữ liệu IID, nơi các máy khách có phân phối giống nhau và chứa đủ dữ liệu của 10 phân lớp. Chi tiết thống kê được trình bày trong bảng \ref{tab:stat_iid_data}.
+Khóa luận cũng tiến hành các thí nghiệm của mình trên kịch bản dữ liệu IID, nơi các máy khách có phân phối giống nhau và chứa đủ dữ liệu của 10 phân lớp. Chi tiết thống kê được trình bày trong bảng \ref{tab:stat_iid_data}.
 
 \begin{table}[H]
     \caption{Thống kê trên hai tập dữ liệu MNIST và CIFAR-10 (dữ liệu IID)}
@@ -41,9 +41,9 @@ Chúng tôi cũng tiến hành các thí nghiệm của mình trên kịch bản
     }
 \end{table}
 
-Dữ liệu trên mỗi máy khách được chia làm hai tập: tập huấn luyện chiếm 75\% tổng số điểm dữ liệu và tập kiểm tra chiếm 25\% tổng số điểm dữ liệu. Theo hướng ML, chúng tôi tiếp tục chia nhỏ dữ liệu trong tập huấn luyện và tập kiểm tra thành hai tập: tập support chiếm 20\% dữ liệu và tập query chiếm 80\% dữ liệu. Như vậy, thực chất mô hình được huấn luyện trên 75\% tổng số điểm dữ liệu (tập huấn luyện), tinh chỉnh trên 5\% dữ liệu (tập support của dữ liệu kiểm tra) và kiểm thử trên 20\% tổng số điểm dữ liệu (tập query của dữ liệu kiểm tra).
+Dữ liệu trên mỗi máy khách được chia làm hai tập: tập huấn luyện chiếm 75\% tổng số điểm dữ liệu và tập kiểm tra chiếm 25\% tổng số điểm dữ liệu. Theo hướng ML, dữ liệu trong tập huấn luyện và tập kiểm tra tại máy khách tiếp tục chia nhỏ thành hai tập: tập support chiếm 20\% dữ liệu và tập query chiếm 80\% dữ liệu. Như vậy, thực chất mô hình được huấn luyện trên 75\% tổng số điểm dữ liệu (tập huấn luyện), fine-tune trên 5\% dữ liệu (tập support của dữ liệu kiểm tra) và kiểm thử trên 20\% tổng số điểm dữ liệu (tập query của dữ liệu kiểm tra).
 
-Trong quá trình kiểm thử, dữ liệu kiểm thử chứa trong 50 máy khách được cấu hình để tạo ra hai loại người dùng: người dùng cũ và người dùng mới. Dữ liệu của người dùng cũ được chia như đã trình bày ở trên. Đối với người dùng mới, chúng tôi tiến hành chia lại từ 25\% dữ liệu tập kiểm tra sao cho phân phối của những người dùng này khác hoàn toàn với các phân phối đã tồn tại trước đó trong hệ thống.
+Trong quá trình kiểm thử, dữ liệu kiểm tra chứa trong 50 máy khách được cấu hình để tạo ra hai loại người dùng: người dùng cục bộ và người dùng mới. Dữ liệu của người dùng cục bộ được chia như đã trình bày ở trên. Đối với người dùng mới, dữ liệu của họ được chia lại từ 25\% dữ liệu tập kiểm tra sao cho phân phối của những người dùng này khác hoàn toàn với các phân phối đã tồn tại trước đó trong hệ thống.
 
 Tóm lại, ký hiệu $C_{train} = \{c^{train}_1,...,c^{train}_{50}\}$ là tập máy khách dùng trong huấn luyện, $C_{test} = \{c^{test}_1,...,c^{test}_{50}\}$ là tập máy khách dùng trong kiểm thử, $N$ là tổng số điểm dữ liệu, ta có số lượng dữ liệu huấn luyện và kiểm tra lần lượt là:
 
@@ -63,11 +63,11 @@ Trong cài đặt ML, ký hiệu $c^{train}_i = \{\mathcal{D}_{train(i)}^{suppor
     N_{train/test(i)}^{query} = \left|\mathcal{D}_{train/test(i)}^{query}\right| = 0.8 \left|c^{train/test}_i\right|
 \end{equation*}
 
-Người dùng $c_j^{test} \in C_{test}$ được gọi là người dùng cũ nếu tồn tại người dùng $c_i^{train}\in C_{train}$ sao cho $p\left((x,y)\in c_j^{test}\right) = p\left((x,y)\in c_i^{train}\right)$. Ngược lại, $c_j^{test}$ là người dùng mới nếu $p\left((x,y)\in c_j^{test}\right) \ne p\left((x,y)\in c_i^{train}\right)$ với mọi $c_i^{train}\in C_{train}$.
+Người dùng $c_j^{test} \in C_{test}$ được gọi là người dùng cục bộ nếu tồn tại người dùng $c_i^{train}\in C_{train}$ sao cho $p\left((x,y)\in c_j^{test}\right) = p\left((x,y)\in c_i^{train}\right)$. Ngược lại, $c_j^{test}$ là người dùng mới nếu $p\left((x,y)\in c_j^{test}\right) \ne p\left((x,y)\in c_i^{train}\right)$ với mọi $c_i^{train}\in C_{train}$.
 
 \section{Phương pháp đánh giá}
 
-Sau quá trình huấn luyện mô hình toàn cục sử dụng dữ liệu trong tập $C_{train}$, chúng tôi thực hiện đánh giá mô hình này trên dữ liệu của tập $C_{test}$ bằng cách ghi nhận lại hai thông tin \cite{chen2018federated}: (1) - Độ chính xác trong tương quan với tất cả các điểm dữ liệu, (2) - Độ chính xác trong tương quan với tất cả các máy khách.
+Sau quá trình huấn luyện mô hình toàn cục sử dụng dữ liệu trong tập $C_{train}$, hệ thống thực hiện đánh giá mô hình này trên dữ liệu của tập $C_{test}$ bằng cách ghi nhận lại hai thông tin \cite{chen2018federated}: (1) - Độ chính xác trong tương quan với tất cả các điểm dữ liệu, (2) - Độ chính xác trong tương quan với tất cả các máy khách.
 
 Độ chính xác trong tương quan với tất cả các điểm dữ liệu được tính toán bằng cách duyệt qua tất cả các máy khách để thống kê số lượng mẫu dữ liệu được phân lớp đúng và tổng số mẫu dữ liệu, sau đó lấy thương của hai đại lượng này. Gọi $r_i^t, n_i$ lần lượt là số lượng mẫu được phân lớp đúng tại bước huấn luyện thứ $t$, tổng số mẫu dữ liệu trên tập dữ liệu của người dùng $c_i^{test}$ và $n$ là số người dùng tham gia kiểm thử. Độ đo này tại bước huấn luyện toàn cục thứ $t$ được tính như sau:
 
@@ -86,14 +86,14 @@ Sau quá trình huấn luyện mô hình toàn cục sử dụng dữ liệu tro
 
 Trong đó, $\sigma^t$ dùng để biểu thị mức độ phân tán trên độ chính xác của người dùng kiểm thử tại bước huấn luyện thứ $t$.
 
-Các mô hình trong hệ thống của chúng tôi được đánh giá bằng độ chính xác trong tương quan với các điểm dữ liệu sau mỗi 20 bước huấn luyện toàn cục. Độ đánh giá trong tương quan với các máy khách được tính một lần duy nhất, khi mô hình toàn cục được huấn luyện xong.
+Các mô hình trong hệ thống của khóa luận được đánh giá bằng độ chính xác trong tương quan với các điểm dữ liệu sau mỗi 20 bước huấn luyện toàn cục. Độ đánh giá trong tương quan với các máy khách được tính một lần duy nhất, khi mô hình toàn cục được huấn luyện xong.
 
 \section{Mô tả thực nghiệm}
 
 \subsection{Kiến trúc mô hình}
 \label{model_schema}
 
-Chúng tôi sử dụng hai mô hình để rút trích đặc trưng và phân lớp dữ liệu cho tập dữ liệu CIFAR-10 và MNIST.
+Khóa luận sử dụng hai mô hình để rút trích đặc trưng và phân lớp dữ liệu cho tập dữ liệu CIFAR-10 và MNIST.
 
 \textbf{CIFAR-10.} Mô hình nhận các ảnh đầu vào có kích thước $(32\times32\times3)$. Hai lớp tích chập (kernel có kích thước $(5\times5)$, số chanel lần lượt là $6$ và $16$) được sử dụng để rút trích đặc trưng. Theo sau mỗi lớp tích chập là một lớp \codeword{MaxPooing} có kích thước $(2\times2)$. Phần phân lớp gồm ba lớp tuyến tính có đầu ra lần lượt là $120$, $84$ và $10$. Các hàm kích hoạt được sử dụng là \codeword{ReLU} và \codeword{Softmax}.
 
@@ -101,28 +101,28 @@ Chúng tôi sử dụng hai mô hình để rút trích đặc trưng và phân 
 
 \subsection{Huấn luyện tập trung}
 
-Chúng tôi huấn luyện tập trung dựa theo định nghĩa về hệ thống FL trong nghiên cứu \cite{yin2021comprehensive}. Theo đó, cần cấu hình tập dữ liệu $\mathcal{D}_{train}$ chứa 80\% tổng dữ liệu. Kiến trúc mạng học sâu mô tả trong phần \ref{model_schema} sẽ được huấn luyện trên tập dữ liệu này. Mô hình sau khi huấn luyện được thực thi trên tập dữ liệu $\mathcal{D}_{test}$ chứa 20\% tổng dữ liệu. Các tập $\mathcal{D}_{train}, \mathcal{D}_{test}$ có dữ liệu tuân theo phân phối đều. Kết quả về độ chính xác sau khi kiểm thử gọi là kết quả huấn luyện tập trung.
+Quá trình huấn luyện tập trung dựa theo định nghĩa về hệ thống FL trong nghiên cứu \cite{yin2021comprehensive}. Theo đó, cần cấu hình tập dữ liệu $\mathcal{D}_{train}$ chứa 80\% tổng dữ liệu. Kiến trúc mạng học sâu mô tả trong phần \ref{model_schema} sẽ được huấn luyện trên tập dữ liệu này. Mô hình sau khi huấn luyện được thực thi trên tập dữ liệu $\mathcal{D}_{test}$ chứa 20\% tổng dữ liệu. Các tập $\mathcal{D}_{train}, \mathcal{D}_{test}$ có dữ liệu tuân theo phân phối đều. Kết quả về độ chính xác sau khi kiểm thử gọi là kết quả huấn luyện tập trung.
 
 \subsection{Huấn luyện phân tán}
 
-Trước hết chúng tôi cài đặt và huấn luyện hệ thống FL bằng thuật toán \codeword{FedAvg} để có kết quả đối sánh chính. Thuật toán này được huấn luyện trên toàn bộ dữ liệu của tập $C_{train}$ và thực hiện kiểm thử trên các tập $\mathcal{D}_{test(i)}^{query}$ của từng người dùng trong tập $C_{test}$.
+Trước hết thuật toán \codeword{FedAvg} được cài đặt để huấn luyện hệ thống FL và thu được kết quả đối sánh chính. Thuật toán này được huấn luyện trên toàn bộ dữ liệu của tập $C_{train}$ và thực hiện kiểm thử trên các tập $\mathcal{D}_{test(i)}^{query}$ của từng người dùng trong tập $C_{test}$.
 
-Khi thuật toán \codeword{FedAvg} cập nhật xong mô hình toàn cục, trong lúc kiểm thử, chúng tôi cho phép mô hình này thực hiện tinh chỉnh một hoặc một vài bước huấn luyện trên tập dữ liệu $\mathcal{D}_{test(i)}^{support}$ của những người dùng trong tập $C_{test}$. Đây chính là ý tưởng của thuật toán \codeword{FedAvgMeta}, thuật toán sinh ra nhằm so sánh công bằng với các thuật toán \codeword{FedMeta}.
+Khi thuật toán \codeword{FedAvg} cập nhật xong mô hình toàn cục, trong lúc kiểm thử, mô hình này được phép thực hiện fine-tune một hoặc một vài bước huấn luyện trên tập dữ liệu $\mathcal{D}_{test(i)}^{support}$ của những người dùng trong tập $C_{test}$. Đây chính là ý tưởng của thuật toán \codeword{FedAvgMeta}, thuật toán sinh ra nhằm so sánh công bằng với các thuật toán \codeword{FedMeta}.
 
 Các thuật toán \codeword{FedMeta} và \codeword{FedMeta-Per} tiến hành huấn luyện như đã trình bày tại chương \ref{Chapter3}.
 
-Để dễ dàng trong việc tinh chỉnh các mô hình học cũng như phù hợp với phần cứng thấp của máy khách trong hệ thống Horizontal FL, chúng tôi cố định một vài tham số: mỗi bước huấn luyện toàn cục sẽ sử dụng 5 máy khách, lượng dữ liệu trong một lô (batch) là 32, số bước huấn luyện cục bộ là 1 bước, số lượng bước huấn luyện cục bộ là 300 đối với tập dữ liệu MNIST và 600 đối với tập dữ liệu CIFAR-10.
+Để dễ dàng trong việc fine-tune các mô hình học cũng như phù hợp với phần cứng thấp của máy khách trong hệ thống Horizontal FL, một vài tham số được giữ cố định: mỗi bước huấn luyện toàn cục sẽ sử dụng 5 máy khách, lượng dữ liệu trong một batch dữ liệu là 32, số bước huấn luyện cục bộ là 1 bước, số lượng bước huấn luyện cục bộ là 300 đối với tập dữ liệu MNIST và 600 đối với tập dữ liệu CIFAR-10.
 
-Các thuật toán được huấn luyện và kiểm thử trên dữ liệu Non-IID với hai kịch bản kiểm thử: người dùng mới và người dùng cũ. Riêng thuật toán \codeword{FedAvg}, \codeword{FedAvgMeta} được chạy trên cả dữ liệu IID lẫn Non-IID để minh họa tác động của dữ liệu Non-IID đối với hệ thống.
+Các thuật toán được huấn luyện và kiểm thử trên dữ liệu Non-IID với hai kịch bản kiểm thử: người dùng mới và người dùng cục bộ. Riêng thuật toán \codeword{FedAvg}, \codeword{FedAvgMeta} và \codeword{FedPer} được chạy trên cả dữ liệu IID lẫn Non-IID để minh họa tác động của dữ liệu Non-IID đối với hệ thống.
 
 Các thuật toán \codeword{FedMeta} được cài đặt và sử dụng trong huấn luyện mô hình để kiểm tra khả năng thích ứng nhanh trên tập dữ liệu mới của ML khi được tích hợp vào hệ thống FL. Ngoài ra, việc này còn dùng để lấy dữ liệu so sánh với thuật toán \codeword{FedMeta-Per}.
 
-Thuật toán \codeword{FedPer} được cài đặt sử dụng trong huấn luyện mô hình để chứng minh việc các lớp phần chung của hệ thống chưa đạt hiệu quả cao khi làm việc trên tập dữ liệu của người dùng mới. Kết quả này cũng được đem so sánh với kết của của \codeword{FedMeta-Per}.
+Thuật toán \codeword{FedPer} và \codeword{FedPerMeeta} được cài đặt sử dụng trong huấn luyện mô hình để chứng minh việc các lớp phần chung của hệ thống chưa đạt hiệu quả cao khi làm việc trên tập dữ liệu của người dùng mới. Kết quả này cũng được đem so sánh với kết của của \codeword{FedMeta-Per}.
 
 Thuật toán \codeword{FedMeta-Per} được cài đặt sử dụng trong huấn luyện mô hình để kiểm tra khả năng thích ứng nhanh trên tập dữ liệu mới của các lớp phần chung và khả năng cá nhân hóa dựa trên từng tập dữ liệu của các lớp phần riêng. Ngoài ra, cần kiểm chứng độ chính xác của thuật toán này so với các thuật toán \codeword{FedMeta}, \codeword{FedPer} và \codeword{FedAvg}.
 
-Tất cả các thí nghiệm của chúng tôi được giả lập bằng framework Flower 0.17.0 \cite{beutel2020flower} trên một máy chủ duy nhất. Theo đó, máy chủ và các máy khách trong hệ thống đểu sử dụng chung các tài nguyên tính toán (CPU và GPU) và giao tiếp với nhau thông qua giao thức gRPC.
+Tất cả các thí nghiệm trong khóa luận được giả lập bằng framework Flower 0.17.0 \cite{beutel2020flower} trên một máy chủ duy nhất. Theo đó, máy chủ và các máy khách trong hệ thống đểu sử dụng chung các tài nguyên tính toán (CPU và GPU) và giao tiếp với nhau thông qua giao thức gRPC.
 
-Tại máy chủ, một tiến trình được đặt ra để "lắng nghe" kết nối từ các máy khách tại một cổng (port) cố định. Khi các máy khách được khởi tạo xong, máy chủ tiến hành khởi tạo tham số toàn cục bằng cách chọn ngẫu nhiên bộ tham số từ một máy khách. Tại một bước huấn luyện toàn cục, máy chủ chọn ngẫu nhiên một tập con các máy khách để gửi thông tin tới máy khách thông qua giao thức gRPC. Thông tin này giúp máy khách biết mình cần thực hiện huấn luyện hay kiểm thử mô hình. Thông tin huấn luyện bao gồm tham số toàn cục, siêu tham số huấn luyện, số bước huấn luyện cục bộ, lượng dữ liệu trong một lô dữ liệu (batch). Thông tin kiểm thử bao gồm tham số toàn cục, số bước tinh chỉnh cục bộ (nếu có), siêu tham số huấn luyện (nếu có), lượng dữ liệu trong một lô dữ liệu (nếu có). Sau khi thực hiện xong yêu cầu của máy chủ, máy khách sẽ gửi thông tin về. Trong trường hợp máy chủ yêu cầu máy khách thực hiện huấn luyện, thông tin máy chủ nhận về là các tham số cục bộ và số điểm dữ liệu tham gia huấn luyện ra tham số cục bộ đó. Máy chủ tiến hành tổng hợp tham số toàn cục từ các thông tin này. Đối với yêu cầu kiểm thử mô hình, máy chủ sẽ nhận được thông tin về độ chính xác, độ lỗi, số điểm dữ liệu được kiểm thử trên các mô hình cục bộ.
+Tại máy chủ, một tiến trình được đặt ra để "lắng nghe" kết nối từ các máy khách tại một cổng (port) cố định. Khi các máy khách được khởi tạo xong, máy chủ tiến hành khởi tạo tham số toàn cục bằng cách chọn ngẫu nhiên bộ tham số từ một máy khách. Tại một bước huấn luyện toàn cục, máy chủ chọn ngẫu nhiên một tập con các máy khách để gửi thông tin tới máy khách thông qua giao thức gRPC. Thông tin này giúp máy khách biết mình cần thực hiện huấn luyện hay kiểm thử mô hình. Thông tin huấn luyện bao gồm tham số toàn cục, siêu tham số huấn luyện, số bước huấn luyện cục bộ, lượng dữ liệu trong một batch. Thông tin kiểm thử bao gồm tham số toàn cục, số bước fine-tune cục bộ (nếu có), siêu tham số huấn luyện (nếu có), lượng dữ liệu trong một batch (nếu có). Sau khi thực hiện xong yêu cầu của máy chủ, máy khách sẽ gửi thông tin về. Trong trường hợp máy chủ yêu cầu máy khách thực hiện huấn luyện, thông tin máy chủ nhận về là các tham số cục bộ và số điểm dữ liệu tham gia huấn luyện ra tham số cục bộ đó. Máy chủ tiến hành tổng hợp tham số toàn cục từ các thông tin này. Đối với yêu cầu kiểm thử mô hình, máy chủ sẽ nhận được thông tin về độ chính xác, độ lỗi, số điểm dữ liệu được kiểm thử trên các mô hình cục bộ.
 
 Tại máy khách, sau khi khởi tạo, máy khách kết nối đến máy chủ thông qua cổng được chỉ định trước và đợi các thông tin gửi đến từ máy chủ. Dựa trên thông tin này, máy khách sẽ thực hiện huấn luyện hay kiểm thử cục bộ. Sau đó gửi các thông tin được yêu cầu về máy chủ.

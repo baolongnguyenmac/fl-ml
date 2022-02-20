@@ -28,13 +28,13 @@ Trong bối cảnh bùng nổ thông tin cũng như việc đề cao tính riên
     \item Cần một máy chủ thật mạnh mẽ để huấn luyện mô hình với lượng dữ liệu lớn như vậy.
 \end{itemize}
 
-Khái niệm federated learning (FL) được Google lần đầu giới thiệu trong nghiên cứu \cite{mcmahan2017communication} với ý tưởng chính là huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt được phân bố trên các thiết bị biên (được gọi là huấn luyện phân tán). Với ý tưởng này, việc triển khi mô hình máy học đến người dùng không còn gặp phải vấn đề về chi phí truyền tin, giúp bảo vệ quyền riêng tư dữ liệu và không đòi hỏi một máy chủ quá mạnh để huấn luyện mô hình. Tuy nhiên, dữ liệu của người dùng trong hệ thống thường không đồng nhất và có tính cá nhân hóa rất cao (tuân theo phân phối Non-IID). Điều này khiến cho hiệu suất của hệ thống FL suy giảm nghiêm trọng \cite{zhu2021federated}.
+Khái niệm federated learning (FL) được Google lần đầu giới thiệu trong nghiên cứu \cite{mcmahan2017communication} với ý tưởng chính là huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt được phân bố trên các thiết bị biên (được gọi là huấn luyện phân tán). Với ý tưởng này, việc triển khi mô hình máy học đến người dùng không còn gặp phải vấn đề về chi phí truyền tin, giúp bảo vệ quyền riêng tư dữ liệu và không đòi hỏi một máy chủ quá mạnh để huấn luyện mô hình. Tuy nhiên, dữ liệu của người dùng trong hệ thống thường không đồng nhất và có tính cá nhân hóa rất cao (dữ liệu Non-IID). Điều này khiến cho hiệu suất của hệ thống FL suy giảm nghiêm trọng \cite{zhao2018federated}.
 
-Một cách ngắn gọn, hiệu suất của mô hình bị giảm là do mô hình không khái quát tốt trên tập dữ liệu của người dùng. Các thuật toán meta learning (ML) được biết đến với khả năng thích ứng nhanh trên tập dữ liệu mới \cite{hospedales2020meta}. Điều này giải quyết chính xác vấn đề dữ liệu FL đang gặp phải. Song song với đó, để tăng thêm tính các nhân hóa mô hình cho từng người dùng, các nghiên cứu \parencite{arivazhagan2019federated, liang2020think} đề xuất sử dụng kỹ thuật personalization layer (PL), giúp tăng đáng kể hiệu suất trên hệ thống FL. Tuy nhiên, các phương pháp tối ưu kể trên vẫn tồn tại nhiều khuyết điểm và có khả năng bù trừ cho nhau. Do đó, chúng tôi tiến hành nghiên cứu về ML, PL. Từ đó, kết hợp chúng vào hệ thống FL để đạt được hiệu suất tốt hơn.
+Một cách ngắn gọn, hiệu suất của mô hình bị giảm là do mô hình không thích ứng nhanh được trên tập dữ liệu của người dùng. Mặt khác, các thuật toán ML được biết đến với khả năng thích ứng nhanh trên tập dữ liệu mới \cite{hospedales2020meta}. Điều này giải quyết chính xác vấn đề dữ liệu FL đang gặp phải. Song song với đó, để tăng thêm tính các nhân hóa mô hình cho từng người dùng, các nghiên cứu \parencite{arivazhagan2019federated, liang2020think} đề xuất sử dụng kỹ thuật PL, giúp tăng đáng kể cả hiệu suất lẫn trải nghiệm của người dùng trong hệ thống FL. Tuy nhiên, các phương pháp tối ưu kể trên vẫn tồn tại nhiều khuyết điểm và có khả năng bù trừ cho nhau. Do đó, việc nghiên cứu về ML, PL được tiến hành và kết hợp vào hệ thống FL để đạt được hiệu suất tốt hơn.
 
 \subsection*{Mục tiêu đề tài}
 
-Mục tiêu chính của đề tài này bao gồm: (1) - nghiên cứu, khảo sát các thuật toán theo hướng FL, ML, PL và (2) - kết hợp cài đặt các thuật toán trên, giúp nâng cao hiệu suất của hệ thống FL khi đối mặt với dữ liệu dạng Non-IID.
+Mục tiêu chính của đề tài này bao gồm: (1) - nghiên cứu, khảo sát các thuật toán theo hướng FL, ML, PL và (2) - kết hợp cài đặt các thuật toán trên, giúp nâng cao hiệu suất của hệ thống FL khi đối mặt với dữ liệu Non-IID.
 
 Việc nghiên cứu, khảo sát các thuật toán nhằm đưa ra đánh giá về ưu, nhược điểm của từng thuật toán. Từ đó, biết cách kết hợp chúng để đạt hiệu suất tốt.
 
@@ -48,10 +48,10 @@ Về việc phân loại hệ thống FL, dựa trên dữ liệu đầu vào, h
 
 Về việc phân loại các kịch bản Non-IID, nghiên cứu \cite{zhu2021federated} chỉ ra bốn kịch bản chính: (1) - Phân phối thuộc tính khác nhau giữa các máy khách, (2) - Phân phối nhãn khác nhau giữa các máy khách, (3) - Phân phối thời gian khác nhau giữa các máy khách, (4) - Các kịch bản khác.
 
-Chúng tôi giới hạn phạm vi và xây dựng phương án giải quyết của đề tài dựa trên ba giả định sau:
+Từ đó, khóa luận này có phạm vi nghiên cứu được giới hạn và phương án giải quyết được xây dựng dựa trên ba giả định sau:
 
 \begin{itemize}
-    \item Loại hệ thống: Môi trường thí nghiệm (bao gồm các yếu tố như số lượng người dùng, dữ liệu, cấu hình, khả năng lưu trữ của thiết bị cuối,...) tuân theo đặc điểm của hệ thống Horizontal FL.
+    \item Loại hệ thống: Môi trường thí nghiệm (bao gồm các yếu tố như số lượng người dùng, dữ liệu, cấu hình, khả năng lưu trữ của thiết bị cuối,...) tuân theo đặc trưng của hệ thống Horizontal FL.
     \item Bảo mật \& quyền riêng tư: Hệ thống đã đảm bảo tính bảo mật cũng như duy trì tốt quyền riêng tư của người dùng.
     \item Kịch bản Non-IID: Phân phối nhãn dữ liệu trên các máy khách là khác nhau.
 \end{itemize}
@@ -67,15 +67,15 @@ Hệ thống FL huấn luyện trực tiếp các mô hình máy học trên cá
     \item Máy khách: Đóng vai trò là nơi huấn luyện các mô hình học theo sự chỉ đạo của máy chủ. Chúng nhận tham số toàn cục từ máy chủ, huấn luyện mô hình dựa trên bộ tham số này và gửi tham số của mô hình mới về máy chủ để tổng hợp.
 \end{itemize}
 
-Phương pháp đề xuất của chúng tôi nhằm tích hợp các thuật toán ML, PL vào hệ thống nêu trên. Trong đó, các thuật toán ML được sử dụng để tạo ra một khởi tạo tốt, giúp máy khách hội tụ mô hình nhanh chóng (chỉ sau một hoặc một vài bước huấn luyện); các thuật toán PL được thêm vào như một phương pháp giúp tăng tính cá nhân hóa của từng mô hình máy học phân bố trên máy khách.
+Phương pháp đề xuất của khóa luận nhằm tích hợp các thuật toán ML, PL vào hệ thống nêu trên. Trong đó, các thuật toán ML được sử dụng để tạo ra một khởi tạo tốt, giúp mô hình tại máy khách hội tụ nhanh chóng (chỉ sau một hoặc một vài bước huấn luyện trên một số ít dữ liệu); các thuật toán PL được thêm vào như một phương pháp giúp tăng tính cá nhân hóa của từng mô hình máy học phân bố trên máy khách.
 
-\textbf{Dữ liệu thực nghiệm.} Chúng tôi sử dụng tập dữ liệu CIFAR-10 và tập dữ liệu MNIST trong tất cả các thí nghiệm. Cả hai tập dữ liệu đều sử dụng 25\% số điểm dữ liệu để kiểm thử và 75\% số điểm dữ liệu để huấn luyện.
+\textbf{Dữ liệu thực nghiệm.} Khóa luận sử dụng tập dữ liệu CIFAR-10 và tập dữ liệu MNIST trong tất cả các thí nghiệm. Cả hai tập dữ liệu đều sử dụng 75\% số điểm dữ liệu để huấn luyện và 25\% số điểm dữ liệu để kiểm thử.
 
-\textbf{Phương pháp đối sánh.} Chúng tôi sử dụng thuật toán \codeword{FedAvg} làm mô hình baseline. Để so sánh công bằng, chúng tôi cho phép mô hình này fine-tune một hoặc một vài bước trên một phần tập dữ liệu kiểm thử (thuật toán \codeword{FedAvgMeta}) trước khi bước vào kiểm thử thực sự. Các kết quả của thuật toán đề xuất sẽ được đem so sánh với kết quả của \codeword{FedAvg} và \codeword{FedAvgMeta}.
+\textbf{Phương pháp đối sánh.} Khóa luận sử dụng thuật toán \codeword{FedAvg} làm mô hình baseline. Để so sánh công bằng, thuật toán \codeword{FedAvgMeta} cho phép mô hình toàn cục huấn luyện theo hướng \codeword{FedAvg} được phép fine-tune một hoặc một vài bước trên một phần tập dữ liệu kiểm tra trước khi bước vào kiểm thử thực sự. Các kết quả của thuật toán đề xuất sẽ được đem so sánh với kết quả của \codeword{FedAvg} và \codeword{FedAvgMeta}.
 
 \subsection*{Kết quả đề tài}
 
-Sau khi tiến hành nghiên cứu, chúng tôi kỳ vọng đạt được những kết quả sau:
+Sau khi tiến hành nghiên cứu, nghiên cứu này kỳ vọng đạt được những kết quả sau:
 
 \begin{itemize}
     \item Nắm được ý tưởng huấn luyện mô hình của các thuật toán theo hướng FL, ML, PL. Cài đặt mô hình baseline.
@@ -85,7 +85,7 @@ Sau khi tiến hành nghiên cứu, chúng tôi kỳ vọng đạt được nh�
 
 \subsection*{Kế hoạch thực hiện}
 
-Kế hoạch thực hiện khóa luận bao gồm 4 giai đoạn, được trình bày trong bảng sau:
+Kế hoạch thực hiện khóa luận bao gồm ba giai đoạn, được trình bày trong bảng sau:
 
 \begin{table}[H]
     \centering
