@@ -7,7 +7,21 @@ Trong chương này, khóa luận khảo sát bốn thuật toán chính bao g�
 
 \section{Thuật toán $FedMeta(MAML)$ và $FedMeta(Meta-SGD)$}
 
-\begin{algorithm}
+\subsection{Thuật toán $FedMeta(MAML)$}
+
+Nghiên cứu \cite{chen2018federated} đề xuất kết hợp \codeword{MAML} và \codeword{Meta-SGD} vào hệ thống FL của họ (thuật toán \ref{alg:fedmeta}). Tuy nhiên, tác giả sử dụng kỹ thuật cập nhật bằng cách lấy trung bình đạo hàm của hàm lỗi. Trước hết, máy khách sau khi nhận được trọng số toàn cục sẽ tiến hành fine-tune trọng số này trên tập dữ liệu support (phương trình \ref{eq:fine-tune_maml} và \ref{eq:fine-tune_metasgd}). Như vậy, mô hình sau khi fine-tune sẽ nắm bắt được các đặc trưng riêng của bộ dữ liệu. Từ đó thích ứng tốt với dữ liệu query.
+
+\begin{dmath}
+    \label{eq:fine-tune_maml}
+    \text{MAML: } \hat{w}_i^{t+1} \gets w_G^t - \alpha\nabla_{w_G^t} f_{local}(w_G^t, \mathcal{D}_{train(i)}^{support})
+\end{dmath}
+
+\begin{dmath}
+    \label{eq:fine-tune_metasgd}
+    \text{Meta-SGD: } \hat{w}_i^{t+1} \gets w_G^t - \alpha^t \circ \nabla_{w_G^t} f_{local}(w_G^t, \mathcal{D}_{train(i)}^{support})
+\end{dmath}
+
+\begin{algorithm}[H]
     \caption{FedMeta(MAML) và FedMeta(Meta-SGD) \cite{chen2018federated}} \label{alg:fedmeta}
     \begin{algorithmic}[1]
         \State \textbf{Server:}
@@ -44,21 +58,7 @@ Trong chương này, khóa luận khảo sát bốn thuật toán chính bao g�
     \end{algorithmic}
 \end{algorithm}
 
-\subsection{Thuật toán $FedMeta(MAML)$}
-
-Nghiên cứu \cite{chen2018federated} đề xuất kết hợp \codeword{MAML} và \codeword{Meta-SGD} vào hệ thống FL của họ (thuật toán \ref{alg:fedmeta}). Tuy nhiên, tác giả sử dụng kỹ thuật cập nhật bằng cách lấy trung bình đạo hàm của hàm lỗi. Trước hết, máy khách sau khi nhận được trọng số toàn cục sẽ tiến hành fine-tune trọng số này trên tập dữ liệu support (phương trình \ref{eq:fine-tune_maml} và \ref{eq:fine-tune_metasgd}). Như vậy, mô hình sau khi tinh chỉnh sẽ nắm bắt được các đặc trưng riêng của bộ dữ liệu. Từ đó thích ứng tốt với dữ liệu query.
-
-\begin{dmath}
-    \label{eq:fine-tune_maml}
-    \text{MAML: } \hat{w}_i^{t+1} \gets w_G^t - \alpha\nabla_{w_G^t} f_{local}(w_G^t, \mathcal{D}_{train(i)}^{support})
-\end{dmath}
-
-\begin{dmath}
-    \label{eq:fine-tune_metasgd}
-    \text{Meta-SGD: } \hat{w}_i^{t+1} \gets w_G^t - \alpha^t \circ \nabla_{w_G^t} f_{local}(w_G^t, \mathcal{D}_{train(i)}^{support})
-\end{dmath}
-
-Trọng số sau khi tinh chỉnh được dùng để dự đoán phân lớp trên tập dữ liệu query và tính toán hàm lỗi dựa trên kết quả dự đoán:
+Trọng số sau khi fine-tune được dùng để dự đoán phân lớp trên tập dữ liệu query và tính toán hàm lỗi dựa trên kết quả dự đoán:
 
 \begin{dmath}
     \label{eq:grad_maml}
@@ -111,7 +111,7 @@ Nghiên cứu cũng đề ra một hướng tiếp cận mới cho phép tự đ
 
 Nghiên cứu \cite{arivazhagan2019federated} đề xuất kiến trúc hệ thống FL theo hướng PL bằng cách chia mạng học sâu ra làm hai phần. Phần chung được hợp tác huấn luyện bởi các máy khách trong hệ thống và được tổng hợp bởi máy chủ. Phần riêng được các máy khách độc lập huấn luyện trên dữ liệu của mình (Hình \ref{fig:fedper}).
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{../images/perlayer.png}
     \caption{Minh họa thuật toán FedPer \cite{arivazhagan2019federated}}
@@ -195,7 +195,14 @@ Một lần nữa, bộ trọng số $(w_{P(1)},...,w_{P(n)})$ vốn có tính c
 
 Ngoại trừ việc phần chung của mạng học sâu là các lớp tuyến tính còn phần riêng của mạng là các lớp rút trích đặc trưng, ý tưởng huấn luyện của thuật toán \codeword{LG-FedAvg} (thuật toán \ref{alg:lg_fedavg}) gần như giống hoàn toàn với thuật toán \codeword{FedPer}. Các lớp phần riêng của thuật toán này được kỳ vọng sẽ học những đặc trưng dữ liệu của từng máy khách một cách riêng biệt. Tuy nhiên, khi đối mặt với các phân phối dữ liệu lạ trên các máy khách vừa tham gia vào hệ thống, các lớp phần riêng tỏ ra khó khăn trong việc nắm bắt các đặc trưng mới vì chúng đã được cá nhân hóa rất cao cho các đặc trưng cục bộ trước đó. Dẫn đến việc độ chính xác của hệ thống giảm từ 31\% đến 34\% khi hoạt động trên các máy khách mới khi so sánh với độ chính xác trên các máy khách cũ \cite{liang2020think}.
 
-\begin{algorithm}
+Điểm nổi bật được chú ý đến trong nghiên cứu này chính là kịch bản mà nó xây dựng trong quá trình kiểm thử rất phù hợp với các tình huống thực tế của một hệ thống client-server. Kịch bản kiểm thử của nghiên cứu \cite{liang2020think} chia người dùng ra làm hai loại: (1) - Người dùng cục bộ, (2) - Người dùng mới.
+
+Đối với người dùng cục bộ, nghiên cứu cho rằng loại người dùng này đã tồn tại đủ lâu trong hệ thống để có thể xây dựng được một lớp cá nhân hóa cho chính nó. Khi làm việc với loại dữ liệu trên máy khách của họ, hệ thống biết chính xác nên sử dụng bộ trọng số nào là phù hợp nhất.
+
+\label{ensemble_test}
+Đối với người dùng mới, nghiên cứu giả định họ là những người vừa tham gia vào hệ thống. Do đó, hệ thống không thể biết được nên sử dụng trọng số nào để làm việc với phân phối dữ liệu của họ. Chính vì vậy, nghiên cứu đề xuất thực hiện ensemble test\footnote{Lớp phần chung được ghép với từng lớp phần riêng để tạo thành các mạng neuron riêng biệt. Các mạng này được dùng để kiểm thử trên dữ liệu. Kết quả cuối được đưa ra bằng hình thức bỏ phiếu.} trên loại người dùng này.
+
+\begin{algorithm}[H]
     \caption{LG-FEDAVG \cite{liang2020think}}\label{alg:lg_fedavg}
     \begin{algorithmic}[1]
         \State \textbf{Server:}
@@ -224,14 +231,7 @@ Ngoại trừ việc phần chung của mạng học sâu là các lớp tuyến
     \end{algorithmic}
 \end{algorithm}
 
-Điểm nối bật được chú ý đến trong nghiên cứu này chính là kịch bản mà nó xây dựng trong quá trình kiểm thử rất phù hợp với các tình huống thực tế của một hệ thống client-server. Kịch bản kiểm thử của nghiên cứu \cite{liang2020think} chia người dùng ra làm hai loại: (1) - Người dùng cục bộ, (2) - Người dùng mới.
-
-Đối với người dùng cục bộ, nghiên cứu cho rằng loại người dùng này đã tồn tại đủ lâu trong hệ thống để có thể xây dựng được một lớp cá nhân hóa cho chính nó. Khi làm việc với loại dữ liệu trên máy khách của họ, hệ thống biết chính xác nên sử dụng bộ trọng số nào là phù hợp nhất.
-
-\label{ensemble_test}
-Đối với người dùng mới, nghiên cứu giả định họ là những người vừa tham gia vào hệ thống. Do đó, hệ thống không thể biết được nên sử dụng trọng số nào để làm việc với phân phối dữ liệu của họ. Chính vì vậy, nghiên cứu đề xuất thực hiện ensemble test\footnote{Lớp phần chung được ghép với từng lớp phần riêng để tạo thành các mạng neuron riêng biệt. Các mạng này được dùng để kiểm thử trên dữ liệu. Kết quả cuối được đưa ra bằng hình thức bỏ phiếu.} trên loại người dùng này.
-
-Dựa trên việc phân chia dữ liệu theo hướng ML, khóa luận không đồng ý với cách tiếp cận ensemble test trên người dùng mới vì hai lý do. Thứ nhất, khả năng thích ứng trên tập dữ liệu mới của các lớp phần riêng của hệ thống bị triệt tiêu, thay vào đó là tính cá nhân hóa cho từng tập dữ liệu cục bộ mà hệ thống đã làm việc trước đó. Đứng trước một tập dữ liệu mới, các lớp phần riêng này hầu như không đạt được hiệu suất cao, dẫn đến kết quả của ensemble test không được như kỳ vọng. Thứ hai, cách tổ chức dữ liệu của hệ thống FL theo hướng ML yêu cầu chia tập dữ liệu cục bộ ra thành hai tập con (tập support và query). Mô hình học sẽ được thích ứng với dữ liệu kiểm tra thông qua một vài bước fine-tune trên tập support. Vì vậy, không những có thể chọn ra lớp phần riêng phù hợp nhất trong quá trình fine-tune. Hơn nữa, lớp phần riêng được chọn còn có khả năng thích ứng nhanh trên tập dữ liệu mới do đã được huấn luyện bằng các thuật toán ML. Do đó, dù hoạt động đơn lẻ hơn so với ensemble test, phương pháp này vẫn có khả năng đạt được độ chính xác thậm chí cao hơn phương pháp của nghiên cứu \cite{liang2020think} đề xuất.
+Dựa trên việc phân chia dữ liệu theo hướng ML, khóa luận không đồng ý với cách tiếp cận ensemble test trên người dùng mới vì hai lý do. Thứ nhất, khả năng thích ứng trên tập dữ liệu mới của các lớp phần riêng của hệ thống bị triệt tiêu, thay vào đó là tính cá nhân hóa cho từng tập dữ liệu cục bộ mà hệ thống đã làm việc trước đó. Đứng trước một tập dữ liệu mới, các lớp phần riêng này hầu như không đạt được hiệu suất cao, dẫn đến kết quả của ensemble test không được như kỳ vọng. Thứ hai, cách tổ chức dữ liệu của hệ thống FL theo hướng ML yêu cầu chia tập dữ liệu cục bộ ra thành hai tập con (tập support và query). Mô hình học sẽ được thích ứng với dữ liệu kiểm tra thông qua một vài bước fine-tune trên tập support. Vì vậy, có thể chọn ra lớp phần riêng phù hợp nhất trong quá trình fine-tune. Do đó, dù hoạt động đơn lẻ hơn so với ensemble test, phương pháp này vẫn có khả năng đạt được độ chính xác thậm chí cao hơn phương pháp của nghiên cứu \cite{liang2020think} đề xuất.
 
 % lý do 1: hệ thống tệ vcl r, ensemble thì cx là 1 đám ăn hại nc với nhau
 % lý do 2: bên ML chia data theo kiểu có support và query trên tập test nên có thể mò ra thằng weight tốt nhất cho hệ thống dựa vào tập support này.
@@ -254,26 +254,30 @@ Giai đoạn huấn luyện cục bộ bằng cách sử dụng thuật toán \c
 Đối với các máy khách huấn luyện theo thuật toán \codeword{MAML}, tại bước huấn luyện toàn cục thứ $t$, một máy khách $c_i$ ban đầu sẽ nhận được trọng số khởi tạo $w_B^t$ của phần chung do máy chủ gửi đến. Dưới hình thức huấn luyện của ML, $c_i$ cần phải chuẩn bị hai tập dữ liệu $\mathcal{D}_{train(i)}^{support}$ và $\mathcal{D}_{train(i)}^{query}$. Tiếp đến, $c_i$ tiến hành hợp nhất trọng số phần chung $w_B^t$ với trọng số phần riêng $w_{P(i)}^t$ (được khởi tạo ngẫu nhiên trong bước huấn luyện toàn cục đầu tiên và được tải lại trong các bước huấn luyện sau) để thu được trọng số của mô hình hoàn chỉnh $w_i^t$. $w_i^t$ sau đó được huấn luyện như sau:
 
 \begin{dmath}
-    \text{Train: } \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha\nabla_{w_i^t} f_{local}(w_{i}^t, \mathcal{D}_{train(i)}^{support})
+    \text{Train: } \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha\nabla_{w_i^t} f_{local}\left(w_{i}^t, \mathcal{D}_{train(i)}^{support}\right)
 \end{dmath}
 
 \begin{dmath}
-    \text{Meta-train: } w_{i}^{t+1} \gets w_{i}^t - \beta\nabla_{w_i^t} f_{local}(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query})
+    \text{Meta-train: } w_{i}^{t+1} \gets w_{i}^t - \beta\nabla_{w_i^t} f_{local}\left(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query}\right)
 \end{dmath}
 
 Đối với các máy khách sử dụng thuật toán \codeword{Meta-SGD} trong huấn luyện, phần chung của mạng học sâu bao gồm hai tham số: trọng số huấn luyện chung $w_B^{t}$ và siêu tham số huấn luyện chung $\alpha_B^{t}$; phần riêng của mạng bao gồm hai tham số $w_{P(i)}^{t}$ và $\alpha_{P(i)}^{t}$. Quá trình hợp nhất tham số cũng được diễn ra giữa các tham số phần chung và phần riêng để tạo thành bộ tham số hoàn chỉnh $w_i^t$ và $\alpha_i^t$. Hai tham số này sau đó cũng tham gia vào quá trình huấn luyện giống như \codeword{MAML}:
 
 \begin{dmath}
-    \text{Train: } \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha_i^t\circ\nabla_{w_i^t} f_{local}(w_{i}^t, \mathcal{D}_{train(i)}^{support})
+    \text{Train: } \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha_i^t\circ\nabla_{w_i^t} f_{local}\left(w_{i}^t, \mathcal{D}_{train(i)}^{support}\right)
 \end{dmath}
 
 \begin{dmath}
-    \text{Meta-train: } (w_{i}^{t+1}, \alpha_i^{t+1}) \gets (w_{i}^t, \alpha_{i}^{t}) - \beta\nabla_{(w_i^t, \alpha_i^t)} f_{local}(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query})
+    \text{Meta-train: } (w_{i}^{t+1}, \alpha_i^{t+1}) \gets (w_{i}^t, \alpha_{i}^{t}) - \beta\nabla_{(w_i^t, \alpha_i^t)} f_{local}\left(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query}\right)
 \end{dmath}
 
 Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới $w_i^{t+1}$ được phân giải thành trọng số phần chung mới $w_{B(i)}^{t+1}$ và trọng số phần riêng mới $w_{P(i)}^{t+1}$. $w_{B(i)}^{t+1}$ được gửi về máy chủ để tổng hợp $w_B^{t+1}$ còn $w_{P(i)}^{t+1}$ được lưu lại tại bộ nhớ của máy khách. Việc phân giải, gửi về máy chủ và lưu trữ tham số tại máy khách cũng diễn ra tương tự với siêu tham số $\alpha_i^t$.
 
-\begin{algorithm}
+\textbf{Với việc sử dụng ML trong huấn luyện mạng học sâu cục bộ, trọng số phần chung toàn cục sẽ có được khả năng thích ứng nhanh trên tập dữ liệu mới của kỹ thuật ML. Từ đó, mạng học sâu của thuật toán đề xuất có thể dễ dàng nắm bắt các đặc trưng của người dùng mới trong hệ thống}. Đây chính là giải pháp cho câu hỏi về cách cải thiện các lớp phần chung của các thuật toán theo hướng PL được nên trong phần \ref{open_question}.
+
+% có thể viết thêm về việc duy trì PL tại local nhưng điều này đang chưa thực sự chính xác
+
+\begin{algorithm}[H]
     \caption{FedMeta-Per (MAML Client)} \label{alg:fedmaml_per_client}
     \begin{algorithmic}[1]
         \State\textbf{ModelTrainingMAML($c_i, w_B^t$):}
@@ -286,17 +290,17 @@ Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới 
         \State $w_i^t \gets w_B^t \bigoplus w_{P(i)}^t$ \Comment{Hợp nhất $w_B^t$ và $w_{P(i)}^t$ để tạo thành $w_i^t$}
         \State Tính toán: 
         \begin{dmath*}
-            \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha\nabla_{w_i^t} f_{local}(w_{i}^t, \mathcal{D}_{train(i)}^{support})
+            \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha\nabla_{w_i^t} f_{local}\left(w_{i}^t, \mathcal{D}_{train(i)}^{support}\right)
         \end{dmath*}
         \begin{dmath*}
-            w_{i}^{t+1} \gets w_{i}^t - \beta\nabla_{w_i^t} f_{local}(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query})
+            w_{i}^{t+1} \gets w_{i}^t - \beta\nabla_{w_i^t} f_{local}\left(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query}\right)
         \end{dmath*}
         \State $w_{B(i)}^{t+1}, w_{P(i)}^{t+1} \gets w_i^{t+1}$ \Comment{Phân giải $w_i^{t+1}$ để tạo thành $w_{B(i)}^{t+1}$ và $w_{P(i)}^{t+1}$}
         \State Gửi $w_{B(i)}^{t+1}$ về máy chủ và lưu trữ $w_{P(i)}^{t+1}$
     \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[H]
     \caption{FedMeta-Per (Meta-SGD Client)} \label{alg:fedsgd_per_client}
     \begin{algorithmic}[1]
         \State\textbf{ModelTrainingMetaSGD($c_i, w_G^t, \alpha_B^t$):}
@@ -310,10 +314,10 @@ Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới 
         \State $\alpha_i^t \gets \alpha_B^t \bigoplus \alpha_{P(i)}^t$ \Comment{Hợp nhất $\alpha_B^t$ và $\alpha_{P(i)}^t$ để tạo thành $\alpha_i^t$}
         \State Tính toán:
         \begin{dmath*}
-            \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha_i^t\circ\nabla_{w_i^t} f_{local}(w_{i}^t, \mathcal{D}_{train(i)}^{support})
+            \hat{w}_{i}^{t+1} \gets w_{i}^t - \alpha_i^t\circ\nabla_{w_i^t} f_{local}\left(w_{i}^t, \mathcal{D}_{train(i)}^{support}\right)
         \end{dmath*}
         \begin{dmath*}
-            (w_{i}^{t+1}, \alpha_i^{t+1}) \gets (w_{i}^t, \alpha_{i}^{t}) - \beta\nabla_{(w_i^t, \alpha_i^t)} f_{local}(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query})
+            (w_{i}^{t+1}, \alpha_i^{t+1}) \gets (w_{i}^t, \alpha_{i}^{t}) - \beta\nabla_{(w_i^t, \alpha_i^t)} f_{local}\left(\hat{w}_{i}^{t+1}, \mathcal{D}_{train(i)}^{query}\right)
         \end{dmath*}
         \State $w_{B(i)}^{t+1}, w_{P(i)}^{t+1} \gets w_i^{t+1}$ \Comment{Phân giải $w_i^{t+1}$ để tạo thành $w_{B(i)}^{t+1}$ và $w_{P(i)}^{t+1}$}
         \State $\alpha_{B(i)}^{t+1}, \alpha_{P(i)}^{t+1} \gets \alpha_i^{t+1}$ \Comment{Phân giải $\alpha_i^{t+1}$ để tạo thành $\alpha_{B(i)}^{t+1}$ và $\alpha_{P(i)}^{t+1}$}
@@ -325,7 +329,7 @@ Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới 
 
 Máy chủ thi triển thuật toán \ref{alg:fedmeta_per_server} để tổng hợp trọng số toàn cục mới của hệ thống. Tại đây diễn ra ba quá trình cơ bản của một máy chủ FL: gửi tham số toàn cục, nhận tham số cập nhật cục bộ, tổng hợp tham số toàn cục mới (Bảng \ref{tab:param_fedmetaper}).
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Bảng các tham số tại máy chủ hệ thống FedMeta-Per}
     \label{tab:param_fedmetaper}
@@ -354,7 +358,7 @@ Máy chủ tổng hợp các tham số nhận về bằng phương pháp lấy t
     \text{Meta-SGD: } (w_B^{t+1}, \alpha_B^{t+1}) \gets \sum_{i=0}^m \frac{n_i}{N_m} (w_i^{t+1}, \alpha_{B(i)}^{t+1})
 \end{dmath}
 
-\begin{algorithm} [H]
+\begin{algorithm}[H]
     \caption{FedMeta-Per (Server)} \label{alg:fedmeta_per_server}
     \begin{algorithmic}[1]
         \State \textbf{Server:}

@@ -3,13 +3,13 @@
 
 \section{Mô tả dữ liệu}
 
-CIFAR-10 \cite{cifar-10} là tập dữ liệu hình ảnh được sủ dụng phổ biến trong việc huấn luyện các mô hình máy học hay các thuật toán thị giác máy tính. Đây là một trong các tập dữ liệu được dùng nhiều nhất trong quá trình nghiên cứu máy học. Tập dữ liệu bao gồm 60,000 ảnh màu kích thước $32\times 32$ thuộc 10 phân lớp khác nhau.
+CIFAR-10 \cite{cifar-10} là tập dữ liệu hình ảnh được sử dụng phổ biến trong việc huấn luyện các mô hình máy học hay các thuật toán thị giác máy tính. Đây là một trong các tập dữ liệu được dùng nhiều nhất trong quá trình nghiên cứu máy học. Tập dữ liệu bao gồm 60,000 ảnh màu kích thước $32\times 32$ thuộc 10 phân lớp khác nhau.
 
 MNIST \cite{mnist} là tập dữ liệu hình ảnh được sử dụng trong việc huấn luyện các hệ thống xử lý ảnh. Tập dữ liệu này cũng được sử dụng rộng rãi trong lĩnh vực học máy. Tập dữ liệu có tổng cộng 70,000 ảnh đen trắng các chữ số viết tay từ 0 đến 9 được viết bởi nhiều người.
 
-Khóa luận sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh giá thuật toán đề xuất và các thuật toán được khảo sát. Bằng các đặc tính của hệ thống Horizontal FL và dữ liệu Non-IID, mỗi máy khách được cấu hình để chỉ 2/10 phân lớp dữ liệu, số lượng nhãn giữa các lớp và số lượng dữ liệu giữa các máy khách là không đồng đều. Thống kê dữ liệu Non-IID được trình bày trong bảng \ref{tab:stat_noniid_data}.
+Khóa luận sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh giá thuật toán đề xuất và các thuật toán được khảo sát. Bằng các đặc tính của hệ thống Horizontal FL và dữ liệu Non-IID, mỗi máy khách được cấu hình để chỉ 2/10 phân lớp dữ liệu, số lượng nhãn giữa các lớp và số lượng dữ liệu giữa các máy khách là không đồng đều. Thống kê dữ liệu Non-IID được trình bày trong Bảng \ref{tab:stat_noniid_data}.
 
-\begin{table}
+\begin{table}[H]
     \caption{Thống kê trên hai tập dữ liệu MNIST và CIFAR-10 (dữ liệu Non-IID)}
     \label{tab:stat_noniid_data}
     \resizebox{\textwidth}{!}{%
@@ -24,9 +24,9 @@ Khóa luận sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh g
     }
 \end{table}
 
-Khóa luận cũng tiến hành các thí nghiệm của mình trên kịch bản dữ liệu IID, nơi các máy khách có phân phối giống nhau và chứa đủ dữ liệu của 10 phân lớp. Chi tiết thống kê được trình bày trong bảng \ref{tab:stat_iid_data}.
+Khóa luận cũng tiến hành các thí nghiệm của mình trên kịch bản dữ liệu IID, nơi các máy khách có phân phối giống nhau và chứa đủ dữ liệu của 10 phân lớp. Chi tiết thống kê được trình bày trong Bảng \ref{tab:stat_iid_data}.
 
-\begin{table}
+\begin{table}[H]
     \caption{Thống kê trên hai tập dữ liệu MNIST và CIFAR-10 (dữ liệu IID)}
     \label{tab:stat_iid_data}
     \resizebox{\textwidth}{!}{%
@@ -111,17 +111,19 @@ Khi thuật toán \codeword{FedAvg} cập nhật xong mô hình toàn cục, tro
 
 Các thuật toán \codeword{FedMeta} và \codeword{FedMeta-Per} tiến hành huấn luyện như đã trình bày tại chương \ref{Chapter3}.
 
-Để dễ dàng trong việc fine-tune các mô hình học cũng như phù hợp với phần cứng thấp của máy khách trong hệ thống Horizontal FL, một vài tham số được giữ cố định: mỗi bước huấn luyện toàn cục sẽ sử dụng 5 máy khách, lượng dữ liệu trong một batch dữ liệu là 32, số bước huấn luyện cục bộ là 1 bước, số lượng bước huấn luyện cục bộ là 300 đối với tập dữ liệu MNIST và 600 đối với tập dữ liệu CIFAR-10.
+% Để dễ dàng trong việc fine-tune các mô hình học cũng như phù hợp với phần cứng thấp của máy khách trong hệ thống Horizontal FL, một vài tham số được giữ cố định: mỗi bước huấn luyện toàn cục sẽ sử dụng 5 máy khách, lượng dữ liệu trong một batch dữ liệu là 32, số bước huấn luyện cục bộ là 1 bước, số lượng bước huấn luyện cục bộ là 300 đối với tập dữ liệu MNIST và 600 đối với tập dữ liệu CIFAR-10.
 
 Các thuật toán được huấn luyện và kiểm thử trên dữ liệu Non-IID với hai kịch bản kiểm thử: người dùng mới và người dùng cục bộ. Riêng thuật toán \codeword{FedAvg}, \codeword{FedAvgMeta} và \codeword{FedPer} được chạy trên cả dữ liệu IID lẫn Non-IID để minh họa tác động của dữ liệu Non-IID đối với hệ thống.
 
 Các thuật toán \codeword{FedMeta} được cài đặt và sử dụng trong huấn luyện mô hình để kiểm tra khả năng thích ứng nhanh trên tập dữ liệu mới của ML khi được tích hợp vào hệ thống FL. Ngoài ra, việc này còn dùng để lấy dữ liệu so sánh với thuật toán \codeword{FedMeta-Per}.
 
-Thuật toán \codeword{FedPer} và \codeword{FedPerMeeta} được cài đặt sử dụng trong huấn luyện mô hình để chứng minh việc các lớp phần chung của hệ thống chưa đạt hiệu quả cao khi làm việc trên tập dữ liệu của người dùng mới. Kết quả này cũng được đem so sánh với kết của của \codeword{FedMeta-Per}.
+Các thuật toán \codeword{FedPer} và \codeword{FedPerMeta} được cài đặt và sử dụng trong huấn luyện mô hình để chứng minh việc các lớp phần chung của hệ thống chưa đạt hiệu quả cao khi làm việc trên tập dữ liệu của người dùng mới. Kết quả này cũng được đem so sánh với kết của của \codeword{FedMeta-Per}.
 
 Thuật toán \codeword{FedMeta-Per} được cài đặt sử dụng trong huấn luyện mô hình để kiểm tra khả năng thích ứng nhanh trên tập dữ liệu mới của các lớp phần chung và khả năng cá nhân hóa dựa trên từng tập dữ liệu của các lớp phần riêng. Ngoài ra, cần kiểm chứng độ chính xác của thuật toán này so với các thuật toán \codeword{FedMeta}, \codeword{FedPer} và \codeword{FedAvg}.
 
-Tất cả các thí nghiệm trong khóa luận được giả lập bằng framework Flower 0.17.0 \cite{beutel2020flower} trên một máy chủ duy nhất. Theo đó, máy chủ và các máy khách trong hệ thống đểu sử dụng chung các tài nguyên tính toán (CPU và GPU) và giao tiếp với nhau thông qua giao thức gRPC.
+Khóa luận cũng tiến hành quá trình tìm kiếm bộ siêu tham số tối ưu cho từng thuật toán nêu trên (Phụ lục \ref{Appendix1}). Theo đó, tất cả các thuật toán đều được chạy trên bộ siêu tham số tối ưu ở một mức nhất định trước khi được đem ra so sánh với nhau.
+
+Tất cả các thí nghiệm trong khóa luận được giả lập bằng framework Flower 0.17.0 \cite{beutel2020flower} trên một máy chủ duy nhất. Theo đó, máy chủ và các máy khách trong hệ thống đều sử dụng chung các tài nguyên tính toán (CPU và GPU) và giao tiếp với nhau thông qua giao thức gRPC.
 
 Tại máy chủ, một tiến trình được đặt ra để "lắng nghe" kết nối từ các máy khách tại một cổng (port) cố định. Khi các máy khách được khởi tạo xong, máy chủ tiến hành khởi tạo tham số toàn cục bằng cách chọn ngẫu nhiên bộ tham số từ một máy khách. Tại một bước huấn luyện toàn cục, máy chủ chọn ngẫu nhiên một tập con các máy khách để gửi thông tin tới máy khách thông qua giao thức gRPC. Thông tin này giúp máy khách biết mình cần thực hiện huấn luyện hay kiểm thử mô hình. Thông tin huấn luyện bao gồm tham số toàn cục, siêu tham số huấn luyện, số bước huấn luyện cục bộ, lượng dữ liệu trong một batch. Thông tin kiểm thử bao gồm tham số toàn cục, số bước fine-tune cục bộ (nếu có), siêu tham số huấn luyện (nếu có), lượng dữ liệu trong một batch (nếu có). Sau khi thực hiện xong yêu cầu của máy chủ, máy khách sẽ gửi thông tin về. Trong trường hợp máy chủ yêu cầu máy khách thực hiện huấn luyện, thông tin máy chủ nhận về là các tham số cục bộ và số điểm dữ liệu tham gia huấn luyện ra tham số cục bộ đó. Máy chủ tiến hành tổng hợp tham số toàn cục từ các thông tin này. Đối với yêu cầu kiểm thử mô hình, máy chủ sẽ nhận được thông tin về độ chính xác, độ lỗi, số điểm dữ liệu được kiểm thử trên các mô hình cục bộ.
 

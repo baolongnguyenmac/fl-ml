@@ -1,6 +1,52 @@
 \appendix
 
-\chapter{Ngữ pháp tiếng Việt}
+\chapter{Tìm kiếm siêu tham số}
 \label{Appendix1}
 
-Đây là phụ lục.
+Số lượng siêu tham số trong một hệ thống FL là quá lớn. Do đó, sau khi giới hạn không gian tìm kiếm thì số phép thử còn lại cũng khó có thể thực hiện vét cạn. Hệ thống FL trình bày trong khóa luận cũng không nằm ngoại lệ.
+
+Các siêu tham số của hệ thống FL của khóa luận bao gồm: số máy khách tham gia huấn luyện trong một bước huấn luyện toàn cục (\#clients/round), số bước huấn luyện cục bộ (\#epochs), số bước huấn luyện toàn cục (\#rounds), lượng dữ liệu trong một batch dữ liệu (batch_size), số lớp phần riêng đối với các thuật toán sử dụng kỹ thuật PL (\#per_layer) và các siêu tham số học sử dụng trong tối ưu mạng học sâu bằng kỹ thuật SGD.
+
+Để phù hợp cho phần cứng của các máy khách có cấu hình yếu trong kịch bản Horizontal FL, số bước huấn luyện cục bộ và lượng dữ liệu trong một batch dữ liệu được giữ cố định lần lượt là 1 và 32. Từ việc khảo sát các thí nghiệm FL của các nghiên cứu gần đây, số máy khách tham gia huấn luyện toàn cục được được chọn lần lượt là 2, 5 và 10 máy. Trong đó, sử dụng 5 máy khách tham gia huấn luyện cùng lúc cho kết quả cao hơn một chút so với việc sử dụng 2 hay 10 máy và tiêu tốn chi phí tính toán ở một mức chấp nhận được. Do giới hạn phần cứng và theo quan sát quá trình hội tụ, số lượng bước huấn luyện toàn cục được giữ ở mức 300 cho tập MNIST và 600 cho tập CIFAR-10.
+
+Đối với kích thước mạng học sâu được cài đặt trong khóa luận, việc duy trì một lớp phần chung và một lớp phần riêng cho mạng neural MNIST là tất nhiên. Với mạng học sâu dùng cho tập CIFAR-10, số lớp phần riêng được chọn lần lượt là 1, 2 và 3 lớp (tính từ lớp tuyến tính cuối cùng). Kết quả chạy thực nghiệm có thấy, việc sử dụng lớp tuyến tính cuối cùng làm phần riêng và các lớp học sâu còn lại làm phần chung cho kết quả tốt nhất trên tập CIFAR-10.
+
+Ngoại trừ siêu tham số học của từng thuật toán, các siêu tham số kể trên đều được giữ cố định trong quá trình huấn luyện. Bảng \ref{tab:fixed_hyper_param} trình bày tóm tắt các giá trị siêu tham số này.
+
+\begin{table}[H]
+    \centering
+    \caption{Bảng các siêu tham số cố định của hệ thống trên MNIST và CIFAR-10}
+    \label{tab:fixed_hyper_param}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{l|ccccc} 
+    \toprule
+             & \#clients/round    & \#epochs           & \#rounds & batch\_size         & \multicolumn{1}{l}{\#per\_layer}  \\ 
+    \hline
+    MNIST    & \multirow{2}{*}{5} & \multirow{2}{*}{1} & 300      & \multirow{2}{*}{32} & \multirow{2}{*}{1}                \\
+    CIFAR-10 &                    &                    & 600      &                     &                                   \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{table}
+
+Các siêu tham số học được tìm kiếm trong khoảng $(10^{-5}, 0.01)$ cho từng thuật toán. Kết quả tìm kiếm được trình bày trong Bảng \ref{tab:hyper_param}.
+
+\begin{table}[H]
+    \centering
+    \caption{Bảng siêu tham số được sử dụng cho từng thuật toán}
+    \label{tab:hyper_param}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{l|cc} 
+    \toprule
+    \begin{tabular}[c]{@{}l@{}}\\\end{tabular} & CIFAR-10           & MNIST                                             \\ 
+    \hline
+    FedAvg, FedAvgMeta                         & $10^{-4}$          & $10^{-5}$                                      \\
+    FedPer, FedPerMeta                         & $10^{-4}$          & $10^{-5}$                                      \\
+    FedMeta(MAML) ($\alpha,\beta$)             & $(0.01, 0.001)$    & $(0.001, 0.001)$                                \\
+    FedMeta(Meta-SGD)($\alpha,\beta$)          & $(0.001, 0.001)$   & $(0.001, 5\times 10^{-4})$  \\
+    FedMeta-Per(MAML)($\alpha,\beta$)          & $(0.001, 0.005)$   & $(0.001, 0.001)$                                \\
+    FedMeta-Per(Meta-SGD)($\alpha,\beta$)      & $(0.01,0.01)$      & $(0.001, 5\times 10^{-4})$  \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{table}
