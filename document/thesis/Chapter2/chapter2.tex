@@ -3,8 +3,6 @@
 
 \section{Hệ thống Federated Learning}
 
-\codeword{#todo: ứng dụng của FL?}
-
 \subsection{Định nghĩa}
 
 \textbf{Định nghĩa về FL} \cite{yang2019federated}: Giả sử có $n$ máy khách, máy khách thứ $i$ ký hiệu là $c_i$ $(i\in [1, n])$, chứa tập dữ liệu $\mathcal{D}_i$. FL là một quá trình học mà ở đó, các chủ sở hữu dữ liệu (ở đây có thể hiểu là các thiết bị biên) cùng hợp tác huấn luyện một mô hình $\mathcal{M}$ và đạt được độ chính xác $f$ nhưng không có bất kỳ chủ sở hữu dữ liệu $c_i$ nào chia sẻ tập dữ liệu $\mathcal{D}_i$ của chúng.
@@ -145,7 +143,7 @@ Trường hợp cuối chính là đặc điểm chính của hệ thống Horiz
 
 \subsection{Phân phối nhãn khác nhau giữa các máy khách}
 
-Đây là trường hợp dữ liệu Non-IID phổ biến nhất, gây hại nghiêm trọng cho hệ thống FL \cite{zhu2021federated}, cũng chính là trường hợp mà khóa luận hướng tới giải quyết. Tại đây, phân phối nhãn của hai máy khách $c_i, c_j$ bất kỳ là khác nhau: $p_i(y) \ne p_j(y)$ và xác suất thuộc tính $x$ có nhãn dữ liệu $y$: $p(x|y)$ của các máy khách là như nhau. Một kịch bản thường thấy của trường hợp này được trình bày trong nghiên cứu \cite{mcmahan2017communication}: Mỗi máy khách sẽ chỉ chứa các điểm dữ liệu thuộc về $k$ nhãn (Hình \ref{fig:my_noniid}). Trong đó, $k$ là một siêu tham số biểu diễn độ mất cân bằng về nhãn. $k$ càng nhỏ, hệ thống mất cân bằng nhãn càng mạnh. Khóa luận này thiết đặt môi trường dữ liệu theo cách tương tự như vậy.
+Đây là trường hợp dữ liệu Non-IID phổ biến nhất, gây hại nghiêm trọng cho hệ thống FL \cite{zhu2021federated}, cũng chính là trường hợp mà khóa luận hướng tới giải quyết. Tại đây, phân phối nhãn của hai máy khách $c_i, c_j$ bất kỳ là khác nhau: $p_i(y) \ne p_j(y)$ và xác suất thuộc tính $x$ có nhãn dữ liệu $y$: $p(x|y)$ của các máy khách là như nhau. Một kịch bản thường thấy của trường hợp này được trình bày trong nghiên cứu \cite{mcmahan2017communication}: Mỗi máy khách sẽ chỉ chứa các điểm dữ liệu thuộc về $k$ nhãn (Hình \ref{fig:my_noniid}). Trong đó, $k$ là một siêu tham số biểu diễn độ mất cân bằng về nhãn. $k$ càng nhỏ, hệ thống mất cân bằng nhãn càng mạnh. \textbf{Khóa luận này nhằm đưa ra giải pháp để giải quyết tình huống Non-IID trên nhãn dữ liệu như vừa khảo sát}.
 
 \begin{figure}[H]
     \centering
@@ -205,7 +203,7 @@ Với việc lượng dữ liệu và thiết bị biên ngày càng tăng lên,
 
 \section{Meta-Learning trong Federated Learning}
 
-ML được áp dụng vào hệ thống FL như một phương pháp tối ưu thuộc nhóm "Fine-tune cục bộ". Các thuật toán ML được sử dụng trong hệ thống FL nhằm mục đích tạo ra một mô hình toàn cục tốt, giúp hội tụ nhanh trên tập dữ liệu phân bố trên các máy khách.
+ML được áp dụng vào hệ thống FL như một phương pháp tối ưu thuộc nhóm "Fine-tune cục bộ". Các thuật toán ML được sử dụng trong hệ thống FL nhằm mục đích tạo ra một mô hình toàn cục tốt, giúp hội tụ nhanh trên tập dữ liệu phân bố trên các máy khách. Khảo sát dưới đây nhằm đạt được kiến thức nền tảng cho việc kết hợp ML vào FL trong chương sau.
 
 \subsection{Diễn giải Meta-Learning}
 
@@ -314,7 +312,27 @@ Tóm lại, cả hai nghiên cứu \parencite{chen2018federated, fallah2020perso
 
 \section{Personalization Layer trong Federated Learning}
 
-Khóa luận tiến hành khảo sát kết quả của các kỹ thuật tối ưu hệ thống FL trên dữ liệu Non-IID và nhận thấy các thuật toán theo hướng PL đạt kết quả rất cao và có tiềm năng phát triển thêm (Bảng \ref{tab:acc_paper}). Các thuật toán theo hướng này chia mạng học sâu ra làm hai phần \cite{zhu2021federated}: phần chung và phần riêng. Theo đó, phần chung được hợp tác huấn luyện bởi tất cả các máy khách trong hệ thống còn phần riêng được từng máy khách huấn luyện riêng biệt trên tập dữ liệu cục bộ. \textbf{Chính nhờ việc các lớp học sâu trong phần riêng nắm bắt tốt các đặc trưng của từng tập dữ liệu riêng biệt, đã làm cho cách tiếp cận này trở nên mạnh mẽ trên dữ liệu có tính cá nhân hóa cao như dữ liệu Non-IID}.
+Thuật toán \codeword{FedAvg} trước kia đưa ra dự đoán giống nhau cho toàn bộ người dùng. Điều này giờ đây không còn phù hợp nữa. Các nhà cung cấp dịch vụ hiện nay đang cố gắng cải thiện trải nghiệm người dùng bằng cách đưa ra các đề xuất phù hợp với họ (Hình \ref{fig:gboard}). Đặt trong ngữ cảnh dữ liệu Non-IID - ám chỉ dữ liệu có tính cá nhân hóa rất cao, việc cá nhân hóa mô hình học cho từng người dùng của một hệ thống FL là việc rất quan trọng.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[height=6cm,keepaspectratio]{../images/gboard1.jpg}
+        \caption{Người dùng 1}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[height=6cm,keepaspectratio]{../images/gboard2.png}
+        \caption{Người dùng 2}
+    \end{subfigure}
+    \caption{Đề xuất từ tiếp theo trong bàn phím GBoard sử dụng FL}
+    \label{fig:gboard}
+\end{figure}
+
+% Cá nhân hóa cho từng người dùng trong một hệ thống FL là việc rất quan trọng. Đặc biệt, trong ngữ cảnh các người dùng là không đồng nhất trên dữ liệu (chứa dữ liệu Non-IID) và không đồng nhất trên thiết bị (các thiết bị biên có cấu hình khác nhau), vấn đề cá nhân hóa cho máy khách còn được đặt lên cao hơn vì từng người dùng trong hệ thống đều rất "khác nhau". Thuật toán \codeword{FedAvg} trước kia đưa ra dự đoán giống nhau cho toàn bộ người dùng. Điều này giờ đây không còn phù hợp nữa. Mục đích của việc cá nhân hóa là giúp mô hình hoạt động tốt hơn trên dữ liệu của từng người dùng riêng biệt. Điều này làm tăng trải nghiệm người sử dụng dịch vụ.
+
+Khóa luận tiến hành khảo sát kết quả của các kỹ thuật tối ưu hệ thống FL trên dữ liệu Non-IID và nhận thấy các thuật toán theo hướng PL đạt kết quả rất cao xét trên trung bình độ chính xác lẫn tính cá nhân hóa (dựa trên độ lệch chuẩn) và có tiềm năng phát triển thêm (Bảng \ref{tab:acc_paper}).
 
 \begin{table}[H]
     \centering
@@ -333,6 +351,8 @@ Khóa luận tiến hành khảo sát kết quả của các kỹ thuật tối 
     \end{tabular}
     }
 \end{table}
+
+Các thuật toán theo hướng này chia mạng học sâu ra làm hai phần \cite{zhu2021federated}: phần chung và phần riêng. Theo đó, phần chung được hợp tác huấn luyện bởi tất cả các máy khách trong hệ thống còn phần riêng được từng máy khách huấn luyện riêng biệt trên tập dữ liệu cục bộ. \textbf{Chính nhờ việc các lớp học sâu trong phần riêng nắm bắt tốt các đặc trưng của từng tập dữ liệu riêng biệt, đã làm cho cách tiếp cận này trở nên mạnh mẽ trên dữ liệu có tính cá nhân hóa cao như dữ liệu Non-IID}.
 
 Một thuật toán điển hình theo hướng tiếp cận này là \codeword{FedPer} \cite{arivazhagan2019federated}. \codeword{FedPer} quy định phần chung của mạng học sâu là các lớp rút trích đặc trưng, phần riêng của mạng là các lớp còn lại. Tác giả của \codeword{FedPer} đã thực hiện nhiều thí nghiệm chứng tỏ rằng thuật toán này đạt điệu quả cao hơn nhiều so với \codeword{FedAvg} khi làm việc trên dữ liệu Non-IID.
 

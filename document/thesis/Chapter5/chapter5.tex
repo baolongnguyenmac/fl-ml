@@ -163,71 +163,7 @@ Với hai kỳ vọng vừa trình bày về khả năng thích ứng nhanh trê
 \end{table}
 
 Xét về khả năng thích ứng nhanh trên tập dữ liệu mới, \codeword{FedMeta-Per} cho kết quả tốt hơn hẳn so với \codeword{FedPerMeta} khi cùng thực hiện một bước huấn luyện trên tập dữ liệu support (chỉ chiếm 20\% dữ liệu) của máy khách trong lúc kiểm thử, nhưng đã có thể nắm bắt được các đặc tính dữ liệu trong máy khách đó và cho kết quả dự đoán phân lớp với độ chính xác rất cao. Từ Hình \ref{fig:fedmetaper_acc}, có thể quan sát thấy việc hội tụ của các thuật toán này cũng xảy ra nhanh hơn rất nhiều với hai thuật toán còn lại. Kết quả này tương đồng với kết quả thí nghiệm của các thuật toán \codeword{FedMeta}. Từ những ý phân tích vừa nêu, có thể kết luận rằng, \textbf{các thuật toán} \codeword{FedMeta-Per} \textbf{đã thừa hưởng thành công khả năng thích ứng nhanh trên tập dữ liệu mới của các thuật toán ML như đã kỳ vọng trước đó}.
-
-\begin{table}
-    \centering
-    \caption{Bảng độ chính xác (\%) của thuật toán FedPer và các thuật toán FedMeta-Per tính trên máy khách (dữ liệu Non-IID)}
-    \label{tab:fedmetaper_client_acc}
-    \resizebox{\linewidth}{!}{%
-    \begin{tabular}{l|cc|cc} 
-    \toprule
-                          & \multicolumn{2}{c|}{CIFAR-10}              & \multicolumn{2}{c}{MNIST}                  \\ 
-    \cline{2-5}
-                          & local client        & new client           & local client        & new client           \\ 
-    \hline
-    FedPer                & 15.41±20.90         & 13.91±20.40          & 63.67±20.04         & 55.06±26.09           \\
-    FedPerMeta            & 17.46±23.15         & 20.99±22.61          & 54.94±23.14         & 59.43±27.31          \\
-    FedMeta-Per(MAML)     & 85.58±7.40          & 61.81±21.63          & \textbf{99.33±0.89} & 94.06±7.73           \\
-    FedMeta-Per(Meta-SGD) & \textbf{86.10±6.42} & \textbf{67.21±16.57} & 98.69±1.41          & \textbf{95.33±6.59}  \\
-    \bottomrule
-    \end{tabular}
-    }
-\end{table}
-
-Khả năng cá nhân hóa mô hình cho từng người dùng được đánh giá dựa vào độ chính xác trong tương quan với máy khách, trình bày trong Bảng \ref{tab:fedmetaper_client_acc}. Bảy trong số tám các trường hợp các thuật toán \codeword{FedMeta-Per} có độ lệch chuẩn nhỏ hơn thuật toán \codeword{FedPer} (trừ trường hợp kiểm định thuật toán \codeword{FedMeta-Per(MAML)} trên người dùng mới của tập CIFAR-10). Điều này chứng tỏ rằng khả năng cá nhân hóa của thuật toán đề xuất tốt hơn so với thuật toán \codeword{FedPer} và \codeword{FedPerMeta}.
-
-Mặt khác, khóa luận so sánh các thuật toán \codeword{FedMeta} với các thuật toán \codeword{FedMeta-Per} và tổng hợp kết quả trong hai Bảng \ref{tab:compare} và \ref{tab:compare_again}. Theo đó, độ chính xác của \codeword{FedMeta-Per} luôn cao hơn \codeword{FedMeta} từ 1\% đến 19\% khi so sánh trên cùng thuật toán huấn luyện cục bộ. Tính cá nhân hóa của \codeword{FedMeta-Per} cũng cao hơn đáng kể so với \codeword{FedMeta} khi thuật toán đề xuất, trong đa số các trường hợp, đã làm giảm độ lệch chuẩn của độ chính xác xuống từ 2 đến 10 lần xét trên cùng thuật toán huấn luyện cục bộ.
-
-\begin{table}
-    \centering
-    \caption{Bảng so sánh độ chính xác (\%) giữa FedMeta và FedMeta-Per tính trên điểm dữ liệu (dữ liệu Non-IID)}
-    \label{tab:compare}
-    \resizebox{\linewidth}{!}{%
-    \begin{tabular}{l|cc|cc} 
-    \toprule
-                          & \multicolumn{2}{c|}{CIFAR-10}   & \multicolumn{2}{c}{MNIST}        \\ 
-    \cline{2-5}
-                          & local client   & new client     & local client   & new client      \\ 
-    \hline
-    FedMeta(MAML)         & 66.58          & 64.86          & 93.09          & 92.55           \\
-    FedMeta(Meta-SGD)     & 75.75          & 70.02          & 97.36          & 95.89           \\
-    FedMeta-Per(MAML)     & 85.73          & 66.19          & \textbf{99.35} & 93.21           \\
-    FedMeta-Per(Meta-SGD) & \textbf{86.20} & \textbf{72.99} & 99.00          & \textbf{96.63}  \\
-    \bottomrule
-    \end{tabular}
-    }
-\end{table}
-
-\begin{table}
-    \centering
-    \caption{Bảng so sánh độ chính xác (\%) giữa FedMeta và FedMeta-Per tính trên máy khách (dữ liệu Non-IID)}
-    \label{tab:compare_again}
-    \resizebox{\linewidth}{!}{%
-    \begin{tabular}{l|cc|cc} 
-    \toprule
-                          & \multicolumn{2}{c|}{CIFAR-10}              & \multicolumn{2}{c}{MNIST}                  \\ 
-    \cline{2-5}
-                          & local client        & new client           & local client        & new client           \\ 
-    \hline
-    FedMeta(MAML)         & 66.31±13.72         & 61.34±19.99          & 92.63±5.04          & 92.79±5.29           \\
-    FedMeta(Meta-SGD)     & 76.01±11.98         & \textbf{67.98±15.28}          & 92.21±10.19         & 90.45±11.18          \\
-    FedMeta-Per(MAML)     & 85.58±7.40          & 61.81±21.63          & \textbf{99.33±0.89} & 94.06±7.73           \\
-    FedMeta-Per(Meta-SGD) & \textbf{86.10±6.42} & 67.21±16.57          & 98.69±1.41          & \textbf{95.33±6.59}  \\
-    \bottomrule
-    \end{tabular}
-    }
-\end{table}
-
+\clearpage
 \begin{sidewaysfigure}
     \centering
     \begin{subfigure}{\textwidth}
@@ -268,3 +204,73 @@ Mặt khác, khóa luận so sánh các thuật toán \codeword{FedMeta} với c
     \caption{Kết quả chạy thuật toán FedPer và các thuật toán FedMeta-Per trên các tập dữ liệu và máy khách kiểm thử tương ứng}
     \label{fig:fedmetaper_acc}
 \end{sidewaysfigure}
+\clearpage
+Khả năng cá nhân hóa mô hình cho từng người dùng được đánh giá dựa vào độ chính xác trong tương quan với máy khách, trình bày trong Bảng \ref{tab:fedmetaper_client_acc}. Bảy trong số tám các trường hợp các thuật toán \codeword{FedMeta-Per} có độ lệch chuẩn nhỏ hơn các thuật toán \codeword{FedPer}, \codeword{FedPerMeta} (trừ trường hợp kiểm định thuật toán \codeword{FedMeta-Per(MAML)} trên người dùng mới của tập CIFAR-10). Các thuật toán \codeword{FedMeta-Per} cũng có độ chính xác trung bình của người dùng cao hơn so với các thuật toán còn lại. \textbf{Điều này chứng tỏ rằng khả năng cá nhân hóa của thuật toán đề xuất tốt hơn so với thuật toán} \codeword{FedPer} \textbf{và} \codeword{FedPerMeta}.
+
+\begin{table}[H]
+    \centering
+    \caption{Bảng độ chính xác (\%) của thuật toán FedPer và các thuật toán FedMeta-Per tính trên máy khách (dữ liệu Non-IID)}
+    \label{tab:fedmetaper_client_acc}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{l|cc|cc} 
+    \toprule
+                          & \multicolumn{2}{c|}{CIFAR-10}              & \multicolumn{2}{c}{MNIST}                  \\ 
+    \cline{2-5}
+                          & local client        & new client           & local client        & new client           \\ 
+    \hline
+    FedPer                & 15.41±20.90         & 13.91±20.40          & 63.67±20.04         & 55.06±26.09           \\
+    FedPerMeta            & 17.46±23.15         & 20.99±22.61          & 54.94±23.14         & 59.43±27.31          \\
+    FedMeta-Per(MAML)     & 85.58±7.40          & 61.81±21.63          & \textbf{99.33±0.89} & 94.06±7.73           \\
+    FedMeta-Per(Meta-SGD) & \textbf{86.10±6.42} & \textbf{67.21±16.57} & 98.69±1.41          & \textbf{95.33±6.59}  \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{table}
+
+Mặt khác, khóa luận so sánh các thuật toán \codeword{FedMeta} với các thuật toán \codeword{FedMeta-Per} và tổng hợp kết quả trong hai Bảng \ref{tab:compare} và \ref{tab:compare_again}. Theo đó, độ chính xác trong tương quan điểm dữ liệu của \codeword{FedMeta-Per} luôn cao hơn \codeword{FedMeta} từ 1\% đến 19\% khi so sánh trên cùng thuật toán huấn luyện cục bộ. Tính cá nhân hóa của mô hình trên người dùng cục bộ cũng được cải thiện từ 2 đến 10 lần xét trên độ lệch chuẩn. Độ chính xác trung bình của các thuật toán đề xuất trên đối tượng người dùng này cũng cao hơn từ 6\% đến 19\%. Trên đối tượng kiểm thử là người dùng mới, \codeword{FedMeta(Meta-SGD)} và \codeword{FedMeta-Per(Meta-SGD)} lần lượt đạt kết quả cao nhất trên tập CIFAR-10 và MNIST. Đối với tập dữ liệu CIFAR-10, kết quả này gần như xấp xỉ với kết quả mà \codeword{FedMeta-Per(Meta-SGD)} đạt được. Tuy nhiên, cần lưu ý thêm rằng, theo thời gian, khi các đối tượng người dùng mới duy trì được một phần riêng của mạng học sâu cho bản thân, độ chính xác của chúng sẽ được cải thiện và đạt được kết quả cao như khi thử nghiệm trên người dùng cục bộ.
+
+% Tính cá nhân hóa của \codeword{FedMeta-Per} cũng cao hơn đáng kể so với \codeword{FedMeta} khi thuật toán đề xuất, trong đa số các trường hợp, đã làm giảm độ lệch chuẩn của độ chính xác xuống từ 2 đến 10 lần xét trên cùng thuật toán huấn luyện cục bộ.
+
+\begin{table}[H]
+    \centering
+    \caption{Bảng so sánh độ chính xác (\%) giữa FedMeta và FedMeta-Per tính trên điểm dữ liệu (dữ liệu Non-IID)}
+    \label{tab:compare}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{l|cc|cc} 
+    \toprule
+                          & \multicolumn{2}{c|}{CIFAR-10}   & \multicolumn{2}{c}{MNIST}        \\ 
+    \cline{2-5}
+                          & local client   & new client     & local client   & new client      \\ 
+    \hline
+    FedMeta(MAML)         & 66.58          & 64.86          & 93.09          & 92.55           \\
+    FedMeta(Meta-SGD)     & 75.75          & 70.02          & 97.36          & 95.89           \\
+    FedMeta-Per(MAML)     & 85.73          & 66.19          & \textbf{99.35} & 93.21           \\
+    FedMeta-Per(Meta-SGD) & \textbf{86.20} & \textbf{72.99} & 99.00          & \textbf{96.63}  \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Bảng so sánh độ chính xác (\%) giữa FedMeta và FedMeta-Per tính trên máy khách (dữ liệu Non-IID)}
+    \label{tab:compare_again}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{l|cc|cc} 
+    \toprule
+                          & \multicolumn{2}{c|}{CIFAR-10}              & \multicolumn{2}{c}{MNIST}                  \\ 
+    \cline{2-5}
+                          & local client        & new client           & local client        & new client           \\ 
+    \hline
+    FedMeta(MAML)         & 66.31±13.72         & 61.34±19.99          & 92.63±5.04          & 92.79±5.29           \\
+    FedMeta(Meta-SGD)     & 76.01±11.98         & \textbf{67.98±15.28}          & 92.21±10.19         & 90.45±11.18          \\
+    FedMeta-Per(MAML)     & 85.58±7.40          & 61.81±21.63          & \textbf{99.33±0.89} & 94.06±7.73           \\
+    FedMeta-Per(Meta-SGD) & \textbf{86.10±6.42} & 67.21±16.57          & 98.69±1.41          & \textbf{95.33±6.59}  \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{table}
+
+Như vậy, có thể kết luận rằng, \textbf{tính cá nhân hóa của thuật toán đề xuất đã được cải thiện so với các thuật toán trong phần so sánh nhờ vào việc duy trì các lớp phần riêng tại máy khách và việc mô hình tại máy khách thực hiện fine-tune trên tập dữ liệu support trước khi tiến hành kiểm thử}.
+
+
