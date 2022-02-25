@@ -28,9 +28,9 @@ Trong bối cảnh bùng nổ thông tin cũng như việc đề cao tính riên
     \item Cần một máy chủ thật mạnh mẽ để huấn luyện mô hình với lượng dữ liệu lớn như vậy.
 \end{itemize}
 
-Khái niệm federated learning (FL) được Google lần đầu giới thiệu trong nghiên cứu \cite{mcmahan2017communication} với ý tưởng chính là huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt được phân bố trên các thiết bị biên (được gọi là huấn luyện phân tán). Với ý tưởng này, việc triển khi mô hình máy học đến người dùng không còn gặp phải vấn đề về chi phí truyền tin, giúp bảo vệ quyền riêng tư dữ liệu và không đòi hỏi một máy chủ quá mạnh để huấn luyện mô hình. Tuy nhiên, dữ liệu của người dùng trong hệ thống thường không đồng nhất và có tính cá nhân hóa rất cao (dữ liệu Non-IID). Điều này khiến cho hiệu suất của hệ thống FL suy giảm nghiêm trọng \cite{zhao2018federated}.
+Khái niệm \textit{federated learning} (FL) được Google lần đầu giới thiệu trong nghiên cứu \cite{mcmahan2017communication} với ý tưởng chính là huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt được phân bố trên các thiết bị biên (được gọi là huấn luyện phân tán). Với ý tưởng này, việc triển khai mô hình máy học đến người dùng không còn gặp phải vấn đề về chi phí truyền tin, giúp bảo vệ quyền riêng tư dữ liệu và không đòi hỏi một máy chủ quá mạnh để huấn luyện mô hình. Tuy nhiên, dữ liệu của người dùng trong hệ thống thường không đồng nhất và có tính cá nhân hóa rất cao (dữ liệu Non-IID). Điều này khiến cho hiệu suất của hệ thống FL suy giảm nghiêm trọng \cite{zhao2018federated}.
 
-Một cách ngắn gọn, hiệu suất của mô hình bị giảm là do mô hình không thích ứng nhanh được trên tập dữ liệu của người dùng. Mặt khác, các thuật toán ML được biết đến với khả năng thích ứng nhanh trên tập dữ liệu mới \cite{hospedales2020meta}. Điều này giải quyết chính xác vấn đề dữ liệu FL đang gặp phải. Song song với đó, để tăng thêm tính các nhân hóa mô hình cho từng người dùng, các nghiên cứu \parencite{arivazhagan2019federated, liang2020think} đề xuất sử dụng kỹ thuật PL, giúp tăng đáng kể cả hiệu suất lẫn trải nghiệm của người dùng trong hệ thống FL. Tuy nhiên, các phương pháp tối ưu kể trên vẫn tồn tại nhiều khuyết điểm và có khả năng bù trừ cho nhau. Do đó, việc nghiên cứu về ML, PL được tiến hành và kết hợp vào hệ thống FL để đạt được hiệu suất tốt hơn.
+Một cách ngắn gọn, hiệu suất của mô hình bị giảm là do mô hình không thích ứng nhanh được trên tập dữ liệu của người dùng. Mặt khác, các thuật toán \textit{Meta-learning} (ML) được biết đến với khả năng thích ứng nhanh trên tập dữ liệu mới \cite{hospedales2020meta}. Điều này giải quyết chính xác vấn đề dữ liệu mà FL đang gặp phải. Song song với đó, để tăng thêm tính các nhân hóa mô hình cho từng người dùng, các nghiên cứu \parencite{arivazhagan2019federated, liang2020think} đề xuất sử dụng kỹ thuật \textit{Personalization layer} (PL), giúp tăng đáng kể cả hiệu suất lẫn trải nghiệm của người dùng trong hệ thống FL. Tuy nhiên, các phương pháp tối ưu kể trên vẫn tồn tại nhiều khuyết điểm và có khả năng bù trừ cho nhau. Do đó, việc nghiên cứu về ML, PL được tiến hành và kết hợp vào hệ thống FL để đạt được hiệu suất tốt hơn.
 
 \subsection*{Mục tiêu đề tài}
 
@@ -51,6 +51,7 @@ Về việc phân loại các kịch bản Non-IID, nghiên cứu \cite{zhu2021f
 Từ đó, khóa luận này có phạm vi nghiên cứu được giới hạn và phương án giải quyết được xây dựng dựa trên ba giả định sau:
 
 \begin{itemize}
+    \item Hướng nghiên cứu: Cải thiện hiệu suất của hệ thống FL.
     \item Loại hệ thống: Môi trường thí nghiệm (bao gồm các yếu tố như số lượng người dùng, dữ liệu, cấu hình, khả năng lưu trữ của thiết bị cuối,...) tuân theo đặc trưng của hệ thống Horizontal FL.
     \item Bảo mật \& quyền riêng tư: Hệ thống đã đảm bảo tính bảo mật cũng như duy trì tốt quyền riêng tư của người dùng.
     \item Kịch bản Non-IID: Phân phối nhãn dữ liệu trên các máy khách là khác nhau.
@@ -60,11 +61,11 @@ Từ đó, khóa luận này có phạm vi nghiên cứu được giới hạn v
 
 \textbf{Phương pháp chính.}
 
-Hệ thống FL huấn luyện trực tiếp các mô hình máy học trên các tập dữ liệu của từng người dùng, sau đó tiến hành tổng hợp tham số của mô hình thu được từ các máy khách này để thu được một mô hình toàn cục. Do đó, kiến trúc máy chủ - máy khách nghiễm nhiên trở được nghĩ đến và trở nên phổ biến. Nghiên cứu \cite{yin2021comprehensive} nêu ra các đặc điểm chính của máy chủ và máy khách trong một hệ thống FL:
+Hệ thống FL huấn luyện trực tiếp các mô hình máy học trên các tập dữ liệu của từng người dùng, sau đó tiến hành tổng hợp tham số của mô hình trên các máy khách này để thu được một mô hình toàn cục. Do đó, kiến trúc client-server nghiễm nhiên được nghĩ đến và trở nên phổ biến. Nghiên cứu \cite{yin2021comprehensive} nêu ra các đặc điểm chính của máy chủ và máy khách trong một hệ thống FL:
 
 \begin{itemize}
     \item Máy chủ: Điều phối các hoạt động huấn luyện mô hình và duy trì một bộ tham số toàn cục bằng cách tổng hợp các tham số mô hình do máy khách gửi về.
-    \item Máy khách: Đóng vai trò là nơi huấn luyện các mô hình học theo sự chỉ đạo của máy chủ. Chúng nhận tham số toàn cục từ máy chủ, huấn luyện mô hình dựa trên bộ tham số này và gửi tham số của mô hình mới về máy chủ để tổng hợp.
+    \item Máy khách: Huấn luyện mô hình học theo sự chỉ đạo của máy chủ. Chúng nhận tham số toàn cục từ máy chủ, huấn luyện mô hình trên tập dữ liệu cục bộ và gửi tham số của mô hình mới về máy chủ để tổng hợp.
 \end{itemize}
 
 Phương pháp đề xuất của khóa luận nhằm tích hợp các thuật toán ML, PL vào hệ thống nêu trên. Trong đó, các thuật toán ML được sử dụng để tạo ra một khởi tạo tốt, giúp mô hình tại máy khách hội tụ nhanh chóng (chỉ sau một hoặc một vài bước huấn luyện trên một số ít dữ liệu); các thuật toán PL được thêm vào như một phương pháp giúp tăng tính cá nhân hóa của từng mô hình máy học phân bố trên máy khách.
@@ -79,7 +80,7 @@ Sau khi tiến hành nghiên cứu, nghiên cứu này kỳ vọng đạt đư�
 
 \begin{itemize}
     \item Nắm được ý tưởng huấn luyện mô hình của các thuật toán theo hướng FL, ML, PL. Cài đặt mô hình baseline.
-    \item Cài đặt được hệ thống FL có tích hợp ML. So sánh độ chính xác thu được với mô hình baseline.
+    \item Cài đặt hệ thống FL có tích hợp ML. So sánh độ chính xác thu được với mô hình baseline.
     \item Cài đặt hệ thống FL có tích hợp ML và PL. So sánh độ chính xác thu được với mô hình baseline.
 \end{itemize}
 
@@ -102,7 +103,7 @@ Kế hoạch thực hiện khóa luận bao gồm ba giai đoạn, được trì
                                                                                               & Trao đổi 2 mảng kiến thức                                                                   & Cả hai                               \\ 
     \hline
     \multirow{4}{*}{\begin{tabular}[c]{@{}c@{}}2\\(16/09/2021 \\- 31/01/2022)\end{tabular}}   & \begin{tabular}[c]{@{}l@{}}Cài đặt các thuật toán FedAvg, \\ FedMeta(Meta-SGD)\end{tabular} & Nguyễn Bảo Long                      \\
-                                                                                              & \begin{tabular}[c]{@{}l@{}}Cài đặt các thuật toán FedAvg(Meta),\\FedAvg(MAML)\end{tabular}  & Cao Tất Cường                        \\
+                                                                                              & \begin{tabular}[c]{@{}l@{}}Cài đặt các thuật toán FedAvgMeta,\\FedMeta(MAML)\end{tabular}  & Cao Tất Cường                        \\
                                                                                               & \begin{tabular}[c]{@{}l@{}}Cài đặt hệ thống FL có tích hợp ML\\và PL\end{tabular}           & Nguyễn Bảo Long                      \\
                                                                                               & Phân tích và đánh giá kết quả                                                               & Cả hai                               \\ 
     \hline

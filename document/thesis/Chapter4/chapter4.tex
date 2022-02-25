@@ -113,7 +113,7 @@ Các thuật toán \codeword{FedMeta} và \codeword{FedMeta-Per} tiến hành hu
 
 % Để dễ dàng trong việc fine-tune các mô hình học cũng như phù hợp với phần cứng thấp của máy khách trong hệ thống Horizontal FL, một vài tham số được giữ cố định: mỗi bước huấn luyện toàn cục sẽ sử dụng 5 máy khách, lượng dữ liệu trong một batch dữ liệu là 32, số bước huấn luyện cục bộ là 1 bước, số lượng bước huấn luyện cục bộ là 300 đối với tập dữ liệu MNIST và 600 đối với tập dữ liệu CIFAR-10.
 
-Các thuật toán được huấn luyện và kiểm thử trên dữ liệu Non-IID với hai kịch bản kiểm thử: người dùng mới và người dùng cục bộ. Riêng thuật toán \codeword{FedAvg}, \codeword{FedAvgMeta} và \codeword{FedPer} được chạy trên cả dữ liệu IID lẫn Non-IID để minh họa tác động của dữ liệu Non-IID đối với hệ thống.
+Các thuật toán được huấn luyện và kiểm thử trên dữ liệu Non-IID với hai kịch bản kiểm thử: người dùng mới và người dùng cục bộ. Riêng thuật toán \codeword{FedAvg} được chạy trên cả dữ liệu IID lẫn Non-IID để minh họa tác động của dữ liệu Non-IID đối với hệ thống.
 
 Các thuật toán \codeword{FedMeta} được cài đặt và sử dụng trong huấn luyện mô hình để kiểm tra khả năng thích ứng nhanh trên tập dữ liệu mới của ML khi được tích hợp vào hệ thống FL. Ngoài ra, việc này còn dùng để lấy dữ liệu so sánh với thuật toán \codeword{FedMeta-Per}.
 
