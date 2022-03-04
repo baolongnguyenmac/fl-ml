@@ -60,10 +60,10 @@ class BaseClient(fl.client.Client):
                 # val_loss, val_acc, num_val_sample = self.ensemble_evaluate(ins)
 
                 # choose the personalization weight that fit best to the new client
-                val_loss, val_acc, num_val_sample = self.get_best_evaluate(ins)
+                val_loss, val_acc, num_val_sample, precision, recall, f1  = self.get_best_evaluate(ins)
             else:
-                val_loss, val_acc, num_val_sample = self.single_evaluate(ins)
-
+                val_loss, val_acc, num_val_sample, precision, recall, f1 = self.single_evaluate(ins)
+        
             return EvaluateRes(
-                loss=val_loss, num_examples=num_val_sample, metrics={'acc': val_acc}
+                loss=val_loss, num_examples=num_val_sample, metrics={'acc': val_acc, 'precision': precision, 'recall': recall, 'f1': f1}
             )
