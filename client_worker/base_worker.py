@@ -36,7 +36,7 @@ class BaseWorker:
 
         if return_prob:
             return loss, outputs, labels
-        return loss, acc
+        return loss, acc, labels, preds
 
     def _valid_step(self, model: nn.Module, batch, return_prob=False):
         with torch.no_grad():

@@ -102,12 +102,7 @@ class FedAvgClient(BaseClient):
             epochs = int(config['epochs'])
             lr = float(config['alpha'])
 
-            # assgin personalized layer to local model if the self.per_layer is specified
-            if self.per_layer:
-                # self.load_personalization_weight(self.cid, weights)
-                self.model_wrapper.load_personalization_weight(self.cid, weights, self.per_layer)
-            else:
-                self.model_wrapper.set_weights(weights)
+            self.model_wrapper.set_weights(weights)
 
             # test the meta model
             return self.worker.meta_test(
@@ -123,13 +118,8 @@ class FedAvgClient(BaseClient):
             config = ins.config
             current_round = int(config['current_round'])
             batch_size = int(config['batch_size'])
-
-            # assgin personalized layer to local model if the self.per_layer is specified
-            if self.per_layer:
-                # self.load_personalization_weight(self.cid, weights)
-                self.model_wrapper.load_personalization_weight(self.cid, weights, self.per_layer)
-            else:
-                self.model_wrapper.set_weights(weights)
+            
+            self.model_wrapper.set_weights(weights)
 
             # test the model
             return self.worker.test(

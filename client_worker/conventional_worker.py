@@ -1,6 +1,7 @@
 import os
 import torch
 from flwr.common import Weights
+from sklearn.metrics import precision_recall_fscore_support
 
 from model.model_wrapper import ModelWrapper
 from .base_worker import BaseWorker
@@ -29,7 +30,7 @@ class ConventionalWorker(BaseWorker):
                 opt.zero_grad()
 
                 # forward + backward + optimize
-                loss, acc = self._training_step(model_wrapper.model, batch)
+                loss, acc, _, _ = self._training_step(model_wrapper.model, batch)
                 loss.backward()
                 opt.step()
 
@@ -51,16 +52,22 @@ class ConventionalWorker(BaseWorker):
         print(f'[Client {self.cid}]: Evaluate on {len(val_loader)} batch(es) using {self.device}')
         val_loss = 0.
         val_acc = 0.
+        labels = []
+        preds = []
         for batch in val_loader:
-            tmp_loss, tmp_acc = self._valid_step(model_wrapper.model, batch)
+            tmp_loss, tmp_acc, label, pred = self._valid_step(model_wrapper.model, batch)
             val_loss += tmp_loss
             val_acc += tmp_acc
+            labels.extend(label)
+            preds.extend(pred)
+
+        precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
 
         val_loss /= len(val_loader)
         val_acc /= num_val_sample
 
         print(f'[Client {self.cid}]: Val loss = {float(val_loss)}, Val acc = {float(val_acc)}')
-        return float(val_loss), float(val_acc), num_val_sample
+        return float(val_loss), float(val_acc), num_val_sample, float(precision), float(recall), float(f1)
 
     def meta_test(self, model_wrapper:ModelWrapper, batch_size:int, lr:float, epochs:int, current_round:str):
         print(f'[Client {self.cid}]: Eval in round {current_round}')
@@ -74,22 +81,28 @@ class ConventionalWorker(BaseWorker):
         for e in range(epochs):
             for batch in support_loader:
                 opt.zero_grad()
-                loss, _ = self._training_step(model_wrapper.model, batch)
+                loss, _, _, _ = self._training_step(model_wrapper.model, batch)
                 loss.backward()
                 opt.step()
 
         val_loss = 0.
         val_acc = 0.
+        labels = []
+        preds = []
         for batch in query_loader:
-            loss, acc = self._valid_step(model_wrapper.model, batch)
+            loss, acc, label, pred = self._valid_step(model_wrapper.model, batch)
             val_loss += loss
             val_acc += acc
+            labels.extend(label)
+            preds.extend(pred)
+
+        precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
 
         val_loss /= len(query_loader)
         val_acc /= num_query_sample
 
         print(f'[Client {self.cid}]: Val loss = {float(val_loss)}, Val acc = {float(val_acc)}')
-        return float(val_loss), float(val_acc), num_query_sample
+        return float(val_loss), float(val_acc), num_query_sample, float(precision), float(recall), float(f1)
 
     def ensemble_test(self, model_wrapper:ModelWrapper, batch_size:int, current_round:str, weights:Weights, per_layer:int):
         print(f'[Client {self.cid}]: Ensemble eval in round {current_round}')
@@ -151,7 +164,7 @@ class ConventionalWorker(BaseWorker):
             for e in range(epochs):
                 for batch in support_loader:
                     opt.zero_grad()
-                    loss, _ = self._training_step(model_wrapper.model, batch)
+                    loss, _, _, _ = self._training_step(model_wrapper.model, batch)
                     loss.backward()
                     opt.step()
 
@@ -204,7 +217,7 @@ class ConventionalWorker(BaseWorker):
                 finetune_loss = 0.
                 for batch in support_loader:
                     opt.zero_grad()
-                    loss, _ = self._training_step(model_wrapper.model, batch)
+                    loss, _, _, _ = self._training_step(model_wrapper.model, batch)
                     loss.backward()
                     opt.step()
 
@@ -222,20 +235,26 @@ class ConventionalWorker(BaseWorker):
         for e in range(epochs):
             for batch in support_loader:
                 opt.zero_grad()
-                loss, _ = self._training_step(model_wrapper.model, batch)
+                loss, _, _, _ = self._training_step(model_wrapper.model, batch)
                 loss.backward()
                 opt.step()
 
         # test the model
         val_loss = 0.
         val_acc = 0.
+        labels = []
+        preds = []
         for batch in query_loader:
-            loss, acc = self._valid_step(model_wrapper.model, batch)
+            loss, acc, label, pred = self._valid_step(model_wrapper.model, batch)
             val_loss += loss
             val_acc += acc
+            labels.extend(label)
+            preds.extend(pred)
+
+        precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
 
         val_loss /= len(query_loader)
         val_acc /= num_query_sample
 
         print(f'[Client {self.cid}]: Val loss = {float(val_loss)}, Val acc = {float(val_acc)}')
-        return float(val_loss), float(val_acc), num_query_sample
+        return float(val_loss), float(val_acc), num_query_sample, float(precision), float(recall), float(f1)

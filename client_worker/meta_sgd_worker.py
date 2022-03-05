@@ -1,6 +1,7 @@
 import torch 
 import os
 from flwr.common import Weights
+from sklearn.metrics import precision_recall_fscore_support
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -21,13 +22,13 @@ class MetaSGDWorker(BaseWorker):
 
         for epoch in range(epochs):
             for batch in support_loader:
-                loss, _ = self._training_step(learner, batch)
+                loss, _, _, _ = self._training_step(learner, batch)
                 learner.adapt(loss)
 
         training_loss = 0.
         training_acc = 0.
         for batch in query_loader:
-            loss, acc = self._training_step(learner, batch)
+            loss, acc, _, _ = self._training_step(learner, batch)
             training_loss += loss
             training_acc += acc
 
@@ -50,21 +51,27 @@ class MetaSGDWorker(BaseWorker):
         print(f'[Client {self.cid}]: Evaluate {epochs} epoch(s) on {len(support_loader)} batch(es) using {self.device}')
         for e in range(epochs):
             for batch in support_loader:
-                loss, _ = self._training_step(learner, batch)
+                loss, _, _, _ = self._training_step(learner, batch)
                 learner.adapt(loss)
 
         val_loss = 0.
         val_acc = 0.
+        labels = []
+        preds = []
         for batch in query_loader:
-            loss, acc = self._valid_step(learner, batch)
+            loss, acc, label, pred = self._valid_step(learner, batch)
             val_loss += loss
             val_acc += acc
+            labels.extend(label)
+            preds.extend(pred)
+
+        precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
 
         val_loss /= len(query_loader)
         val_acc /= num_query_sample
 
         print(f'[Client {self.cid}]: Val loss = {float(val_loss)}, Val acc = {float(val_acc)}')
-        return float(val_loss), float(val_acc), num_query_sample
+        return float(val_loss), float(val_acc), num_query_sample, float(precision), float(recall), float(f1)
 
     def ensemble_test(self, model_wrapper:ModelWrapper, batch_size:int, epochs:int, current_round:str, weights:Weights, per_layer:int):
         print(f'[Client {self.cid}]: Ensemble eval in round {current_round}')
@@ -83,7 +90,7 @@ class MetaSGDWorker(BaseWorker):
             learner:MetaSGDModelWrapper = model_wrapper.model.module.clone()
             for e in range(epochs):
                 for batch in support_loader:
-                    loss, _ = self._training_step(learner, batch)
+                    loss, _, _, _ = self._training_step(learner, batch)
                     learner.adapt(loss)
 
             loss = 0. # loss of a model in ensemble schema
@@ -133,7 +140,7 @@ class MetaSGDWorker(BaseWorker):
             for e in range(epochs):
                 finetune_loss = 0.
                 for batch in support_loader:
-                    loss, _ = self._training_step(learner, batch)
+                    loss, _, _, _ = self._training_step(learner, batch)
                     learner.adapt(loss)
 
                     finetune_loss += loss
@@ -150,19 +157,25 @@ class MetaSGDWorker(BaseWorker):
         for e in range(epochs):
             finetune_loss = 0.
             for batch in support_loader:
-                loss, _ = self._training_step(learner, batch)
+                loss, _, _, _ = self._training_step(learner, batch)
                 learner.adapt(loss)
 
         # test the model
         val_loss = 0.
         val_acc = 0.
+        labels = []
+        preds = []
         for batch in query_loader:
-            loss, acc = self._valid_step(learner, batch)
+            loss, acc, label, pred = self._valid_step(learner, batch)
             val_loss += loss
             val_acc += acc
+            labels.extend(label)
+            preds.extend(pred)
+
+        precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
 
         val_loss /= len(query_loader)
         val_acc /= num_query_sample
 
         print(f'[Client {self.cid}]: Val loss = {float(val_loss)}, Val acc = {float(val_acc)}')
-        return float(val_loss), float(val_acc), num_query_sample
+        return float(val_loss), float(val_acc), num_query_sample, float(precision), float(recall), float(f1)

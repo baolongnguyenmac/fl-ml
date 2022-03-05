@@ -22,17 +22,26 @@ import json
 def weighted_loss_acc_avg(results: List[Tuple[int, float, Optional[float]]]):
     """Aggregate evaluation results obtained from multiple clients."""
     num_total_evaluation_examples = sum(
-        [num_examples for num_examples, _, _ in results]
+        [num_examples for num_examples, _, _, _, _, _ in results]
     )
-    weighted_losses = [num_examples * loss for num_examples, loss, _ in results]
-    weighted_acc = [num_examples * acc for num_examples, _, acc in results]
+    weighted_losses = [num_examples * loss for num_examples, loss, _, _, _, _ in results]
+    weighted_acc = [num_examples * acc for num_examples, _, acc, _, _, _ in results]
 
     return sum(weighted_losses) / num_total_evaluation_examples, sum(weighted_acc) / num_total_evaluation_examples
 
 def calculate_final_acc(results: List[Tuple[int, float, Optional[float]]]):
-    average_client_acc = sum([acc for _, _, acc in results])/len(results)
-    std_client_acc = math.sqrt(sum([(acc - average_client_acc)**2 for _, _, acc in results])/len(results))
-    return average_client_acc, std_client_acc
+    average_client_acc = sum([acc for _, _, acc, _, _, _ in results])/len(results)
+    std_client_acc = math.sqrt(sum([(acc - average_client_acc)**2 for _, _, acc, _, _, _ in results])/len(results))
+    
+    average_client_precision = sum([precision for _, _, _, precision, _, _ in results])/len(results)
+    std_client_precision = math.sqrt(sum([(precision - average_client_precision)**2 for _, _, _, precision, _, _ in results])/len(results))
+
+    average_client_recall = sum([recall for _, _, _, _, recall, _ in results])/len(results)
+    std_client_recall = math.sqrt(sum([(recall - average_client_recall)**2 for _, _, _, _, recall, _ in results])/len(results))
+
+    average_client_f1 = sum([f1 for _, _, _, _, _, f1 in results])/len(results)
+    std_client_f1 = math.sqrt(sum([(f1 - average_client_f1)**2 for _, _, _, _, _, f1 in results])/len(results))
+    return average_client_acc, std_client_acc, average_client_precision, std_client_precision, average_client_recall, std_client_recall, average_client_f1, std_client_f1
 
 class MyFedAvg(FedAvg):
     def __init__(self, fraction_fit: float = 0.1, fraction_eval: float = 0.1, min_fit_clients: int = 2, min_eval_clients: int = 2, min_available_clients: int = 2, eval_fn: Optional[Callable[[Weights], Optional[Tuple[float, Dict[str, Scalar]]]]] = None, on_fit_config_fn: Optional[Callable[[int], Dict[str, Scalar]]] = None, on_evaluate_config_fn: Optional[Callable[[int], Dict[str, Scalar]]] = None, accept_failures: bool = True, initial_parameters: Optional[Parameters] = None) -> None:
@@ -72,6 +81,9 @@ class MyFedAvg(FedAvg):
                     fit_res.num_examples,
                     fit_res.metrics['training_loss'],
                     fit_res.metrics['training_accuracy'],
+                    1,
+                    1,
+                    1
                 )
                 for _, fit_res in results
             ]
@@ -104,11 +116,18 @@ class MyFedAvg(FedAvg):
             rs = [(
                 evaluate_res.num_examples,
                 evaluate_res.loss,
-                evaluate_res.metrics['acc']) for _, evaluate_res in results
+                evaluate_res.metrics['acc'],
+                evaluate_res.metrics['precision'],
+                evaluate_res.metrics['recall'],
+                evaluate_res.metrics['f1']) for _, evaluate_res in results
             ]
+
             loss_aggregated, acc_aggregated = weighted_loss_acc_avg(rs)
-            avg_client_acc, std_client_acc = calculate_final_acc(rs)
+            avg_client_acc, std_client_acc, average_client_precision, std_client_precision, average_client_recall, std_client_recall, average_client_f1, std_client_f1 = calculate_final_acc(rs)
             self.valid_history['avg_client_acc'] = (avg_client_acc, std_client_acc)
+            self.valid_history['avg_client_precision'] = (average_client_precision, std_client_precision)
+            self.valid_history['avg_client_recall'] = (average_client_recall, std_client_recall)
+            self.valid_history['avg_client_f1'] = (average_client_f1, std_client_f1)
 
             self.x_axis_val.append(rnd)
             self.valid_history['loss'].append(loss_aggregated)
