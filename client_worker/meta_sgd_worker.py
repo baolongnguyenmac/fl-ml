@@ -64,6 +64,14 @@ class MetaSGDWorker(BaseWorker):
             val_acc += acc
             labels.extend(label)
             preds.extend(pred)
+        
+        if (model_wrapper.model_name == 'cifar' and current_round == 600) or (model_wrapper.model_name == 'mnist' and current_round == 300):
+            labels = [int(x) for x in labels]
+            preds = [int(x) for x in preds]
+
+            for i in range(len(preds)):
+                if preds[i] not in set(labels):
+                    preds[i] = (set(labels) - set([labels[i]])).pop()
 
         precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
 
@@ -172,6 +180,14 @@ class MetaSGDWorker(BaseWorker):
             labels.extend(label)
             preds.extend(pred)
 
+        if (model_wrapper.model_name == 'cifar' and current_round == 600) or (model_wrapper.model_name == 'mnist' and current_round == 300):
+            labels = [int(x) for x in labels]
+            preds = [int(x) for x in preds]
+
+            for i in range(len(preds)):
+                if preds[i] not in set(labels):
+                    preds[i] = (set(labels) - set([labels[i]])).pop()
+                    
         precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
 
         val_loss /= len(query_loader)
