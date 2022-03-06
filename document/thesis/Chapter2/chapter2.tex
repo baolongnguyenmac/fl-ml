@@ -227,7 +227,7 @@ Trong thực tế, người ta thực hiện mục tiêu trên bằng cách hu�
 
 \begin{dmath}
     \label{eq:meta_train}
-    \omega^* = \arg \max_{\omega} \log{p(\omega|\mathcal{D}_{source})}
+    \omega^* = \arg \max_{\omega} \log{p(\omega|\mathcal{D}_{train})}
 \end{dmath}
 
 Trong quá trình kiểm thử, tham số $\omega^*$ được sử dụng trong việc huấn luyện mô hình giải quyết nhiệm vụ $T_{new}$: $w^* = \arg \max_{w} \log{p(w|\omega^*, \mathcal{D}_{test(new)}^{support})}$. Để đánh giá hiệu quả của việc sử dụng $\omega$ trong huấn luyện nhiệm vụ $T_{new}$, người ta dựa vào kết quả của $w^*$ trên tập $\mathcal{D}_{test(new)}^{query}$.
@@ -261,7 +261,7 @@ Hay:
 
 \begin{eqnarray}
     \label{eq:outer_opt}
-    \omega^* = \arg \min_{\omega} \sum_{i=1}^{|\mathcal{D}_{source}|} \mathcal{L}^{meta}\left(w^*_i(\omega), \omega, \mathcal{D}_{train(i)}^{query}\right)
+    \omega^* = \arg \min_{\omega} \sum_{i=1}^{|\mathcal{D}_{train}|} \mathcal{L}^{meta}\left(w^*_i(\omega), \omega, \mathcal{D}_{train(i)}^{query}\right)
 \end{eqnarray}
 
 Áp dụng kỹ thuật SGD, lời giải cần tìm cho phương trình \ref{eq:outer_opt} được biểu diễn như sau:
@@ -269,7 +269,7 @@ Hay:
 \begin{dmath}
     \begin{cases}
         \omega_0 = \Omega, \Omega \text{ là giá trị khởi tạo ngẫu nhiên}\\
-        \omega_j = \omega_{j-1} - \beta \nabla \sum_{i=1}^{|\mathcal{D}_{source}|} \mathcal{L}^{meta}\left(w_i^*(\omega), \omega, \mathcal{D}_{train(i)}^{query}\right)
+        \omega_j = \omega_{j-1} - \beta \nabla \sum_{i=1}^{|\mathcal{D}_{train}|} \mathcal{L}^{meta}\left(w_i^*(\omega), \omega, \mathcal{D}_{train(i)}^{query}\right)
     \end{cases}
 \end{dmath}
 
@@ -277,9 +277,9 @@ Hay:
 
 \begin{dmath}
     \label{sol:outer_opt}
-    \omega \leftarrow \omega - \beta\nabla \sum_{i=1}^{|\mathcal{D}_{source}|} \mathcal{L}^{meta}\left(w_i^*(\omega)\right)
-        \leftarrow \omega - \beta\nabla \sum_{i=1}^{|\mathcal{D}_{source}|} \mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
-        \leftarrow \omega - \beta \sum_{i=1}^{|\mathcal{D}_{source}|} \left( I - \alpha \nabla^2 \mathcal{L}^{task}(w_i) \right) \times \nabla \mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
+    \omega \leftarrow \omega - \beta\nabla \sum_{i=1}^{|\mathcal{D}_{train}|} \mathcal{L}^{meta}\left(w_i^*(\omega)\right)
+        \leftarrow \omega - \beta\nabla \sum_{i=1}^{|\mathcal{D}_{train}|} \mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
+        \leftarrow \omega - \beta \sum_{i=1}^{|\mathcal{D}_{train}|} \left( I - \alpha \nabla^2 \mathcal{L}^{task}(w_i) \right) \times \nabla \mathcal{L}^{meta}\left( w_i - \alpha\nabla\mathcal{L}^{task}(w_i)\right)
 \end{dmath}
 
 \subsection{Tích hợp Meta-Learning vào Federated Learning}

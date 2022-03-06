@@ -303,7 +303,7 @@ Kết thúc quá trình huấn luyện cục bộ, trọng số mô hình mới 
 \begin{algorithm}[H]
     \caption{FedMeta-Per (Meta-SGD Client)} \label{alg:fedsgd_per_client}
     \begin{algorithmic}[1]
-        \State\textbf{ModelTrainingMetaSGD($c_i, w_G^t, \alpha_B^t$):}
+        \State\textbf{ModelTrainingMetaSGD($c_i, w_B^t, \alpha_B^t$):}
         \State Chọn tập support $\mathcal{D}_{train(i)}^{support}$ và tập query $\mathcal{D}_{train(i)}^{query}$
         \If {$t=0$}
             \State Khởi tạo $(w_{P(i)}^t, \alpha_{P(i)}^t)$
