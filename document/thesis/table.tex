@@ -22,11 +22,11 @@
 \def\blx@maxline{77}
 \makeatother
 
-% Chèn hình, các hình trong luận văn được để trong thư mục Images/
+% Chèn hình, các hình trong luận văn được để trong thư mục tab_img/
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
-\graphicspath{ {Images/} }
+\graphicspath{ {tab_img/} }
 
 % Chèn và định dạng mã nguồn
 \usepackage{listings}
@@ -200,7 +200,7 @@
     FedPer                         & 13.22         & 12.99±19.39          & 18.34±28.59          & 14.14±20.83          & 10.52±14.91           \\
     FedAvgMeta                     & 40.3          & 38.47±31.52          & 32.84±32.06          & 39.33±30.35          & 33.81±30.61           \\
     FedPerMeta                     & 18.57         & 17.48±22.55          & 20.02±27.4           & 18.43±23.47          & 14.54±18.67           \\
-    FedMeta(MAML)                  & 69.02         & 68.76±14.86          & 67.42±21.16          & 66.56±13.48          & 61.14±2            \\
+    FedMeta(MAML)                  & 69.02         & 68.76±14.86          & 67.42±21.16          & 66.56±13.48          & 61.14±20           \\
     FedMeta(Meta-SGD)              & 78.63         & 78.73±11.59          & 74.65±21.12          & 75.25±14.09          & 72.87±18.31           \\
     \textbf{FedMeta-Per(MAML)}     & \textbf{86.6} & \textbf{86.52±6.31} & \textbf{86.43±5.88} & \textbf{85.47±6.87} & \textbf{85.33±6.77}  \\
     \textbf{FedMeta-Per(Meta-SGD)} & 85.61         & 85.68±7.22          & 86.26±6.35          & 85.36±6.83          & 85.08±7.32           \\
@@ -222,12 +222,96 @@
     FedAvgMeta                     & 43.39          & 43.54±18             & 33.45±21.44            & 42.87±16.98          & 35.14±17.22           \\
     FedPerMeta                     & 13.33          & 13.57±19.62          & 11.99±19.52            & 13.53±19.08          & 10.05±13.17           \\
     FedMeta(MAML)                  & 61.69          & 61.64±12.49          & 52.66±26.06            & 59.94±12.35          & 50.76±19.2            \\
-    FedMeta(Meta-SGD)              & 68.36          & 67.89±15.11          & \textbf{70.30±22.37} & 66.86±15.02          & 60.24±21.52           \\
+    FedMeta(Meta-SGD)              & 68.36          & 67.89±15.11          & \textbf{70.3±22.37} & 66.86±15.02          & 60.24±21.52           \\
     \textbf{FedMeta-Per(MAML)}     & 64.22          & 63.70±12.29          & 57.06±24.99            & 61.63±12.66          & 53.68±19.06           \\
     \textbf{FedMeta-Per(Meta-SGD)} & \textbf{69.97} & \textbf{69.13±14.63} & 66.53±24.91          & \textbf{67.82±15.34} & \textbf{62.42±20.94}  \\
     \bottomrule
     \end{tabular}
     }
 \end{table}
+
+\clearpage
+
+\begin{sidewaysfigure}
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/cifar_per_new.png}
+            \caption{CIFAR-10, new clients}
+            \label{fig:cifar_meta_new}
+        \end{subfigure}%
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/cifar_per_old.png}
+            \caption{CIFAR-10, local clients}
+            \label{fig:cifar_meta_old}
+        \end{subfigure}
+        % \caption{A figure with two subfigures}
+        % \label{fig:test}
+    \end{subfigure}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/mnist_per_new.png}
+            \caption{MNIST, new clients}
+            \label{fig:mnist_meta_new}
+        \end{subfigure}%
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/mnist_per_old.png}
+            \caption{MNIST, local clients}
+            \label{fig:mnist_meta_old}
+        \end{subfigure}
+        % \caption{A figure with two subfigures}
+        % \label{fig:test}
+    \end{subfigure}
+    \caption*{FedMeta-Per vs. (FedAvg, FedAvgMeta, FedPer, FedPerMeta)}
+    \label{fig:fedmeta_acc}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/cifar_meta_new.png}
+            \caption{CIFAR-10, new clients}
+            \label{fig:cifar_meta_new}
+        \end{subfigure}%
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/cifar_meta_old.png}
+            \caption{CIFAR-10, local clients}
+            \label{fig:cifar_meta_old}
+        \end{subfigure}
+        % \caption{A figure with two subfigures}
+        % \label{fig:test}
+    \end{subfigure}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/mnist_meta_new.png}
+            \caption{MNIST, new clients}
+            \label{fig:mnist_meta_new}
+        \end{subfigure}%
+        \begin{subfigure}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{./tab_img/mnist_meta_old.png}
+            \caption{MNIST, local clients}
+            \label{fig:mnist_meta_old}
+        \end{subfigure}
+        % \caption{A figure with two subfigures}
+        % \label{fig:test}
+    \end{subfigure}
+    \caption*{FedMeta-Per vs. FedMeta}
+    \label{fig:fedmeta_acc}
+\end{sidewaysfigure}
 
 \end{document}
