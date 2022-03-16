@@ -37,16 +37,16 @@ def get_client(args, cid, model: nn.Module) -> fl.client.Client:
     strategy = args.strategy_client
     new_client = bool(args.new_client)
     if strategy == FED_AVG:
-        model_wrapper = ModelWrapper(model, args.model)
+        model_wrapper = ModelWrapper(model, args.model, strategy)
         client = FedAvgClient(model_wrapper, cid, False, args.per_layer, new_client)
     elif strategy == FED_AVG_META:
-        model_wrapper = ModelWrapper(model, args.model)
+        model_wrapper = ModelWrapper(model, args.model, strategy)
         client = FedAvgClient(model_wrapper, cid, True, args.per_layer, new_client)
     elif strategy == FED_META_MAML:
-        model_wrapper = ModelWrapper(MAML(model, args.alpha), args.model)
+        model_wrapper = ModelWrapper(MAML(model, args.alpha), args.model, strategy)
         client = FedMetaMAMLClient(model_wrapper, cid, args.per_layer, new_client)
     elif strategy == FED_META_SGD:
-        model_wrapper = ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model)
+        model_wrapper = ModelWrapper(MetaSGDModelWrapper(model, args.alpha), args.model, strategy)
         client = FedMetaSGDClient(model_wrapper, cid, args.per_layer, new_client)
 
     return client
