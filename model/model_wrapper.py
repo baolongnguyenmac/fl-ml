@@ -19,10 +19,11 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class ModelWrapper:
     """generate a wrapper that wraps a nn.Module
     """
-    def __init__(self, model: nn.Module, model_name: str):
+    def __init__(self, model: nn.Module, model_name: str, strategy: str):
         model = nn.DataParallel(model)
         self.model = model.to(DEVICE)
         self.model_name = model_name
+        self.strategy = strategy
 
     def get_weights(self) -> Weights:
         """Get model weights as a list of NumPy ndarrays."""
