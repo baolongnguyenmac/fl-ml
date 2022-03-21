@@ -31,7 +31,7 @@
 
 - Đọc biểu đồ:
     - Các cực đại của biểu đồ biểu thị quá trình huấn luyện.
-    - Các cực tiểu của biểu đồ là dữ liệu huấn luyện không được giải phóng. (Em có tham khảo từ khóa luận của chị Bùi Thị Cẩm Nhung và biết được: Khi sử dụng Flower, client chỉ giải phóng dữ liệu sau khi nó bị tắt đi.)
+    - Các cực tiểu của biểu đồ là dữ liệu huấn luyện không được giải phóng. (Em có tham khảo từ khoá luận của chị Bùi Thị Cẩm Nhung và biết được: Khi sử dụng Flower, client chỉ giải phóng dữ liệu sau khi nó bị tắt đi.)
     - Rõ ràng, số RAM tiêu tốn cho EMNIST là nhiều hơn cho Cifar10. Do đó, thực hiện tính toán lượng RAM cần thiết trên tập EMNIST.
 
 - Ước lượng RAM tiêu tốn: 
@@ -40,7 +40,7 @@ $$RAM = \text{Đỉnh} \times \text{Client/round} + \text{Đáy}\times \text{(T�
 
 $$RAM = 1625MB\times 5 + 250MB\times(300-5) = 81875MB = 81.875GB$$
 
-- Về số nhân CPU cần thiết, sau khi tham khảo khóa luận của chị Nhung, em ước lượng cần sử dụng 25 core CPU.
+- Về số nhân CPU cần thiết, sau khi tham khảo khoá luận của chị Nhung, em ước lượng cần sử dụng 25 core CPU.
 
 - Về dung lượng đĩa cứng cần thiết, bọn em cần lưu các tập dữ liệu, các kết quả tính toán liên quan và các file sinh ra trong quá trình huấn luyện. Do đó, chỉ cần khoảng 20GB.
 

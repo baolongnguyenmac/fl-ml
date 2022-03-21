@@ -137,11 +137,12 @@
 % ========================================================================================= %
 \newcommand{\tenSV}{Nguyễn~Bảo~Long~-~Cao~Tất~Cường} % Dấu ~ là khoảng trắng không được tách (các chữ nối với nhau bằng dấu ~ sẽ nằm cùng 1 dòng
 \newcommand{\mssv}{1234567}
-\newcommand{\tenKL}{Meta-Learning~và~Personalization~Layer~trong~Federated~Learning} % Chú ý dấu ~ trong tên khóa luận
+\newcommand{\tenKL}{Meta-Learning~và~Personalization~Layer~trong~Federated~Learning} % Chú ý dấu ~ trong tên khoá luận
 \newcommand{\tenGVHD}{GS.~TS.~Lê~Hoài~Bắc}
 \newcommand{\tenBM}{Khoa học dữ liệu}
 
 \begin{document}
+% \frontmatter
 
 \input{Title/title.tex}
 % Sasu trang Title, các bạn chèn nhận xét gủa GVHD và GVPB. Nhận xét sẽ được giáo vụ phát sau buổi bảo vệ để các bạn đóng quyển.
@@ -151,10 +152,10 @@
 %\addcontentsline{toc}{chapter}{Lời cam đoan}
 %\include{Appendix/reassurances}
 
-\addcontentsline{toc}{chapter}{Lời cảm ơn}
+% \addcontentsline{toc}{chapter}{Lời cảm ơn}
 \include{Appendix/thanks}
 
-\addcontentsline{toc}{chapter}{Đề cương chi tiết}
+% \addcontentsline{toc}{chapter}{Đề cương chi tiết}
 \include{Appendix/proposal}
 
 \addcontentsline{toc}{chapter}{Tóm tắt}
@@ -170,6 +171,7 @@
 
 \pagenumbering{arabic} % Đánh số 1, 2, 3, ...
 
+% \mainmatter
 % Các chương nội dung
 \include{Chapter1/chapter1}
 
@@ -200,6 +202,6 @@
 
 % % Phần phụ lục
 \include{Appendix/appendix1}
-% \include{Appendix/appendix2}
+\include{Appendix/appendix2}
 
 \end{document} 

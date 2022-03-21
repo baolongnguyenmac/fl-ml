@@ -16,10 +16,10 @@
 - Dữ liệu Non-IID là dữ liệu mà ở đó, phân phối dữ liệu giữa các client là hoàn toàn khác nhau.
 
 - Các dạng Non-IID bao gồm:
-    - Non-IID về thuộc tính, thời gian: Không thuộc phạm vi giải quyết của khóa luận.
+    - Non-IID về thuộc tính, thời gian: Không thuộc phạm vi giải quyết của khoá luận.
     - Non-IID về nhãn dữ liệu:
-        - **Phân phối số lượng nhãn giữa các client khác nhau**: Với mọi client $i, j$: $P_i(y) \neq P_j(y)$ và $P_i(y|x) = P_j(y|x)$ (Ví dụ: Với cùng 1 ảnh $x$, các client sẽ gắn cho nó cùng 1 nhãn). Đây là loại Non-IID được xét đến trong khóa luận, điển hình cho một hệ thống Horizontal FL.
-        - $P_i(y|x) \neq P_j(y|x)$: Với cùng một ảnh $x$, client $i$ có thể gắn nhãn khác với client $j$. Ví dụ, cùng một ảnh con mèo nhưng sẽ có người thích người không thích. Không được xét đến trong khóa luận.
+        - **Phân phối số lượng nhãn giữa các client khác nhau**: Với mọi client $i, j$: $P_i(y) \neq P_j(y)$ và $P_i(y|x) = P_j(y|x)$ (Ví dụ: Với cùng 1 ảnh $x$, các client sẽ gắn cho nó cùng 1 nhãn). Đây là loại Non-IID được xét đến trong khoá luận, điển hình cho một hệ thống Horizontal FL.
+        - $P_i(y|x) \neq P_j(y|x)$: Với cùng một ảnh $x$, client $i$ có thể gắn nhãn khác với client $j$. Ví dụ, cùng một ảnh con mèo nhưng sẽ có người thích người không thích. Không được xét đến trong khoá luận.
 
 ## 3. Khảo sát hướng tối ưu hệ thống FL cho Non-IID data
 

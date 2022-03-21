@@ -1,6 +1,6 @@
 # Meta-learning và Personalization layer trong Federated learning
 
-## Thông tin khóa luận
+## Thông tin khoá luận
 
 - Tên đề tài: Meta-learning và Personalization layer trong Federated learning
 - GVHD: GS. TS. Lê Hoài Bắc
@@ -98,10 +98,10 @@
 
 ### Minh hoạ so sánh
 
-- FedMeta-Per vs. (FedAvg, FedAvgMeta, FedPer, FedPerMeta)
+- `FedMeta-Per` vs. (`FedAvg`, `FedAvgMeta`, `FedPer`, `FedPerMeta`): Thuật toán đề xuất cho độ chính xác và khả năng hội tụ cao hơn so với các thuật toán `FedAvg` và `FedPer`
 
 ![](./document/thesis/images/sum1.png)
 
-- FedMeta-Per vs. FedMeta
+- `FedMeta-Per` vs. `FedMeta`: Khả năng cá nhân hoá được cải thiện là lý do khiến cho local clients đạt hội tụ nhanh và cao hơn khi so `FedMeta-Per` với `FedMeta`. Đối với new clients, 2 thuật toán cho mức hội tụ như nhau, tuy nhiên, các lớp phần riêng tại từng client sẽ được cải thiện khi client tham gia vào 1 hoặc một vài bước huấn luyện cục bộ (new client trở thành local client).
 
 ![](./document/thesis/images/sum2.png)

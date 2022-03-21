@@ -48,7 +48,7 @@ Về việc phân loại hệ thống FL, dựa trên dữ liệu đầu vào, h
 
 Về việc phân loại các kịch bản Non-IID, nghiên cứu \cite{zhu2021federated} chỉ ra bốn kịch bản chính: (1) - Phân phối thuộc tính khác nhau giữa các máy khách, (2) - Phân phối nhãn khác nhau giữa các máy khách, (3) - Phân phối thời gian khác nhau giữa các máy khách, (4) - Các kịch bản khác.
 
-Từ đó, khóa luận này có phạm vi nghiên cứu được giới hạn và phương án giải quyết được xây dựng dựa trên ba giả định sau:
+Từ đó, khoá luận này có phạm vi nghiên cứu được giới hạn và phương án giải quyết được xây dựng dựa trên ba giả định sau:
 
 \begin{itemize}
     \item Hướng nghiên cứu: Cải thiện hiệu suất của hệ thống FL.
@@ -68,11 +68,11 @@ Hệ thống FL huấn luyện trực tiếp các mô hình máy học trên cá
     \item Máy khách: Huấn luyện mô hình học theo sự chỉ đạo của máy chủ. Chúng nhận tham số toàn cục từ máy chủ, huấn luyện mô hình trên tập dữ liệu cục bộ và gửi tham số của mô hình mới về máy chủ để tổng hợp.
 \end{itemize}
 
-Phương pháp đề xuất của khóa luận nhằm tích hợp các thuật toán ML, PL vào hệ thống nêu trên. Trong đó, các thuật toán ML được sử dụng để tạo ra một khởi tạo tốt, giúp mô hình tại máy khách hội tụ nhanh chóng (chỉ sau một hoặc một vài bước huấn luyện trên một số ít dữ liệu); các thuật toán PL được thêm vào như một phương pháp giúp tăng tính cá nhân hóa của từng mô hình máy học phân bố trên máy khách.
+Phương pháp đề xuất của khoá luận nhằm tích hợp các thuật toán ML, PL vào hệ thống nêu trên. Trong đó, các thuật toán ML được sử dụng để tạo ra một khởi tạo tốt, giúp mô hình tại máy khách hội tụ nhanh chóng (chỉ sau một hoặc một vài bước huấn luyện trên một số ít dữ liệu); các thuật toán PL được thêm vào như một phương pháp giúp tăng tính cá nhân hóa của từng mô hình máy học phân bố trên máy khách.
 
-\textbf{Dữ liệu thực nghiệm.} Khóa luận sử dụng tập dữ liệu CIFAR-10 và tập dữ liệu MNIST trong tất cả các thí nghiệm. Cả hai tập dữ liệu đều sử dụng 75\% số điểm dữ liệu để huấn luyện và 25\% số điểm dữ liệu để kiểm thử.
+\textbf{Dữ liệu thực nghiệm.} Khoá luận sử dụng tập dữ liệu CIFAR-10 và tập dữ liệu MNIST trong tất cả các thí nghiệm. Cả hai tập dữ liệu đều sử dụng 75\% số điểm dữ liệu để huấn luyện và 25\% số điểm dữ liệu để kiểm thử.
 
-\textbf{Phương pháp đối sánh.} Khóa luận sử dụng thuật toán \codeword{FedAvg} làm mô hình baseline. Để so sánh công bằng, thuật toán \codeword{FedAvgMeta} cho phép mô hình toàn cục huấn luyện theo hướng \codeword{FedAvg} được phép fine-tune một hoặc một vài bước trên một phần tập dữ liệu kiểm tra trước khi bước vào kiểm thử thực sự. Các kết quả của thuật toán đề xuất sẽ được đem so sánh với kết quả của \codeword{FedAvg} và \codeword{FedAvgMeta}.
+\textbf{Phương pháp đối sánh.} Khoá luận sử dụng thuật toán \codeword{FedAvg} \cite{mcmahan2017communication} (thuật toán do Google đề xuất) và \codeword{FedPer} \cite{arivazhagan2019federated} (thuật toán sử dụng kỹ thuật lớp cá nhân hoá) làm mô hình baseline. Để so sánh công bằng, thuật toán \codeword{FedAvgMeta} và \codeword{FedPerMeta} cho phép mô hình toàn cục huấn luyện theo hướng \codeword{FedAvg} và \codeword{FedPer} được phép fine-tune một hoặc một vài bước trên một phần tập dữ liệu kiểm tra trước khi bước vào kiểm thử thực sự. Các kết quả của thuật toán đề xuất sẽ được đem so sánh với kết quả của \codeword{FedAvg}, \codeword{FedAvgMeta}, \codeword{FedPer} và \codeword{FedPerMeta}.
 
 \subsection*{Kết quả đề tài}
 
@@ -86,7 +86,7 @@ Sau khi tiến hành nghiên cứu, nghiên cứu này kỳ vọng đạt đư�
 
 \subsection*{Kế hoạch thực hiện}
 
-Kế hoạch thực hiện khóa luận bao gồm ba giai đoạn, được trình bày trong bảng sau:
+Kế hoạch thực hiện khoá luận bao gồm ba giai đoạn, được trình bày trong bảng sau:
 
 \begin{table}[H]
     \centering

@@ -17,7 +17,7 @@ Việc các phương pháp tiếp cận máy học theo hướng truyền thốn
 
 Khái niệm \textit{federated learning} và thuật toán \codeword{FedAvg} được đưa ra vào năm 2016 bởi Google trong nghiên cứu \cite{mcmahan2017communication} nhằm mục đích huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt được phân bố trên các thiết bị biên (được gọi là huấn luyện phân tán). Do đó, \textbf{một hệ thống FL không cần một máy chủ quá mạnh để vận hành (thậm chí có thể sử dụng một máy khách để vận hành \cite{yin2021comprehensive}), không đòi hỏi chi phí truyền tin quá lớn và đảm bảo được quyền riêng tư dữ liệu của người dùng vì không diễn ra bất cứ quá trình thu thập dữ liệu từ người dùng nào (điều mà mô hình huấn luyện tập trung bắt buộc phải làm)}. Dễ thấy rằng, phần lớn quá trình tính toán được phân tán đến các thiết bị biên. Tuy nhiên, khả năng lưu trữ và tính toán tại các thiết bị này ngày càng được cải thiện, khiến cho việc huấn luyện phân tán dần trở nên khả thi và đạt hiệu quả cao hơn. Bằng chứng là sự xuất hiện của hệ thống FL trong nhiều lĩnh vực như Internet vạn vật (IoT), y tế, các hệ thống đề xuất, chuỗi cung ứng,... \cite{zhou2021survey}
 
-Bên cạnh đó, nghiên cứu \cite{zhao2018federated} chỉ ra rằng, hệ thống FL hoạt động trên nền thuật toán \codeword{FedAvg} bị giảm hiệu suất nghiêm trọng khi xử lý dữ liệu Non-IID. Nhưng dữ liệu phân bố trên máy khách là không đồng nhất và có tính cá nhân hóa tất cao. Nói cách khác, các tập dữ liệu này tuân theo phân phối Non-IID. Do đó, \textbf{khóa luận này được thực hiện nhằm nghiên cứu và cải tiến hệ thống FL để thu được kết quả cao cũng như cải thiện khả năng cá nhân hóa mô hình học cho từng người dùng trên dữ liệu Non-IID}.
+Bên cạnh đó, nghiên cứu \cite{zhao2018federated} chỉ ra rằng, hệ thống FL hoạt động trên nền thuật toán \codeword{FedAvg} bị giảm hiệu suất nghiêm trọng khi xử lý dữ liệu Non-IID. Nhưng dữ liệu phân bố trên máy khách là không đồng nhất và có tính cá nhân hóa tất cao. Nói cách khác, các tập dữ liệu này tuân theo phân phối Non-IID. Do đó, \textbf{khoá luận này được thực hiện nhằm nghiên cứu và cải tiến hệ thống FL để thu được kết quả cao cũng như cải thiện khả năng cá nhân hóa mô hình học cho từng người dùng trên dữ liệu Non-IID}.
 
 \section{Phạm vi đề tài}
 
@@ -27,7 +27,7 @@ Về việc phân loại hệ thống FL, dựa trên dữ liệu đầu vào, h
 
 Về việc phân loại các kịch bản Non-IID, nghiên cứu \cite{zhu2021federated} chỉ ra bốn kịch bản chính: (1) - Phân phối thuộc tính khác nhau giữa các máy khách, (2) - Phân phối nhãn khác nhau giữa các máy khách, (3) - Phân phối thời gian khác nhau giữa các máy khách, (4) - Các kịch bản khác.
 
-Từ đó, khóa luận này có phạm vi nghiên cứu được giới hạn và phương án giải quyết được xây dựng dựa trên ba giả định sau:
+Từ đó, khoá luận này có phạm vi nghiên cứu được giới hạn và phương án giải quyết được xây dựng dựa trên ba giả định sau:
 
 \begin{itemize}
     \item Hướng nghiên cứu: Cải thiện hiệu suất của hệ thống FL.
@@ -38,14 +38,14 @@ Từ đó, khóa luận này có phạm vi nghiên cứu được giới hạn v
 
 \section{Đóng góp chính}
 
-Các đóng góp chính của khóa luận được chia thành hai loại: đóng góp về mặt lý thuyết và đóng góp về mặt thực nghiệm.
+Các đóng góp chính của khoá luận được chia thành hai loại: đóng góp về mặt lý thuyết và đóng góp về mặt thực nghiệm.
 
 \subsection{Đóng góp lý thuyết}
 
 \begin{itemize}
     \item Nghiên cứu hệ thống FL và thách thức về phân phối dữ liệu mà hệ thống Horizontal FL gặp phải.
     \item Khảo sát các phương pháp tối ưu hóa hệ thống Horizontal FL trên dữ liệu Non-IID. Trong đó, tập trung nghiên cứu các phương pháp theo hướng Personalized Federated Averaging \parencite{fallah2020personalized, chen2018federated} và Personalization Layer \parencite{liang2020think, arivazhagan2019federated}.
-    \item Phương pháp đề xuất của khóa luận đã cho thấy khả năng đạt được độ chính xác cao hơn trong quá trình kiểm thử với hai đối tượng người dùng (người dùng cục bộ và người dùng mới) so với các phương pháp trước đó (chỉ sử dụng \codeword{FedAvg}, chỉ sử dụng Personalized Federated Averaging, hoặc chỉ sử dụng Personalization Layer).
+    \item Phương pháp đề xuất của khoá luận đã cho thấy khả năng đạt được độ chính xác cao hơn trong quá trình kiểm thử với hai đối tượng người dùng (người dùng cục bộ và người dùng mới) so với các phương pháp trước đó (chỉ sử dụng \codeword{FedAvg}, chỉ sử dụng Personalized Federated Averaging, hoặc chỉ sử dụng Personalization Layer).
 \end{itemize}
 
 \subsection{Đóng góp thực nghiệm}
@@ -60,4 +60,4 @@ Các đóng góp chính của khóa luận được chia thành hai loại: đó
 
 \section{Bố cục}
 
-Trong luận văn này, chương \ref{Chapter2} trình bày về tổng quan lý thuyết được sử dụng trong khóa luận, các lý thuyết này làm nền tảng cho nghiên cứu và đề xuất thuật toán; chương \ref{Chapter3} đề xuất thuật toán giúp giải quyết vấn đề vừa nêu ở chương \ref{Chapter1}; chương \ref{Chapter4} trình bày về việc tổ chức cài đặt thực nghiệm để kiểm chứng tính hiệu quả của thuật toán; chương \ref{Chapter5} đi vào phân tích kết quả đạt được; chương \ref{Chapter6} nêu kết luận và hướng phát triển tương lai của khóa luận.
+Trong luận văn này, chương \ref{Chapter2} trình bày về tổng quan lý thuyết được sử dụng trong khoá luận, các lý thuyết này làm nền tảng cho nghiên cứu và đề xuất thuật toán; chương \ref{Chapter3} đề xuất thuật toán giúp giải quyết vấn đề vừa nêu ở chương \ref{Chapter1}; chương \ref{Chapter4} trình bày về việc tổ chức cài đặt thực nghiệm để kiểm chứng tính hiệu quả của thuật toán; chương \ref{Chapter5} đi vào phân tích kết quả đạt được; chương \ref{Chapter6} nêu kết luận và hướng phát triển tương lai của khoá luận.

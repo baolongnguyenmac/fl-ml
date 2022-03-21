@@ -1,9 +1,9 @@
 \chapter{Phương pháp đề xuất}
 \label{Chapter3}
 
-% Trong chương này, khóa luận khảo sát hai và phân tích về ML và PL - hai hướng tiếp cận giúp cải thiện hiệu suất của hệ thống FL trên dữ liệu Non-IID. Từ đó đề xuất thuật toán \codeword{FedMeta-Per}, là sự kết hợp của hai kỹ thuật ML và PL vào hệ thống FL.
+% Trong chương này, khoá luận khảo sát hai và phân tích về ML và PL - hai hướng tiếp cận giúp cải thiện hiệu suất của hệ thống FL trên dữ liệu Non-IID. Từ đó đề xuất thuật toán \codeword{FedMeta-Per}, là sự kết hợp của hai kỹ thuật ML và PL vào hệ thống FL.
 
-Trong chương này, khóa luận khảo sát bốn thuật toán chính bao gồm \codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)} trong nghiên cứu \cite{chen2018federated} (tích hợp phương pháp huấn luyện của các thuật toán ML vào hệ thống FL) và \codeword{FedPer}, \codeword{LG-FedAvg} trong các nghiên cứu \cite{arivazhagan2019federated}, \cite{liang2020think} (sử dụng kỹ thuật PL trong tối ưu độ chính xác và khả năng cá nhân hóa của hệ thống FL), giúp tạo hình thuật toán đề xuất \codeword{FedMeta-Per}. Từ đó, tiến đến phân tích sự kết hợp của bốn thuật toán này trong \codeword{FedMeta-Per}.
+Trong chương này, khoá luận khảo sát bốn thuật toán chính bao gồm \codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)} trong nghiên cứu \cite{chen2018federated} (tích hợp phương pháp huấn luyện của các thuật toán ML vào hệ thống FL) và \codeword{FedPer}, \codeword{LG-FedAvg} trong các nghiên cứu \cite{arivazhagan2019federated}, \cite{liang2020think} (sử dụng kỹ thuật PL trong tối ưu độ chính xác và khả năng cá nhân hóa của hệ thống FL), giúp tạo hình thuật toán đề xuất \codeword{FedMeta-Per}. Từ đó, tiến đến phân tích sự kết hợp của bốn thuật toán này trong \codeword{FedMeta-Per}.
 
 \section{Thuật toán $FedMeta(MAML)$ và $FedMeta(Meta-SGD)$}
 
@@ -81,7 +81,7 @@ Kết quả đạo hàm trên được gửi trực tiếp về máy chủ để
     \text{Meta-SGD: } (w_G^{t+1}, \alpha^{t+1}) \gets (w_G^t, \alpha^t) - \beta \sum_{i=0}^m \frac{n_i}{N_m} g_i^{t+1}
 \end{dmath}
 
-Khác với phương pháp tổng hợp nêu trên, khóa luận sử dụng kỹ thuật lấy trung bình trọng số trong việc tổng hợp trọng số toàn cục vì chi phí giao tiếp của việc truyền thông tin đạo hàm từ máy khách về máy chủ vượt quá giới hạn phần cứng được cung cấp. Đặt trong ngữ cảnh của ML, nếu bỏ qua việc mất gói tin trong quá trình giao tiếp giữa máy chủ và máy khách, việc sử dụng trọng số để truyền tin không ảnh hưởng đến kết quả của bài toán và được chứng minh đối với \codeword{MAML} như sau:
+Khác với phương pháp tổng hợp nêu trên, khoá luận sử dụng kỹ thuật lấy trung bình trọng số trong việc tổng hợp trọng số toàn cục vì chi phí giao tiếp của việc truyền thông tin đạo hàm từ máy khách về máy chủ vượt quá giới hạn phần cứng được cung cấp. Đặt trong ngữ cảnh của ML, nếu bỏ qua việc mất gói tin trong quá trình giao tiếp giữa máy chủ và máy khách, việc sử dụng trọng số để truyền tin không ảnh hưởng đến kết quả của bài toán và được chứng minh đối với \codeword{MAML} như sau:
 
 Tại bước huấn luyện toàn cục thứ $t$ với sự tham gia của $m$ máy khách, phương trình \ref{eq:agg_fedmeta} trở thành:
 
@@ -231,7 +231,7 @@ Ngoại trừ việc phần chung của mạng học sâu là các lớp tuyến
     \end{algorithmic}
 \end{algorithm}
 
-Dựa trên việc phân chia dữ liệu theo hướng ML, khóa luận không đồng ý với cách tiếp cận ensemble test trên người dùng mới vì hai lý do. Thứ nhất, khả năng thích ứng trên tập dữ liệu mới của các lớp phần riêng của hệ thống bị triệt tiêu, thay vào đó là tính cá nhân hóa cho từng tập dữ liệu cục bộ mà hệ thống đã làm việc trước đó. Đứng trước một tập dữ liệu mới, các lớp phần riêng này hầu như không đạt được hiệu suất cao, dẫn đến kết quả của ensemble test không được như kỳ vọng. Thứ hai, cách tổ chức dữ liệu của hệ thống FL theo hướng ML yêu cầu chia tập dữ liệu cục bộ ra thành hai tập con (tập support và query). Mô hình học sẽ được thích ứng với dữ liệu kiểm tra thông qua một vài bước fine-tune trên tập support. Vì vậy, có thể chọn ra lớp phần riêng phù hợp nhất trong quá trình fine-tune. Do đó, dù hoạt động đơn lẻ hơn so với ensemble test, phương pháp này vẫn có khả năng đạt được độ chính xác thậm chí cao hơn phương pháp của nghiên cứu \cite{liang2020think} đề xuất.
+Dựa trên việc phân chia dữ liệu theo hướng ML, khoá luận không đồng ý với cách tiếp cận ensemble test trên người dùng mới vì hai lý do. Thứ nhất, khả năng thích ứng trên tập dữ liệu mới của các lớp phần riêng của hệ thống bị triệt tiêu, thay vào đó là tính cá nhân hóa cho từng tập dữ liệu cục bộ mà hệ thống đã làm việc trước đó. Đứng trước một tập dữ liệu mới, các lớp phần riêng này hầu như không đạt được hiệu suất cao, dẫn đến kết quả của ensemble test không được như kỳ vọng. Thứ hai, cách tổ chức dữ liệu của hệ thống FL theo hướng ML yêu cầu chia tập dữ liệu cục bộ ra thành hai tập con (tập support và query). Mô hình học sẽ được thích ứng với dữ liệu kiểm tra thông qua một vài bước fine-tune trên tập support. Vì vậy, có thể chọn ra lớp phần riêng phù hợp nhất trong quá trình fine-tune. Do đó, dù hoạt động đơn lẻ hơn so với ensemble test, phương pháp này vẫn có khả năng đạt được độ chính xác thậm chí cao hơn phương pháp của nghiên cứu \cite{liang2020think} đề xuất.
 
 % lý do 1: hệ thống tệ vcl r, ensemble thì cx là 1 đám ăn hại nc với nhau
 % lý do 2: bên ML chia data theo kiểu có support và query trên tập test nên có thể mò ra thằng weight tốt nhất cho hệ thống dựa vào tập support này.
@@ -245,7 +245,7 @@ Theo hướng tiếp cận PL, phương pháp đề xuất chia mạng học sâ
 
 Điểm khác biệt giữa phương pháp này và thuật toán \codeword{FedPer} nằm ở chỗ các lớp của mạng học sâu thuộc phần chung được huấn luyện theo hướng ML. Do đó, thuật toán đề xuất được đặt tên là \codeword{FedMeta-Per} - sự kết hợp giữa các thuật toán \codeword{FedMeta} và thuật toán \codeword{FedPer}.
 
-Trong ba phần dưới đây, khóa luận mô tả về cách thức mà hệ thống hoạt động trong quá trình huấn luyện (bao gồm huấn luyện cục bộ và tổng hợp toàn cục) và các kịch bản kiểm thử thuật toán.
+Trong ba phần dưới đây, khoá luận mô tả về cách thức mà hệ thống hoạt động trong quá trình huấn luyện (bao gồm huấn luyện cục bộ và tổng hợp toàn cục) và các kịch bản kiểm thử thuật toán.
 
 \subsection{Huấn luyện cục bộ}
 
@@ -380,10 +380,10 @@ Máy chủ tổng hợp các tham số nhận về bằng phương pháp lấy t
 
 \subsection{Giai đoạn kiểm thử}
 
-Dựa theo quá trình kiểm thử của nghiên cứu \cite{liang2020think}, khóa luận chia ra hai loại người dùng: người dùng cục bộ và người dùng mới.
+Dựa theo quá trình kiểm thử của nghiên cứu \cite{liang2020think}, khoá luận chia ra hai loại người dùng: người dùng cục bộ và người dùng mới.
 
 Đối với người dùng cục bộ, các lớp học sâu thuộc phần riêng được sử dụng lại để đạt được độ mức cá nhân hóa cao.
 
-Đối với người dùng mới, khóa luận không sử dụng kỹ thuật ensemble test vì các lý do đã nêu tại phần \ref{ensemble_test}, mà cho từng lớp phần riêng đã được xây dựng trước đó kết hợp với lớp phần chung để hoạt động trên bộ dự liệu mới. Trong quá trình fine-tune, máy khách sẽ chọn được bộ tham số cho độ lỗi nhỏ nhất. Từ đó sử dụng bộ tham số này để xử lý dữ liệu kiểm thử.
+Đối với người dùng mới, khoá luận không sử dụng kỹ thuật ensemble test vì các lý do đã nêu tại phần \ref{ensemble_test}, mà cho từng lớp phần riêng đã được xây dựng trước đó kết hợp với lớp phần chung để hoạt động trên bộ dự liệu mới. Trong quá trình fine-tune, máy khách sẽ chọn được bộ tham số cho độ lỗi nhỏ nhất. Từ đó sử dụng bộ tham số này để xử lý dữ liệu kiểm thử.
 
-Theo như cài đặt nêu trên, các thuật toán \codeword{FedMeta-Per} được phép tinh chỉnh trên tập support của máy khách trong giai đoạn kiểm thử nhưng thuật toán \codeword{FedPer} thì không. Để công bằng trong đánh giá, thuật toán \codeword{FedPerMeta} được đề xuất. Thuật toán này cho phép mô hình huấn luyện theo \codeword{FedPer} được phép chạy một hoặc một vài bước huấn luyện trên tập support của máy khách trong lúc kiểm thử.
+% Theo như cài đặt nêu trên, các thuật toán \codeword{FedMeta-Per} được phép tinh chỉnh trên tập support của máy khách trong giai đoạn kiểm thử nhưng thuật toán \codeword{FedPer} thì không. Để công bằng trong đánh giá, thuật toán \codeword{FedPerMeta} được đề xuất. Thuật toán này cho phép mô hình huấn luyện theo \codeword{FedPer} được phép chạy một hoặc một vài bước huấn luyện trên tập support của máy khách trong lúc kiểm thử.

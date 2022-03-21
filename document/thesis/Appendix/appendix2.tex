@@ -1,4 +1,24 @@
-\chapter{Ngữ pháp tiếng Nôm}
+\chapter{Hậu xử lý kết quả mô hình}
 \label{Appendix2}
 
-Đây là phụ lục 2.
+Kịch bản dữ liệu Non-IID sử dụng trong khoá luận cấu hình mỗi máy khách chỉ chứa các dữ liệu thuộc đúng hai phân lớp. Khi mô hình phân loại các mẫu dữ liệu thuộc về các phân lớp khác với hai phân lớp thực sự, việc tính trung bình cộng các giá trị precision, recall, F1-score cho từng máy khách bị giảm đi rất nhiều lần.
+
+Ví dụ, một máy khách bất kỳ có phân lớp chính xác và phân lớp dự đoán như sau:
+
+\begin{equation*}
+    label = [7, 7, 7, 7, 8, 8, 8, 8]
+\end{equation*}
+
+\begin{equation*}
+    predict = [7, 7, 7, \mathbf{0}, 8, 8, 8, \mathbf{1}]
+\end{equation*}
+
+Khi tính các giá trị F1-score cho từng phân lớp, có thể nhận thấy $F1(0) = F1(1) = 0$. Điều này khiến cho việc tính trung bình cộng giá trị F1 bị giảm xuống đáng kể. Trong khi đó, chất lượng phân lớp không thực sự tệ.
+
+Để xử lý các trường hợp nêu trên, khoá luận tiến hành bước hậu xử lý kết quả bằng cách cấu hình lại các dự đoán sao cho chỉ chứa hai phân lớp thực sự và số mẫu phân lớp sai là không đổi. Do đó, dự đoán trong ví dụ nêu trên sẽ được hậu xử lý thành:
+
+\begin{equation*}
+    predict^' = [7, 7, 7, \mathbf{8}, 8, 8, 8, \mathbf{7}]
+\end{equation*}
+
+Sau giai đoạn hậu xử lý, các độ đo precision, recall và F1-score được tính toán như bình thường.
