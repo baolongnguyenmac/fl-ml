@@ -145,27 +145,27 @@
 % \frontmatter
 
 \input{Title/title.tex}
-% Sasu trang Title, các bạn chèn nhận xét gủa GVHD và GVPB. Nhận xét sẽ được giáo vụ phát sau buổi bảo vệ để các bạn đóng quyển.
+% Sau trang Title, các bạn chèn nhận xét gủa GVHD và GVPB. Nhận xét sẽ được giáo vụ phát sau buổi bảo vệ để các bạn đóng quyển.
 
 \pagenumbering{roman} % Đánh số i, ii, iii, ...
 
 %\addcontentsline{toc}{chapter}{Lời cam đoan}
 %\include{Appendix/reassurances}
 
-% \addcontentsline{toc}{chapter}{Lời cảm ơn}
+\addcontentsline{toc}{chapter}{Lời cảm ơn}
 \include{Appendix/thanks}
 
-% \addcontentsline{toc}{chapter}{Đề cương chi tiết}
+\addcontentsline{toc}{chapter}{Đề cương chi tiết}
 \include{Appendix/proposal}
-
-\addcontentsline{toc}{chapter}{Tóm tắt}
-\include{Appendix/abstract}
 
 % Mục lục, danh sách hình, danh sách bảng
 \addcontentsline{toc}{chapter}{Mục lục}
 \tableofcontents
 \listoffigures
 \listoftables
+
+\addcontentsline{toc}{chapter}{Tóm tắt}
+\include{Appendix/abstract}
 
 \clearpage
 
