@@ -3,11 +3,11 @@
 
 \section{Mô tả dữ liệu}
 
-CIFAR-10 \cite{cifar-10} là tập dữ liệu hình ảnh được sử dụng phổ biến trong việc huấn luyện các mô hình máy học hay các thuật toán thị giác máy tính. Đây là một trong các tập dữ liệu được dùng nhiều nhất trong quá trình nghiên cứu máy học. Tập dữ liệu bao gồm 60,000 ảnh màu kích thước $32\times 32$ thuộc 10 phân lớp khác nhau.
+CIFAR-10 \cite{krizhevsky2009learning} là tập dữ liệu hình ảnh được sử dụng phổ biến trong việc huấn luyện các mô hình máy học hay các thuật toán thị giác máy tính. Đây là một trong các tập dữ liệu được dùng nhiều nhất trong quá trình nghiên cứu máy học. Tập dữ liệu bao gồm 60,000 ảnh màu kích thước $32\times 32$ thuộc 10 phân lớp khác nhau.
 
-MNIST \cite{mnist} là tập dữ liệu hình ảnh được sử dụng trong việc huấn luyện các hệ thống xử lý ảnh. Tập dữ liệu này cũng được sử dụng rộng rãi trong lĩnh vực học máy. Tập dữ liệu có tổng cộng 70,000 ảnh đen trắng các chữ số viết tay từ 0 đến 9 được viết bởi nhiều người.
+MNIST \cite{deng2012mnist} là tập dữ liệu hình ảnh được sử dụng trong việc huấn luyện các hệ thống xử lý ảnh. Tập dữ liệu này cũng được sử dụng rộng rãi trong lĩnh vực học máy. Tập dữ liệu có tổng cộng 70,000 ảnh đen trắng các chữ số viết tay từ 0 đến 9 được viết bởi nhiều người.
 
-Khoá luận sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh giá thuật toán đề xuất và các thuật toán được khảo sát. Bằng các đặc tính của hệ thống Horizontal FL và dữ liệu Non-IID, mỗi máy khách được cấu hình để chỉ 2/10 phân lớp dữ liệu, số lượng nhãn giữa các lớp và số lượng dữ liệu giữa các máy khách là không đồng đều. Thống kê dữ liệu Non-IID được trình bày trong Bảng \ref{tab:stat_noniid_data}.
+Khoá luận sử dụng hai tập dữ liệu MNIST và CIFAR-10 để đánh giá thuật toán đề xuất và các thuật toán được khảo sát. Bằng các đặc tính của hệ thống Horizontal FL và dữ liệu Non-IID, mỗi máy khách được cấu hình để chỉ chứa 2/10 phân lớp dữ liệu, số lượng nhãn giữa các lớp và số lượng dữ liệu giữa các máy khách là không đồng đều. Thống kê dữ liệu Non-IID được trình bày trong Bảng \ref{tab:stat_noniid_data}.
 
 \begin{table}[H]
     \caption{Thống kê trên hai tập dữ liệu MNIST và CIFAR-10 (dữ liệu Non-IID)}
