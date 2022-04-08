@@ -77,9 +77,12 @@ Cao Tat Cuong\inst{1}\orcidID{0000-0003-1803-843X} \and Le Hoai Bac\inst{1}\orci
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-The concept of \textit{Federated Learning} (FL) and the algorithm \textit{Federated Averaging} were born, which is seen as an alternative to centralized training. This solution not only achieves almost the same efficiency as existing deep learning methods, solves the hardware cost problem, but also ensures the privacy of user data. However, in the face of highly individualized and heterogeneous data per user (not independent and identically distributed or non-IID data), the system suffered severe performance degradation \cite{zhao2018federated}. This study improves the performance and personalization of the FL system on non-IID data by the algorithm \codeword{FedMeta-Per} - a combination of the meta-learning training method \cite{hospedales2020meta} and the personalization layer technique \cite{zhu2021federated} into the FL system.
+% Các hệ thống federated learning đối mặt với hai thách thức khiến chúng bị giảm hiệu suất nghiêm trọng: Thách thức hệ thống và Thách thức thống kê. Trong đó, dữ liệu non-IID được biết đến như một nhân tố chính trong việc tạo nên thách thức thống kê. Nghiên cứu của chúng tôi đề xuất thuật toán \codeword{FedMeta-Per} (kết hợp các thuật toán meta-learning và kỹ thuật personalization layer vào hệ thống federated learning) nhằm giải quyết việc hệ thống FL bị giảm hiệu suất nghiêm trọng trên dữ liệu non-IID. Qua thực nghiệm, \codeword{FedMeta-Per} được chứng minh là vượt trội hơn so với thuật toán truyền thống của federated learning, thuật toán sử dụng kỹ thuật personalization layer và các thuật toán sử dụng meta-learning trong tối ưu hệ thống trong việc tăng hiệu suất cũng như tăng tính cá nhân hoá cho hệ thống trên dữ liệu non-IID.
+Federated learning systems face two challenges: Systematic Challenge and Statistical Challenge. Among them, non-IID data is known as a major factor in creating statistical challenge. Our study proposes the \codeword{FedMeta-Per} algorithm (combining meta-learning algorithms and personalization layer techniques into federated learning system) to solve the severe performance reduction of the FL system on non-IID data. Experimentally, \codeword{FedMeta-Per} is proven to be superior to traditional federated learning algorithms, algorithms using personalization layer techniques and algorithms using meta-learning in system optimization in two respects: performance and personalization.
 
-\keywords{Federated learning \and non-IID \and Meta-learning \and Personalization layer.}
+% The concept of \textit{Federated Learning} (FL) and the algorithm \textit{Federated Averaging} were born, which is seen as an alternative to centralized training. This solution not only achieves almost the same efficiency as existing deep learning methods, solves the hardware cost problem, but also ensures the privacy of user data. However, in the face of highly individualized and heterogeneous data per user (not independent and identically distributed or non-IID data), the system suffered severe performance degradation \cite{zhao2018federated}. This study improves the performance and personalization of the FL system on non-IID data by the algorithm \codeword{FedMeta-Per} - a combination of the meta-learning training method \cite{hospedales2020meta} and the personalization layer technique \cite{zhu2021federated} into the FL system.
+
+\keywords{Federated learning \and non-IID \and Meta-learning \and Personalization layer}
 \end{abstract}
 %
 %
@@ -91,16 +94,18 @@ In the era of Internet of Things (IoT), facing a huge amount of data at the edge
 
 Edge computing \cite{khan2019edge} was born to push the computation and storage of data from the server to clients or edge devices, reducing the load on the server. Furthermore, the computation is moved to or near the data generation site, which saves huge amounts of communication costs and reduces computational latency. Not only that, the process of exchanging data between the server and the clients no longer takes place, greatly increasing the user's data privacy.
 
-In the spirit of edge computing, \textit{federated learning} (FL) \cite{mcmahan2017communication} was born, to train a machine learning model on separate data sets, distributed on edge devices \cite {yin2021comprehensive}. Specifically, the goal of the FL system is to find a global parameter $w_G^*$ such that the system error is minimized:
+% Dựa trên ý tưởng của tính toán biên, \textit{federated learning} (FL) \cite{mcmahan2017communication} ra đời nhằm bảo vệ quyền riêng tư dữ liệu của người dùng bằng cách cho phép huấn luyện mô hình máy học trên các tập dữ liệu riêng biệt, phân bố trên các thiết bị biên. Cụ thể, mục tiêu của hệ thống FL là tìm kiếm một tham số toàn cục $w_G^*$ sao cho độ lỗi của hệ thống đạt cực tiểu:
+Based on the idea of edge computing, \textit{federated learning} (FL) \cite{mcmahan2017communication} is born to protect user data privacy by allowing machine learning model to be trained on separate datasets that distributed across edge devices. Specifically, the goal of the FL system is to find a global parameter $w_G^*$ such that the system error is minimized:
 
 \begin{dmath}
     w_G^* = \arg\min_{w_G}{f_{global}(w_G)}
         = \arg\min_{w_G}{\frac{1}{n} \sum_{i=1}^n{f_{local}(w_i)}}
 \end{dmath} where, $n$ is the number of clients participating in the system, $f_{global}$ is the error of the whole system, $f_{local}(w_i)$ is the error of the client $i$ when it use the parameter $w_i$.
 
-This training method not only inherits the benefits of edge computing (lowering hardware costs and latency, increased data security) but also has the potential to increase personalization for each user. However, the clients participating in the system are often heterogeneous in terms of storage and computing capacity. The data distributed across these clients is also not uniformly distributed (non-IID). This creates two main challenges of an FL system: the Systemic Challenge and the Statistical Challenge \cite{li2020federated}. As for the statistical challenge, \cite{zhao2018federated} research indicates that FL's traditional algorithm - Federated Averaging (\codeword{FedAvg}) suffers from severe performance loss on non-IID data. This study aims to partially solve the statistical problem. Specifically, the study focuses on improving performance as well as personalization in prediction on non-IID data.
+This training method not only inherits the benefits of edge computing (lowering hardware costs and latency, increased data security) but also has the potential to increase personalization for each user. However, the clients participating in the system are often heterogeneous in terms of storage and computing capacity. The data distributed across these clients is also not uniformly distributed (non-IID). This creates two main challenges of an FL system: the Systemic Challenge and the Statistical Challenge \cite{li2020federated}. As for the statistical challenge, \cite{zhao2018federated} research indicates that FL's traditional algorithm - Federated Averaging (\codeword{FedAvg}) suffers from severe performance loss on non-IID data.
 
-In this study, we improve the performance of the FL system on non-IID data by meta-learning (ML) \cite{hospedales2020meta} and personalization layer (PL) technique. Bilevel optimization-based ML algorithms can generate a quick adaptive initialization on the new task. The use of ML algorithms in training aims to obtain a global parameter that can adapt quickly on the new data set of each user. Meanwhile, the use of PL techniques to maintain part of the deep neural network at the edge devices further improves personalization.
+% This study aims to partially solve the statistical problem. Specifically, the study focuses on improving performance as well as personalization in prediction on non-IID data.
+\textbf{Task}. This study aims to partially solve the statistical problem. Specifically, we improve the performance as well as the personalization per user of the FL system on non-IID data in the supervised learning problem by meta-learning (ML) algorithms \cite{hospedales2020meta} and personalization layer (PL) technique. Bilevel optimization-based ML algorithms can generate a quick adaptive initialization on the new task. The use of ML algorithms in training aims to obtain a global parameter that can adapt quickly on the new dataset of each user. Meanwhile, the use of PL techniques to maintain part of the deep neural network at the edge devices, further improves personalization.
 
 \textbf{Contribution}. The study proposes the \codeword{FedMeta-Per} algorithm, a combination of ML algorithms (\codeword{MAML} \cite{finn2017model}, \codeword{Meta-SGD} \cite{li2017meta}) and PL techniques (\codeword{FedPer} \cite{arivazhagan2019federated}, \codeword{LG-FedAvg} \cite{liang2020think}), which helps to increase accuracy and personalize for each user. Experimentally, the research shows the effectiveness in increasing the accuracy as well as the personalization of the proposed algorithm compared with the algorithm \codeword{FedAvg}; algorithms that incorporate ML into FL \cite{chen2018federated} (\codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)}) and algorithms that use PL (\codeword{FedPer}) on a FL system of 50 users, containing the data of two datasets MNIST \cite{deng2012mnist} and CIFAR-10 \cite{krizhevsky2009learning} respectively.
 
@@ -112,7 +117,7 @@ Since the \codeword{FedAvg} algorithm was first introduced in 2017, a lot of wor
 
 % \textbf{Sử dụng nhiều máy chủ}. Nếu thiếu trang sẽ viết thêm
 
-\textbf{Meta-learning based approach}. ML is a new learning method that allows the learning model to increase experience by performing many different tasks in the same task distribution. This results in ML models being able to adapt quickly on new tasks after only a few training steps with limited training data. This is an important discovery, playing a role in bringing machine learning closer to human learning \cite{harlow1949formation}.
+\textbf{Meta-learning - based approach}. ML is a new learning method that allows the learning model to increase experience by performing many different tasks in the same task distribution. This results in ML models being able to adapt quickly on new tasks after only a few training steps with limited training data. This is an important discovery, playing a role in bringing machine learning closer to human learning \cite{harlow1949formation}.
 
 % Cụ thể, trong cài đặt của ML cho bài toán học có giám sát, tập dữ liệu huấn luyện và kiểm tra lần lượt là $\mathcal{D}_{train} = \{ ( \mathcal{D}_{train(i)}^{support}, \mathcal{D}_{train(i)}^{query} ) \}_{i=1}^{|\mathcal{D}_{train}|}$ và $\mathcal{D}_{test} = \{ ( \mathcal{D}_{test(i)}^{support}, \mathcal{D}_{test(i)}^{query} ) \}_{i=1}^{|\mathcal{D}_{test}|}$. Mỗi phần tử trong các tập dữ liệu trên bao gồm tập support và query và đại diện cho một nhiệm vụ. Theo đó, 
 
@@ -120,7 +125,7 @@ In the context of non-IID data, each user, with different needs, generates datas
 
 An FL system, on the other hand, will have new clients over time. One downside for systems that use ML in training is that they treat clients that have been around for a long time in the system and those that have just joined the system. Therefore, although global models are able to adapt quickly to new data, their performance can be further improved.
 
-\textbf{Personalization layer approach}. To capture the data properties, which are highly personalized on different users, dividing the deep neural network into personalization layers and base layers, and maintaining the personalization layers at each client (base layers will be co-trained by the clients) is suggested. Accordingly, the study \cite{arivazhagan2019federated} proposes the \codeword{FedPer} algorithm with the idea of maintaining fully-connected layers of the deep neural network at the clients with the goal of increasing personalization. Experimentally, \codeword{FedPer} achieved much higher results than \codeword{FedAvg} when tested on the data sets CIFAR-10 and CIFAR-100. In addition, the study \cite{liang2020think} with the algorithm \codeword{LG-FedAvg} proposes to maintain the feature extraction layers of the deep neural network at the clients with the goal of capturing the features of each different clients. The results obtained are even better than \codeword{FedPer} in most cases when testing on a system consisting of 10 to 100 users containing data of the data sets CIFAR-10, CIFAR- 100 and Omniglot \cite{lake2015human}.
+\textbf{Personalization layer - based approach}. To capture the data properties, which are highly personalized on different users, dividing the deep neural network into personalization layers and base layers, and maintaining the personalization layers at each client (base layers will be co-trained by the clients) is suggested. Accordingly, the study \cite{arivazhagan2019federated} proposes the \codeword{FedPer} algorithm with the idea of maintaining fully-connected layers of the deep neural network at the clients with the goal of increasing personalization. Experimentally, \codeword{FedPer} achieved much higher results than \codeword{FedAvg} when tested on the data sets CIFAR-10 and CIFAR-100. In addition, the study \cite{liang2020think} with the algorithm \codeword{LG-FedAvg} proposes to maintain the feature extraction layers of the deep neural network at the clients with the goal of capturing the features of each different clients. The results obtained are even better than \codeword{FedPer} in most cases when testing on a system consisting of 10 to 100 users containing data of the data sets CIFAR-10, CIFAR- 100 and Omniglot \cite{lake2015human}.
 
 The similarity between these two methods lies in the training base layers. These layers are trained and synthesized using the \codeword{FedAvg} algorithm. Therefore, they are not able to adapt quickly on the new data set. In addition, during inference phase, the \codeword{FedPer} algorithm takes the average of the parameters of the personalization layers, then combines with the parameters of the base layers to conduct the test. The parameter of personalization layers, which is highly personalized, is now averaged, which can cause the classification efficiency to be significantly reduced when the data is strong non-IID. The algorithm \codeword{LG-FedAvg} proposes to perform an ensemble test between personalization layers. However, only personalization layers trained on the same data as the test data will really perform well. Therefore, in some cases, ensemble test results are not high because there are too many personalization layers that have never worked with the same data as the data during the test.
 
@@ -260,7 +265,9 @@ For clients that use the \codeword{Meta-SGD} algorithm in training, the base lay
 
 \section{Numerical Experiments}
 
-\textbf{Dataset}. The study evaluates the proposed algorithm on 50 clients containing two datasets MNIST \cite{deng2012mnist} and CIFAR-10 \cite{krizhevsky2009learning}, respectively. To simulate non-IID data, each client is configured to contain only 2/10 data subclasses, the amount of data between clients is uneven. At each client, the data is divided between the support and query sets at a ratio of 2:8. Data statistics are presented in Table \ref{tab:stat_noniid_data}.
+\textbf{Dataset}. This study uses 50 clients for training (contains 75\% of data) and 50 clients for testing (contains 25\% of data). The clients contain the data of the two datasets MNIST \cite{deng2012mnist} and CIFAR-10 \cite{krizhevsky2009learning}, respectively. To simulate Non-IID data, each client is configured to contain only 2/10 labels, the amount of data between clients is uneven (see Table \ref{tab:stat_noniid_data}). During testing, each local user has the same data distribution as that of a training client; each new user has a data distribution that is completely different from the data distribution of all the clients participating in the training. At each client, the data is divided into a support set (containing 20\% data) and a query set (containing 80\% data).
+
+% The study evaluates the proposed algorithm on 50 clients containing two datasets MNIST \cite{deng2012mnist} and CIFAR-10 \cite{krizhevsky2009learning}, respectively. To simulate non-IID data, each client is configured to contain only 2/10 data subclasses, the amount of data between clients is uneven. At each client, the data is divided between the support and query sets at a ratio of 2:8. Data statistics are presented in Table \ref{tab:stat_noniid_data}.
 
 \begin{table}[h]
     \caption{Statistics on MNIST and CIFAR-10 (non-IID data)}
@@ -279,9 +286,7 @@ For clients that use the \codeword{Meta-SGD} algorithm in training, the base lay
 
 \textbf{Metrics}. The study evaluates the model through the following metrics: Accuracy in correlation with all data points ($acc_{micro}$), Accuracy in correlation with all clients ($acc_{macro}$) and F1-score ($F1_{macro}$).
 
-\textbf{Experiments}. This study performs centralized and distributed experiments on the same model architecture. For distributed training, the study experimented on algorithms \codeword{FedAvg}, \codeword{FedPer}, \codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)}. The results are compared with the proposed algorithm \codeword{FedMeta-Per}. For a fair comparison, the study allows the global model obtained by the \codeword{FedAvg} and \codeword{FedPer} algorithms to perform a fine-tune one or several times on the client's support set during the inference phase. This is the idea of \codeword{FedAvgMeta} and \codeword{FedPerMeta} algorithms.
-
-Details of the experimental settings can be found in Appendix \ref{appendix}.
+\textbf{Experiments}. This study performs centralized and distributed experiments on the same model architecture. For distributed training, the study experimented on algorithms \codeword{FedAvg}, \codeword{FedPer}, \codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)}. The results are compared with the proposed algorithm \codeword{FedMeta-Per}. For a fair comparison, the study allows the global model obtained by the \codeword{FedAvg} and \codeword{FedPer} algorithms to perform a fine-tune one or several times on the client's support set during the inference phase. This is the idea of \codeword{FedAvgMeta} and \codeword{FedPerMeta} algorithms. Details of the experimental settings can be found in Appendix \ref{appendix}.
 
 \section{Results \& Discussion}
 
@@ -413,6 +418,7 @@ In addition, thanks to the construction of good personalization layers, the test
 Through the research process, we combine ML algorithms and PL techniques into the FL system, to improve the accuracy as well as the ability to personalize for each user of the system on non-IID data. Experimentally, we prove the effectiveness of the proposed algorithm \codeword{FedMeta-Per} compared with algorithms \codeword{FedAvg}, \codeword{FedPer}, \codeword{FedMeta} over 50 users with two datasets CIFAR-10 and MNIST. In which, it can be explained that achieving high results is based on two inherited factors: (1) - Fast adaptability on new data set of the proposed algorithm inherited from ML algorithms, (2) - High personalization ability for each user inherited from personalization layers of PL technique and model fine-tuning on support set of ML algorithms.
 
 In the future, bilevel optimization-based algorithms (\codeword{FO-MAML} \cite{finn2017model}, \codeword{iMAML} \cite{rajeswaran2019meta}, \codeword{Reptile}) can be integrated into the system. The search and clustering of users so that each user finds the best set of partial parameters should also be further studied to increase the performance of the system. In addition, the issue of information security between the server and the client should also be considered to make the system more practical.
+% \clearpage
 
 % \begin{figure}[H]
 %     \includegraphics[width=\textwidth]{img/cifar_new_metaper.eps}
@@ -430,32 +436,11 @@ In the future, bilevel optimization-based algorithms (\codeword{FO-MAML} \cite{f
 %
 \bibliographystyle{splncs04}
 \bibliography{mybibliography}
+% \clearpage
 
 \appendix
 \section{Experimental Details}
 \label{appendix}
-
-\subsection{Datasets}
-
-The notation $C_{train} = \{c^{train}_1,...,c^{train}_{50}\}$ is the set of clients used in training, $C_{test} = \{ c^{test}_1,...,c^{test}_{50}\}$ is the set of clients used in the test, $N$ is the total number of data points, we have the number of training data points and test data points in turn is:
-
-\begin{equation*}
-    N_{train} = \sum_{i=1}^{50} \left|c^{train}_i\right| = 0.75N
-\end{equation*}
-\begin{equation*}
-    N_{test} = \sum_{i=1}^{50} \left|c^{test}_i\right| = 0.25N
-\end{equation*}
-
-In ML implementation, notation $c^{train}_i = \{\mathcal{D}_{train(i)}^{support}, \mathcal{D}_{train(i)}^{query} \}$, $c^{test}_i = \{\mathcal{D}_{test(i)}^{support}, \mathcal{D}_{test(i)}^{query}\}$. We have the amount of data contained in the support and query sets of client $i$ respectively:
-
-\begin{equation*}
-    N_{train/test(i)}^{support} = \left|\mathcal{D}_{train/test(i)}^{support}\right| = 0.2 \left|c_i^{train/test}\right|
-\end{equation*}
-\begin{equation*}
-    N_{train/test(i)}^{query} = \left|\mathcal{D}_{train/test(i)}^{query}\right| = 0.8 \left|c^{train/test}_i\right|
-\end{equation*}
-
-Client $c_j^{test} \in C_{test}$ is called a local client if there exists a client $c_i^{train}\in C_{train}$ such that $p\left((x, y)\in c_j^{test}\right) = p\left((x,y)\in c_i^{train}\right)$. Otherwise, $c_j^{test}$ is a new client if $p\left((x,y)\in c_j^{test}\right) \ne p\left((x,y)\in c_i^ {train}\right)$ for all $c_i^{train}\in C_{train}$.
 
 \subsection{Model Architecture}
 \label{model_architecture}
@@ -468,35 +453,31 @@ The study uses two simple models for feature extraction and data classification 
 
 \subsection{Hyper-parameters Searching}
 
-The hyper-parameters of the FL system of the study include: number of clients participating in training in a global training step ($\#clients/round$), number of local training steps ($\#epochs $), number of global training steps ($\#rounds$), amount of data in a data batch ($batch\_size$), number of personalization layers for algorithms using PL techniques ($\# per\_layers$) and the learning rate used in the optimization of deep neural networks by mini batch gradient descent.
+The hyper-parameters of the FL system of the study include: number of clients participating in training in a global training step ($\#clients/round$), number of local training steps ($\#epochs $), number of global training steps ($\#rounds$), amount of data in a data batch ($batch\_size$), number of personalization layers for algorithms using PL techniques ($\# per\_layers$) and the learning rates used in the optimization of deep neural networks by mini batch gradient descent.
 
-To accommodate the limited configuration client hardware in the Horizontal FL scenario, this study limits $\#epochs=1$ and $batch\_size=32$. From the survey of FL experiments of recent studies, the number of clients participating in global training was selected as 2, 5 and 10, respectively. In which, $\#clients/round=5$ gives a higher result and consumes an acceptable computational cost.
+To accommodate the limited configuration client hardware in the Horizontal FL scenario, we limits $\#epochs=1$ and $batch\_size=32$. From the survey of FL experiments of recent studies, the number of clients participating in global training was selected as 2, 5 and 10, respectively. In which, $\#clients/round=5$ gives a higher result and consumes an acceptable computational cost. The study maintains a base layer and a personalization layer for the neural network of the MNIST dataset. For the deep learning network used for the set CIFAR-10, $\#per\_layers \in \{1,2,3\}$ (calculated from the last linear layer). Experimental results show that using the last linear layer as the personalization layer and the remaining deep layers as the base layers gives the best results. The learning rates are searched in the range $(10^{-5}, 0.01)$ and are presented in Table \ref{tab:hyper_param}.
 
-For installed deep learning networks, it is natural to maintain a base layer and a personalization layer for the neural network of the MNIST dataset. For the deep learning network used for the set CIFAR-10, $\#per\_layers \in \{1,2,3\}$ (calculated from the last linear layer). Experimental results show that using the last linear layer as the personalization layer and the remaining deep layers as the base layers gives the best results.
+% Except for the learning rate of each algorithm, the above hyper-parameters are kept fixed during training. Table \ref{tab:fixed_hyper_param} summarizes these hyper-parameters values.
 
-Except for the learning rate of each algorithm, the above hyper-parameters are kept fixed during training. Table \ref{tab:fixed_hyper_param} summarizes these hyper-parameters values.
-
-\begin{table}[h]
-    \centering
-    \caption{Fixed hyper-parameters in FL system}
-    \label{tab:fixed_hyper_param}
-    % \resizebox{\linewidth}{!}{%
-    \begin{tabular}{l|ccccc} 
-    \toprule
-             & \#clients/round    & \#epochs           & \#rounds & batch\_size         & \multicolumn{1}{l}{\#per\_layers}  \\ 
-    \hline
-    MNIST    & \multirow{2}{*}{5} & \multirow{2}{*}{1} & 300      & \multirow{2}{*}{32} & \multirow{2}{*}{1}                \\
-    CIFAR-10 &                    &                    & 600      &                     &                                   \\
-    \bottomrule
-    \end{tabular}
-    % }
-\end{table}
-
-The learning hyper-parameters are searched in the range $(10^{-5}, 0.01)$ for each algorithm. Search results are presented in Table \ref{tab:hyper_param}. Empty cells indicate that hyper-parameters cannot be found for the model to converge.
+% \begin{table}[h]
+%     \centering
+%     \caption{Fixed hyper-parameters in FL system}
+%     \label{tab:fixed_hyper_param}
+%     % \resizebox{\linewidth}{!}{%
+%     \begin{tabular}{l|ccccc} 
+%     \toprule
+%              & \#clients/round    & \#epochs           & \#rounds & batch\_size         & \multicolumn{1}{l}{\#per\_layers}  \\ 
+%     \hline
+%     MNIST    & \multirow{2}{*}{5} & \multirow{2}{*}{1} & 300      & \multirow{2}{*}{32} & \multirow{2}{*}{1}                \\
+%     CIFAR-10 &                    &                    & 600      &                     &                                   \\
+%     \bottomrule
+%     \end{tabular}
+%     % }
+% \end{table}
 
 \begin{table}[h]
     \centering
-    \caption{Tuning learning rate for algorithms}
+    \caption{Tuning learning rate for algorithms. Empty cells indicate that hyper-parameters cannot be found for the model to converge.}
     \label{tab:hyper_param}
     % \resizebox{\linewidth}{!}{%
     \begin{tabular}{l|cc} 
