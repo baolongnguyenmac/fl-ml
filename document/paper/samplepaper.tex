@@ -66,7 +66,7 @@
 % an abbreviated paper title here
 %
 \author{Nguyen Bao Long\inst{1}\orcidID{0000-0002-6411-8943} \and
-Cao Tat Cuong\inst{1}\orcidID{0000-0003-1803-843X} \and Le Hoai Bac\inst{1}\orcidID{unknown}}
+Cao Tat Cuong\inst{1}\orcidID{0000-0003-1803-843X} \and Le Hoai Bac\inst{1}\orcidID{0000-0002-4306-6945}}
 %
 \authorrunning{Long-Cuong et al.}
 % First names are abbreviated in the running head.
@@ -105,7 +105,8 @@ Based on the idea of edge computing, \textit{federated learning} (FL) \cite{mcma
 This training method not only inherits the benefits of edge computing (lowering hardware costs and latency, increased data security) but also has the potential to increase personalization for each user. However, the clients participating in the system are often heterogeneous in terms of storage and computing capacity. The data distributed across these clients is also not uniformly distributed (non-IID). This creates two main challenges of an FL system: the Systemic Challenge and the Statistical Challenge \cite{li2020federated}. As for the statistical challenge, \cite{zhao2018federated} research indicates that FL's traditional algorithm - Federated Averaging (\codeword{FedAvg}) suffers from severe performance loss on non-IID data.
 
 % This study aims to partially solve the statistical problem. Specifically, the study focuses on improving performance as well as personalization in prediction on non-IID data.
-\textbf{Task}. This study aims to partially solve the statistical problem. Specifically, we improve the performance as well as the personalization per user of the FL system on non-IID data in the supervised learning problem by meta-learning (ML) algorithms \cite{hospedales2020meta} and personalization layer (PL) technique. Bilevel optimization-based ML algorithms can generate a quick adaptive initialization on the new task. The use of ML algorithms in training aims to obtain a global parameter that can adapt quickly on the new dataset of each user. Meanwhile, the use of PL techniques to maintain part of the deep neural network at the edge devices, further improves personalization.
+\textbf{Task}. This study aims to partially solve the statistical problem. Specifically, we improve the performance as well as the personalization per user of the FL system on non-IID data in the supervised learning problem by meta-learning (ML) algorithms \cite{hospedales2020meta} and personalization layer (PL) technique.
+% Bilevel optimization-based ML algorithms can generate a quick adaptive initialization on the new task. The use of ML algorithms in training aims to obtain a global parameter that can adapt quickly on the new dataset of each user. Meanwhile, the use of PL techniques to maintain part of the deep neural network at the edge devices, further improves personalization.
 
 \textbf{Contribution}. The study proposes the \codeword{FedMeta-Per} algorithm, a combination of ML algorithms (\codeword{MAML} \cite{finn2017model}, \codeword{Meta-SGD} \cite{li2017meta}) and PL techniques (\codeword{FedPer} \cite{arivazhagan2019federated}, \codeword{LG-FedAvg} \cite{liang2020think}), which helps to increase accuracy and personalize for each user. Experimentally, the research shows the effectiveness in increasing the accuracy as well as the personalization of the proposed algorithm compared with the algorithm \codeword{FedAvg}; algorithms that incorporate ML into FL \cite{chen2018federated} (\codeword{FedMeta(MAML)}, \codeword{FedMeta(Meta-SGD)}) and algorithms that use PL (\codeword{FedPer}) on a FL system of 50 users, containing the data of two datasets MNIST \cite{deng2012mnist} and CIFAR-10 \cite{krizhevsky2009learning} respectively.
 
