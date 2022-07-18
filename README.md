@@ -10,9 +10,14 @@
     - Cao Tất Cường - MSSV: 18120296
 - Bảo vệ vào ngày 15/03/2022 tại Hội đồng Khoa học máy tính 1, Trường Đại học Khoa học Tự nhiên, TP. HCM
 
+## Liên hệ
+
+- Nguyễn Bảo Long
+- Email: baolongnguyen.mac@gmail.com hoặc 18120201@student.hcmus.edu.vn
+
 ## How to run
 
-- Dữ liệu được cấu hình giống như paper: Personalized Federated Learning with Moreau Envelopes (NeurIPS 2020).
+- Dữ liệu được cấu hình giống như paper: [Personalized Federated Learning with Moreau Envelopes (NeurIPS 2020)](https://github.com/CharlieDinh/pFedMe).
 
 - Có 2 cách để khởi chạy simulation (đọc doc của Flower để rõ thêm):
 
@@ -39,6 +44,8 @@
 - Folder `./personalized_weight`: Được sinh ra trong quá trình chạy các thuật toán sử dụng personalization layer. Chứa các personalization layer của từng client.
 
 ## Kết quả của khoá luận
+
+- Chúng tôi đề xuất thuật toán FedMeta-Per, là sự kết hợp của Meta-learning và Personalization layer vào hệ thống Federated learning.
 
 ### MNIST
 
