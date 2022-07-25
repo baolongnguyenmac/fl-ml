@@ -60,13 +60,14 @@
 \begin{document}
 %
 \title{Meta-learning and Personalization layer \\in Federated learning}
+% \title{Meta-learning and Personalization layer \\in Federated learning\thanks{This research is funded by University of Science, VNU-HCM under grant number CNTT 2022 - 09}}
 %
 % \titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
 \author{Bao-Long Nguyen\inst{1,2}\orcidID{0000-0002-6411-8943} \and
-Cuong Tat Cao\inst{1,2}\orcidID{0000-0003-1803-843X} \and Bac Le\inst{1,2}\orcidID{0000-0002-4306-6945}}
+Tat Cuong Cao\inst{1,2}\orcidID{0000-0003-1803-843X} \and Bac Le\inst{1,2}\thanks{Corresponding Author}\orcidID{0000-0002-4306-6945}}
 %
 \authorrunning{B.L. Nguyen et al.}
 % First names are abbreviated in the running head.
@@ -439,7 +440,7 @@ The study uses two simple models for feature extraction and data classification 
 
 The hyper-parameters of the FL system of the study include: the number of clients participating in training in a global training step ($\#clients/round$), number of local training steps ($\#epochs $), number of global training steps ($\#rounds$), amount of data in a data batch ($batch\_size$), number of personalization layers for algorithms using PL techniques ($\# per\_layers$) and the learning rates used in the optimization of deep neural networks by mini batch gradient descent.
 
-To accommodate the limited configuration client hardware in the Horizontal FL scenario, we limits $\#epochs=1$ and $batch\_size=32$. From the survey of FL experiments in recent studies, the number of clients participating in global training was selected as 2, 5, and 10, respectively. In which, $\#clients/round=5$ gives a higher result and consumes an acceptable computational cost. The study maintains a base layer and a personalization layer for the neural network of the MNIST dataset. For the deep learning network used for the set CIFAR-10, $\#per\_layers \in \{1,2,3\}$ (calculated from the last linear layer). Experimental results show that using the last linear layer as the personalization layer and the remaining deep layers as the base layers gives the best results. The learning rates are searched in the range $(10^{-5}, 0.01)$ and are presented in Table \ref{tab:hyper_param}.
+To accommodate the limited configuration client hardware in the Horizontal FL scenario, we limits $\#epochs=1$ and $batch\_size=32$. From the survey of FL experiments in recent studies, the number of clients participating in global training was selected as 2, 5, and 10, respectively. In which, $\#clients/round=5$ gives a higher result and consumes an acceptable computational cost. $\#per\_layers$ is searched in $\{1,2,3\}$ (calculated from the last linear layer). Experimental results show that using the last linear layer as the personalization layer gives the best results. The learning rates are presented in Table \ref{tab:hyper_param}.
 
 % Except for the learning rate of each algorithm, the above hyper-parameters are kept fixed during training. Table \ref{tab:fixed_hyper_param} summarizes these hyper-parameters values.
 
@@ -479,6 +480,8 @@ To accommodate the limited configuration client hardware in the Horizontal FL sc
     % }
 \end{table}
 
+\subsubsection*{Acknowledgements} This research is funded by University of Science, VNU-HCM under grant number CNTT 2022 - 09.
+\clearpage
 % ---- Bibliography ----
 %
 % BibTeX users should specify bibliography style 'splncs04'.
