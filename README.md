@@ -1,55 +1,55 @@
-# Meta-learning và Personalization layer trong Federated learning
+# Meta-learning and Personalization layer in Federated learning
 
-## Thông tin khoá luận
+Official code for ACIIDS2022 paper "[Meta-learning and Personalization layer in Federated learning](https://github.com/baolongnguyenmac/fl-ml/blob/main/document/paper/Meta-learning%20and%20Personalization%20layer%20in%20FL.pdf)".
 
-- Tên đề tài: Meta-learning và Personalization layer trong Federated learning
-- GVHD: GS. TS. Lê Hoài Bắc
-- GVPB: TS. Nguyễn Tiến Huy
-- Nhóm sinh viên:
+## General information
+
+- Supervisor: Prof. Lê Hoài Bắc
+- Reviewer: Dr. Nguyễn Tiến Huy
+- Authors:
     - Nguyễn Bảo Long - MSSV: 18120201
     - Cao Tất Cường - MSSV: 18120296
-- Bảo vệ vào ngày 15/03/2022 tại Hội đồng Khoa học máy tính 1, Trường Đại học Khoa học Tự nhiên, TP. HCM
+- Reporting date: 15/03/2022 at Computer Science No.1, University of Science, VietNam National University - Ho Chi Minh City.
 
-## Liên hệ
+## Contact
 
-- Nguyễn Bảo Long
-- Email: baolongnguyen.mac@gmail.com hoặc 18120201@student.hcmus.edu.vn
+- Corresponding author: Bao-Long Nguyen
+- Email: baolongnguyen.mac@gmail.com
 
 ## How to run
 
-- Dữ liệu được cấu hình giống như paper: [Personalized Federated Learning with Moreau Envelopes (NeurIPS 2020)](https://github.com/CharlieDinh/pFedMe).
+- Dataset configuration: Dataset is configured as in [Personalized Federated Learning with Moreau Envelopes (NeurIPS 2020)](https://github.com/CharlieDinh/pFedMe).
 
 - Có 2 cách để khởi chạy simulation (đọc doc của Flower để rõ thêm):
+- 2 ways to run simulation (read [Flower's doc](https://flower.dev/docs/) for more detail):
 
-    - Chạy 1 mạch và khỏi suy nghĩ gì: Chạy file `run.sh`. Trong file này chứa toàn bộ lệnh để tạo ra kết quả của khoá luận. Khi chạy theo kiểu này, chương trình sẽ gọi đến hàm `start_simulation()` trong file `./main.py`
+    - Normal mode: Run file `run.sh`. This file contains all the command codes that output the results of this thesis. After running this file, function `start_simulation()` in file `./main.py` will be called.
 
-    - Trong trường hợp cần debug, có thể sử dụng 2 files `./run_client.sh` và `./run_server.sh`. File `./run_server.sh` khởi chạy hàm `main()` trong file `./server/server_main.py` nhằm tạo ra 1 server. File `./run_client.sh` một số lượng máy khách nhất định bằng cách gọi hàm `main()` trong file `./client/client_main.py` nhiều lần.
+    - Debug mode: Run 2 files `./run_client.sh` and `./run_server.sh`. File `./run_server.sh` calls `main()` in file `./server/server_main.py` in order to create and run a server. File `./run_client.sh` creates a certain number of clients by calling function `main()` in file `./client/client_main.py` multiple times.
 
-- Note thêm về các TH ngoại lệ của `FedPer`
+## Some information about source code
 
-## Giải thích một vài thông tin về source code
+- Folder `./client`: Defines types of clients of FL systems (based on Flower framework).
 
-- Folder `./client`: Các file trong đây chứa các hàm cơ bản của 1 client trong hệ thống FL (của framework Flower).
+- Folder `./client_worker`: Defines training methods (meta learning, using [learn2learn](https://github.com/learnables/learn2learn) and conventional FL training) and testing methods. These functions in here will be called by clients in `./client`.
 
-- Folder `./client_worker`: Chứa phần huấn luyện (cài đặt theo hướng meta learning, sử dụng thư viện [`learn2learn`](https://github.com/learnables/learn2learn)) và kiểm thử. Các hàm tại đây sẽ được các file trong `./client` gọi đến.
+- Folder `./data`: Contains data generator (`./data/mnist`, `./data/cifar`), and data loader (`./data/dataloaders`) for each client.
 
-- Folder `./data`: Chứa code để khởi tạo data trong từng client (`./data/mnist`, `./data/cifar`), load data lên (`./data/dataloaders`).
+- Folder `./document`: Contains a presentation, a thesis and relevant documents.
 
-- Folder `./document`: Chứa slide báo cáo, cuốn khoá luận, các báo cáo liên quan trong quá trình làm khoá luận.
+- Folder `./experiments`: Results of `FedAvg, FedAvgMeta, FedPer, FedPerMeta, FedMeta(MAML), FedMeta(Meta-SGD), FedMeta-Per(MAML), FedMeta-Per(Meta-SGD)` running on MNIST, CIFAR-10, and on 2 types of client (new client, local client).
 
-- Folder `./experiments`: Chứa các kết quả chạy thực nghiệm của các thuật toán `FedAvg, FedAvgMeta, FedPer, FedPerMeta, FedMeta(MAML), FedMeta(Meta-SGD), FedMeta-Per(MAML), FedMeta-Per(Meta-SGD)` chạy trên các tập dữ liệu MNIST, CIFAR-10, trên 2 loại client (new client, local client).
+- Folder `./model`: Defines models and model wrapper for MNIST, CIFAR-10.
 
-- Folder `./model`: Chứa các cài đặt và đóng gói cho model cho tập dữ liệu MNIST, CIFAR-10
+- Folder `./personalized_weight`: A temporary folder, generated during the execution of algorithms using personalization layer. This folder contains personalization layer of each client.
 
-- Folder `./personalized_weight`: Được sinh ra trong quá trình chạy các thuật toán sử dụng personalization layer. Chứa các personalization layer của từng client.
+## Results
 
-## Kết quả của khoá luận
-
-- Chúng tôi đề xuất thuật toán FedMeta-Per, là sự kết hợp của Meta-learning và Personalization layer vào hệ thống Federated learning.
+- We proposed `FedMeta-Per` (`FedMeta-Per(MAML), FedMeta-Per(Meta-SGD)`), a combination of Meta-learning and Personalization layer into a FL system.
 
 ### MNIST
 
-- Bảng kết quả (%) trên local client của tập dữ liệu MNIST
+- Classification results (%) of local client using MNIST dataset
 
 |                            | $acc_{micro}$       | $acc_{macro}$             | $P_{macro}$               | $R_{macro}$               | $F1_{macro}$               |
 | :------------------------- | :-----------------: | :-----------------------: | :-----------------------: | :-----------------------: | :------------------------: |
@@ -62,7 +62,7 @@
 | **FedMeta-Per(MAML)**      | **99.37**           | **99.12±1.29**            | **99.11±1.3**             | **98.82±1.99**            | **98.94±1.6**              |
 | **FedMeta-Per(Meta-SGD)**  | 98.92               | 98.15±3.32                | 98.42±1.95                | 98.42±1.96                | 98.20±2.94                 |
 
-- Bảng kết quả (%) trên new client của tập dữ liệu MNIST
+- Classification results (%) on new client using MNIST dataset
 
 |                            | $acc_{micro}$       | $acc_{macro}$        | $P_{macro}$             | $R_{macro}$             | $F1_{macro}$             |
 | :------------------------- | :--------------: | :---------------------: | :---------------------: | :---------------------: | :----------------------: |
@@ -77,7 +77,7 @@
 
 ### CIFAR-10
 
-- Bảng kết quả (%) trên local client của tập dữ liệu CIFAR-10
+- Classification results (%) of local client using CIFAR-10 dataset
 
 |                            | $acc_{micro}$    | $acc_{macro}$            | $P_{macro}$              | $R_{macro}$              | $F1_{macro}$         |
 | :------------------------- | :--------------: | :----------------------: | :----------------------: | :----------------------: | :------------------: |
@@ -90,7 +90,7 @@
 | **FedMeta-Per(MAML)**      | **86\.6**        | **86\.52±6.31**          | **86\.43±5.88**          | **85\.47±6.87**          | **85\.33±6.77**      |
 | **FedMeta-Per(Meta-SGD)**  | 85\.61           | 85\.68±7.22              | 86\.26±6.35              | 85\.36±6.83              | 85\.08±7.32          |
 
-- Bảng kết quả (%) trên new client của tập dữ liệu CIFAR-10
+- Classification results (%) of new client using CIFAR-10 dataset
 
 |                            | $acc_{micro}$    | $acc_{macro}$            | $P_{macro}$              | $R_{macro}$              | $F1_{macro}$         |
 | :------------------------- | :---------------: | :----------------------: | :----------------------: | :----------------------: | :-----------------------: |
@@ -103,12 +103,12 @@
 | **FedMeta-Per(MAML)**      | 64\.22            | 63\.70±12.29             | 57\.06±24.99             | 61\.63±12.66             | 53\.68±19.06              |
 | **FedMeta-Per(Meta-SGD)**  | **69\.97**        | **69\.13±14.63**         | 66\.53±24.91             | **67\.82±15.34**         | **62\.42±20.94**          |
 
-### Minh hoạ so sánh
+### Visualization
 
-- `FedMeta-Per` vs. (`FedAvg`, `FedAvgMeta`, `FedPer`, `FedPerMeta`): Thuật toán đề xuất cho độ chính xác và khả năng hội tụ cao hơn so với các thuật toán `FedAvg` và `FedPer`
+- `FedMeta-Per` vs. (`FedAvg`, `FedAvgMeta`, `FedPer`, `FedPerMeta`): The proposed methods achieves higher degree in term of convergence and accuracy compared with `FedAvg` and `FedPer`.
 
 ![](./document/thesis/images/sum1.png)
 
-- `FedMeta-Per` vs. `FedMeta`: Khả năng cá nhân hoá được cải thiện là lý do khiến cho local clients đạt hội tụ nhanh và cao hơn khi so `FedMeta-Per` với `FedMeta`. Đối với new clients, 2 thuật toán cho mức hội tụ như nhau, tuy nhiên, các lớp phần riêng tại từng client sẽ được cải thiện khi client tham gia vào 1 hoặc một vài bước huấn luyện cục bộ (new client trở thành local client).
+- `FedMeta-Per` vs. `FedMeta`: Improved personalization is the reason why results on local clients of `FedMeta-Per` achieve faster convergence and higher accuracy than `FedMeta`. Regarding the new clients, 2 algorithms achieve the same degree of convergence. However, the personalization layer at each `FedMeta-Per` client will improve over time as the client participates in one or more local training step (new client becomes local client).
 
 ![](./document/thesis/images/sum2.png)
