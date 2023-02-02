@@ -1,6 +1,6 @@
 # Meta-learning and Personalization layer in Federated learning
 
-Official code for ACIIDS2022 paper "[Meta-learning and Personalization layer in Federated learning](https://github.com/baolongnguyenmac/fl-ml/blob/main/document/paper/Meta-learning%20and%20Personalization%20layer%20in%20FL.pdf)".
+Official code for ACIIDS2022 paper "[Meta-learning and Personalization layer in Federated learning](https://link.springer.com/chapter/10.1007/978-3-031-21743-2_17)".
 
 ## General information
 
