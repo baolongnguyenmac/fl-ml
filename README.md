@@ -20,7 +20,6 @@ Official code for ACIIDS2022 paper "[Meta-learning and Personalization layer in 
 
 - Dataset configuration: Dataset is configured as in [Personalized Federated Learning with Moreau Envelopes (NeurIPS 2020)](https://github.com/CharlieDinh/pFedMe).
 
-- Có 2 cách để khởi chạy simulation (đọc doc của Flower để rõ thêm):
 - 2 ways to run simulation (read [Flower's doc](https://flower.dev/docs/) for more detail):
 
     - Normal mode: Run file `run.sh`. This file contains all the command codes that output the results of this thesis. After running this file, function `start_simulation()` in file `./main.py` will be called.
